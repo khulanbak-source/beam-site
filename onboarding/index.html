@@ -1235,14 +1235,29 @@ function toggleFlag(step) {
   document.getElementById('flag-' + step).classList.toggle('visible');
 }
 
-function submitFlag(step) {
+async function submitFlag(step) {
   const form = document.getElementById('flag-' + step);
   const ta = form.querySelector('textarea');
   const sent = document.getElementById('flag-sent-' + step);
   const btn = form.querySelector('.btn-main');
   if (!ta.value.trim()) { ta.style.borderColor = 'var(--warn)'; return; }
+
   btn.style.display = 'none';
   ta.disabled = true;
+
+  try {
+    await fetch('https://n8n.urstory.studio/webhook/beam-flag-report', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        step: step,
+        text: ta.value.trim(),
+        email: session?.email || 'unknown',
+        company: session?.client_name || ''
+      })
+    });
+  } catch(e) { /* silent fail — UI still shows sent */ }
+
   sent.style.display = 'inline';
 }
 
