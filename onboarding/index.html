@@ -1086,6 +1086,7 @@ async function verifyEmail() {
       user_name: data.user_name || '',
       client_name: data.client_name || '',
       role: data.role || ''
+      telegram_chat_id: data.telegram_chat_id || ''
     };
 
     onVerified();
@@ -1168,9 +1169,10 @@ function onVerified() {
     const logs = await res.json();
 
     // Filter to this user only
-    const myLogs = logs.filter(l =>
-      (l.salesperson || '').toLowerCase().trim() === (user_name || '').toLowerCase().trim()
-    );
+    const chatId = session.telegram_chat_id || '';
+    const myLogs = chatId
+      ? logs.filter(l => (l.telegramChatId || '') === chatId)
+      : logs.filter(l => (l.salesperson || '').toLowerCase() === (session.user_name || '').toLowerCase());
 
     const tableHTML = buildCRMTable(myLogs, user_name);
     document.getElementById('crmTable1').innerHTML = tableHTML;
