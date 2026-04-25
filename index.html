@@ -28,7 +28,7 @@
     line-height: 1.6;
   }
 
-  /* ── HEADER ── */
+  /* HEADER */
   header {
     padding: 24px 40px;
     display: flex;
@@ -41,357 +41,155 @@
     backdrop-filter: blur(8px);
     z-index: 100;
   }
-  .logo {
-    font-size: 17px;
-    font-weight: 500;
-    color: var(--accent);
-    letter-spacing: 0.01em;
-  }
+  .logo { font-size: 17px; font-weight: 500; color: var(--accent); }
   nav { display: flex; align-items: center; gap: 24px; }
-  nav a {
-    font-size: 13px;
-    color: var(--text-muted);
-    text-decoration: none;
-    transition: color 0.15s;
-  }
+  nav a { font-size: 13px; color: var(--text-muted); text-decoration: none; transition: color 0.15s; }
   nav a:hover { color: var(--text); }
-  .nav-cta {
-    padding: 8px 20px;
-    background: var(--accent);
-    color: #fff !important;
-    border-radius: 2px;
-    font-size: 13px;
-    font-weight: 500;
-    transition: opacity 0.15s !important;
-  }
+  .nav-cta { padding: 8px 20px; background: var(--accent); color: #fff !important; border-radius: 2px; font-size: 13px; font-weight: 500; }
   .nav-cta:hover { opacity: 0.85; }
-  .hamburger {
-    display: none;
-    flex-direction: column;
-    gap: 5px;
-    cursor: pointer;
-    padding: 4px;
-  }
-  .hamburger span {
-    display: block;
-    width: 22px;
-    height: 2px;
-    background: var(--text);
-    border-radius: 2px;
-    transition: 0.2s;
-  }
-  .mobile-menu {
-    display: none;
-    flex-direction: column;
-    gap: 0;
-    background: var(--surface);
-    border-bottom: 1px solid var(--border);
-  }
+  .hamburger { display: none; flex-direction: column; gap: 5px; cursor: pointer; padding: 4px; }
+  .hamburger span { display: block; width: 22px; height: 2px; background: var(--text); border-radius: 2px; }
+  .mobile-menu { display: none; flex-direction: column; background: var(--surface); border-bottom: 1px solid var(--border); }
   .mobile-menu.open { display: flex; }
-  .mobile-menu a {
-    padding: 16px 24px;
-    font-size: 14px;
-    color: var(--text);
-    text-decoration: none;
-    border-bottom: 1px solid var(--border);
-  }
+  .mobile-menu a { padding: 16px 24px; font-size: 14px; color: var(--text); text-decoration: none; border-bottom: 1px solid var(--border); }
   .mobile-menu a:last-child { border-bottom: none; }
 
-  /* ── HERO ── */
-  .hero {
-    max-width: 700px;
-    margin: 0 auto;
-    padding: 88px 24px 72px;
-    text-align: center;
-  }
+  /* HERO */
+  .hero { max-width: 700px; margin: 0 auto; padding: 88px 24px 72px; text-align: center; }
   .hero-label {
-    font-size: 11px;
-    color: var(--text-dim);
-    letter-spacing: 0.12em;
-    text-transform: uppercase;
-    margin-bottom: 28px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 12px;
+    font-size: 11px; color: var(--text-dim); letter-spacing: 0.12em; text-transform: uppercase;
+    margin-bottom: 28px; display: flex; align-items: center; justify-content: center; gap: 12px;
   }
-  .hero-label::before, .hero-label::after {
-    content: '';
-    height: 1px;
-    width: 36px;
-    background: var(--border);
-  }
-  h1 {
-    font-size: clamp(34px, 6vw, 54px);
-    font-weight: 300;
-    line-height: 1.15;
-    letter-spacing: -0.02em;
-    margin-bottom: 20px;
-  }
+  .hero-label::before, .hero-label::after { content: ''; height: 1px; width: 36px; background: var(--border); }
+  h1 { font-size: clamp(34px, 6vw, 54px); font-weight: 300; line-height: 1.15; letter-spacing: -0.02em; margin-bottom: 20px; }
   h1 strong { font-weight: 600; color: var(--accent); }
-  .hero-sub {
-    font-size: 16px;
-    color: var(--text-muted);
-    max-width: 420px;
-    margin: 0 auto 44px;
-    font-weight: 300;
-    line-height: 1.75;
-  }
-  .hero-actions {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 12px;
-    flex-wrap: wrap;
-  }
-  .btn-main {
-    display: inline-block;
-    padding: 13px 32px;
-    background: var(--accent);
-    color: #fff;
-    font-size: 14px;
-    font-weight: 500;
-    border-radius: 2px;
-    text-decoration: none;
-    transition: opacity 0.15s;
-    font-family: 'Plus Jakarta Sans', sans-serif;
-  }
+  .hero-sub { font-size: 16px; color: var(--text-muted); max-width: 420px; margin: 0 auto 44px; font-weight: 300; line-height: 1.75; }
+  .hero-actions { display: flex; align-items: center; justify-content: center; gap: 12px; flex-wrap: wrap; }
+  .btn-main { display: inline-block; padding: 13px 32px; background: var(--accent); color: #fff; font-size: 14px; font-weight: 500; border-radius: 2px; text-decoration: none; transition: opacity 0.15s; }
   .btn-main:hover { opacity: 0.85; }
-  .btn-soft {
-    display: inline-block;
-    padding: 13px 24px;
-    background: transparent;
-    color: var(--text-muted);
-    font-size: 13px;
-    border: 1px solid var(--border);
-    border-radius: 2px;
-    text-decoration: none;
-    transition: all 0.15s;
-  }
+  .btn-soft { display: inline-block; padding: 13px 24px; background: transparent; color: var(--text-muted); font-size: 13px; border: 1px solid var(--border); border-radius: 2px; text-decoration: none; transition: all 0.15s; }
   .btn-soft:hover { border-color: var(--accent-border); color: var(--text); }
 
-  /* ── DIVIDER ── */
+  /* UTILS */
   .divider { border: none; border-top: 1px solid var(--border); }
-
-  /* ── SECTION WRAPPER ── */
   .section { max-width: 900px; margin: 0 auto; padding: 72px 24px; }
-  .section-label {
-    font-size: 10px;
-    color: var(--text-dim);
-    letter-spacing: 0.14em;
-    text-transform: uppercase;
-    margin-bottom: 36px;
-    font-weight: 500;
-  }
+  .section-label { font-size: 10px; color: var(--text-dim); letter-spacing: 0.14em; text-transform: uppercase; margin-bottom: 36px; font-weight: 500; }
 
-  /* ── PAIN POINTS ── */
+  /* PAIN POINTS */
   .pain-wrap { background: var(--surface); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); }
-  .pain-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 40px;
-  }
-  .pain-col h3 {
-    font-size: 14px;
-    font-weight: 600;
-    color: var(--text);
-    margin-bottom: 20px;
-    padding-bottom: 12px;
-    border-bottom: 1px solid var(--border);
-  }
+  .pain-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 48px; }
+  .pain-col h3 { font-size: 14px; font-weight: 600; color: var(--text); margin-bottom: 20px; padding-bottom: 12px; border-bottom: 1px solid var(--border); }
   .pain-list { list-style: none; display: flex; flex-direction: column; gap: 14px; }
-  .pain-list li {
-    display: flex;
-    align-items: flex-start;
-    gap: 12px;
-    font-size: 13px;
-    color: var(--text-muted);
-    line-height: 1.6;
-  }
+  .pain-list li { display: flex; align-items: flex-start; gap: 12px; font-size: 13px; color: var(--text-muted); line-height: 1.6; }
   .pain-emoji { font-size: 15px; flex-shrink: 0; margin-top: 1px; }
 
-  /* ── HOW IT WORKS ── */
-  .steps {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 0;
-    border: 1px solid var(--border);
-    border-radius: 3px;
-    overflow: hidden;
-  }
-  .step {
-    padding: 28px 22px;
-    background: var(--surface);
-    border-right: 1px solid var(--border);
-  }
+  /* HOW IT WORKS */
+  .steps { display: grid; grid-template-columns: repeat(4, 1fr); border: 1px solid var(--border); border-radius: 3px; overflow: hidden; }
+  .step { padding: 28px 22px; background: var(--surface); border-right: 1px solid var(--border); }
   .step:last-child { border-right: none; }
   .step-n { font-size: 10px; color: var(--text-dim); margin-bottom: 14px; letter-spacing: 0.06em; }
   .step-icon { font-size: 20px; margin-bottom: 12px; display: block; }
   .step-title { font-size: 13px; font-weight: 600; color: var(--text); margin-bottom: 6px; }
   .step-desc { font-size: 12px; color: var(--text-muted); line-height: 1.65; }
 
-  /* ── WHAT YOU GET ── */
+  /* WHAT YOU GET */
   .what-wrap { background: var(--surface); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); }
-  .what-inner {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 60px;
-    align-items: center;
-  }
-  .what-text h2 {
-    font-size: 26px;
-    font-weight: 400;
-    line-height: 1.35;
-    margin-bottom: 14px;
-    letter-spacing: -0.01em;
-  }
+  .what-inner { display: grid; grid-template-columns: 1fr 1fr; gap: 60px; align-items: center; }
+  .what-text h2 { font-size: 26px; font-weight: 400; line-height: 1.35; margin-bottom: 14px; letter-spacing: -0.01em; }
   .what-text h2 strong { font-weight: 600; color: var(--accent); }
-  .what-text p {
-    font-size: 13px;
-    color: var(--text-muted);
-    line-height: 1.75;
-    margin-bottom: 22px;
-  }
+  .what-text p { font-size: 13px; color: var(--text-muted); line-height: 1.75; margin-bottom: 22px; }
   .what-list { list-style: none; display: flex; flex-direction: column; gap: 10px; }
-  .what-list li {
-    display: flex;
-    align-items: flex-start;
-    gap: 10px;
-    font-size: 13px;
-    color: var(--text-muted);
-    line-height: 1.55;
-  }
-  .what-list li::before {
-    content: 'checked';
-    font-family: 'Material Symbols Outlined', sans-serif;
-    font-size: 15px;
-    color: var(--accent);
-    flex-shrink: 0;
-    margin-top: 1px;
-  }
+  .what-list li { display: flex; align-items: flex-start; gap: 10px; font-size: 13px; color: var(--text-muted); line-height: 1.55; }
+  .what-list li .check { color: var(--accent); font-size: 14px; flex-shrink: 0; margin-top: 1px; font-weight: 600; }
+  .what-list li .opt { font-size: 10px; color: var(--text-dim); background: var(--surface2); border: 1px solid var(--border); border-radius: 2px; padding: 1px 6px; margin-left: 6px; font-weight: 500; letter-spacing: 0.04em; white-space: nowrap; vertical-align: middle; }
 
-  /* ── MOCK CHAT ── */
-  .chat-mock {
-    background: var(--surface2);
-    border: 1px solid var(--border);
-    border-radius: 6px;
-    padding: 18px;
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-  }
-  .chat-header {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    padding-bottom: 12px;
-    border-bottom: 1px solid var(--border);
-    margin-bottom: 4px;
-  }
-  .chat-avatar {
-    width: 30px; height: 30px;
-    border-radius: 50%;
-    background: var(--accent);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 13px;
-    color: #fff;
-    font-weight: 600;
-    flex-shrink: 0;
-  }
+  /* CHAT MOCK */
+  .chat-mock { background: var(--surface2); border: 1px solid var(--border); border-radius: 6px; padding: 18px; display: flex; flex-direction: column; gap: 10px; }
+  .chat-header { display: flex; align-items: center; gap: 10px; padding-bottom: 12px; border-bottom: 1px solid var(--border); margin-bottom: 4px; }
+  .chat-avatar { width: 30px; height: 30px; border-radius: 50%; background: var(--accent); display: flex; align-items: center; justify-content: center; font-size: 13px; color: #fff; font-weight: 600; flex-shrink: 0; }
   .chat-name { font-size: 13px; font-weight: 600; }
   .chat-sub { font-size: 11px; color: var(--text-muted); }
-  .bubble {
-    max-width: 88%;
-    padding: 10px 13px;
-    border-radius: 3px 12px 12px 12px;
-    font-size: 12px;
-    line-height: 1.55;
-    background: var(--surface);
-    border: 1px solid var(--border);
-    color: var(--text);
-  }
-  .bubble.out {
-    align-self: flex-end;
-    border-radius: 12px 3px 12px 12px;
-    background: var(--accent-light);
-    border-color: var(--accent-border);
-    color: var(--accent);
-  }
-  .bubble-time {
-    font-size: 10px;
-    color: var(--text-dim);
-    padding: 0 2px;
-    align-self: flex-end;
-  }
+  .bubble { max-width: 88%; padding: 10px 13px; border-radius: 3px 12px 12px 12px; font-size: 12px; line-height: 1.55; background: var(--surface); border: 1px solid var(--border); color: var(--text); }
+  .bubble.out { align-self: flex-end; border-radius: 12px 3px 12px 12px; background: var(--accent-light); border-color: var(--accent-border); color: var(--accent); }
+  .bubble-time { font-size: 10px; color: var(--text-dim); padding: 0 2px; align-self: flex-end; }
 
-  /* ── LINKS ── */
-  .links-grid {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 14px;
+  /* IMPLEMENTATION */
+  .impl-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 32px; }
+  .impl-card { padding: 22px; background: var(--surface); border: 1px solid var(--border); border-radius: 3px; }
+  .impl-card-top { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }
+  .impl-icon { font-size: 18px; }
+  .impl-title { font-size: 13px; font-weight: 600; color: var(--text); }
+  .impl-desc { font-size: 12px; color: var(--text-muted); line-height: 1.65; }
+  .impl-note { font-size: 11px; color: var(--text-dim); margin-top: 8px; font-style: italic; }
+
+  .custom-note {
+    padding: 16px 20px;
+    background: var(--accent-light);
+    border: 1px solid var(--accent-border);
+    border-radius: 3px;
+    font-size: 13px;
+    color: var(--text-muted);
+    line-height: 1.7;
   }
-  .link-card {
-    display: block;
-    padding: 26px 22px;
-    background: var(--surface);
+  .custom-note strong { color: var(--accent); }
+
+  /* TIMELINE */
+  .timeline { display: flex; flex-direction: column; gap: 0; border: 1px solid var(--border); border-radius: 3px; overflow: hidden; margin-bottom: 24px; }
+  .tl-row { display: grid; grid-template-columns: 120px 1fr; background: var(--surface); border-bottom: 1px solid var(--border); }
+  .tl-row:last-child { border-bottom: none; }
+  .tl-week { padding: 18px 20px; background: var(--surface2); border-right: 1px solid var(--border); display: flex; flex-direction: column; justify-content: center; }
+  .tl-week-label { font-size: 10px; color: var(--text-dim); letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 2px; }
+  .tl-week-val { font-size: 13px; font-weight: 600; color: var(--accent); }
+  .tl-week-val:empty { display: none; }
+  .tl-week { justify-content: center; }
+  .tl-content { padding: 18px 24px; }
+  .tl-title { font-size: 13px; font-weight: 600; color: var(--text); margin-bottom: 4px; }
+  .tl-desc { font-size: 12px; color: var(--text-muted); line-height: 1.6; }
+
+  .timeline-caveat {
+    font-size: 12px;
+    color: var(--text-dim);
+    line-height: 1.7;
+    padding: 14px 18px;
     border: 1px solid var(--border);
     border-radius: 3px;
-    text-decoration: none;
-    transition: border-color 0.15s, box-shadow 0.15s;
+    background: var(--surface);
   }
-  .link-card:hover {
-    border-color: var(--accent-border);
-    box-shadow: 0 2px 12px rgba(0,0,0,0.05);
-  }
+
+  /* EXPLORE */
+  .links-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
+  .link-card { display: block; padding: 26px 22px; background: var(--surface); border: 1px solid var(--border); border-radius: 3px; text-decoration: none; transition: border-color 0.15s, box-shadow 0.15s; }
+  .link-card:hover { border-color: var(--accent-border); box-shadow: 0 2px 12px rgba(0,0,0,0.05); }
   .link-card-icon { font-size: 18px; margin-bottom: 12px; display: block; }
   .link-card-title { font-size: 14px; font-weight: 600; color: var(--text); margin-bottom: 6px; }
   .link-card-desc { font-size: 12px; color: var(--text-muted); line-height: 1.65; margin-bottom: 14px; }
   .link-card-arrow { font-size: 12px; color: var(--accent); font-weight: 500; }
 
-  /* ── FOOTER ── */
-  footer {
-    border-top: 1px solid var(--border);
-    padding: 24px 40px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    flex-wrap: wrap;
-    gap: 12px;
-  }
+  /* FOOTER */
+  footer { border-top: 1px solid var(--border); padding: 24px 40px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px; }
   .footer-left { font-size: 12px; color: var(--text-dim); }
   .footer-right { display: flex; gap: 20px; flex-wrap: wrap; }
-  .footer-right a {
-    font-size: 12px;
-    color: var(--text-dim);
-    text-decoration: none;
-    transition: color 0.15s;
-  }
+  .footer-right a { font-size: 12px; color: var(--text-dim); text-decoration: none; transition: color 0.15s; }
   .footer-right a:hover { color: var(--text); }
 
-  /* ── MOBILE ── */
+  /* MOBILE */
   @media (max-width: 720px) {
     header { padding: 18px 20px; }
     nav { display: none; }
     .hamburger { display: flex; }
     .hero { padding: 56px 20px 52px; }
     .section { padding: 52px 20px; }
-
     .pain-grid { grid-template-columns: 1fr; gap: 32px; }
-
     .steps { grid-template-columns: 1fr 1fr; }
     .step { border-bottom: 1px solid var(--border); }
     .step:nth-child(2) { border-right: none; }
     .step:nth-child(3) { border-bottom: none; }
     .step:nth-child(4) { border-right: none; border-bottom: none; }
-
     .what-inner { grid-template-columns: 1fr; gap: 32px; }
-
+    .impl-grid { grid-template-columns: 1fr; }
+    .tl-row { grid-template-columns: 90px 1fr; }
     .links-grid { grid-template-columns: 1fr; }
-
-    footer { padding: 20px; flex-direction: column; gap: 16px; align-items: flex-start; }
-    .footer-right { gap: 16px; }
+    footer { padding: 20px; flex-direction: column; align-items: flex-start; gap: 16px; }
   }
 </style>
 </head>
@@ -446,7 +244,7 @@
           </li>
           <li>
             <span class="pain-emoji">🕐</span>
-            Details go missing. By the time the rep sits down to log, half the conversation is already forgotten.
+            Details go missing. By the time a rep sits down to log, half the conversation is already forgotten.
           </li>
           <li>
             <span class="pain-emoji">📋</span>
@@ -454,7 +252,7 @@
           </li>
           <li>
             <span class="pain-emoji">📱</span>
-            The tool is wrong for the job. Reps live on their phone and in messaging apps, not inside a CRM dashboard.
+            The tool does not match the workflow. Reps live on their phones and in messaging apps, not inside a CRM dashboard.
           </li>
         </ul>
       </div>
@@ -463,11 +261,11 @@
         <ul class="pain-list">
           <li>
             <span class="pain-emoji">🔁</span>
-            Constantly chasing updates. "Did you log this?" is a daily conversation that shouldn't need to happen.
+            Constantly chasing updates. "Did you log this?" is a daily conversation that should not need to happen.
           </li>
           <li>
             <span class="pain-emoji">📉</span>
-            No visibility into what is working. Without consistent logs, there is no way to see which channels, products, or approaches are converting.
+            No visibility into what is working. Without consistent logs, there is no way to see which channels or approaches are converting.
           </li>
           <li>
             <span class="pain-emoji">🤷</span>
@@ -475,7 +273,7 @@
           </li>
           <li>
             <span class="pain-emoji">🔥</span>
-            Hot leads go cold. Without a clear next action logged somewhere visible, follow-ups slip through the cracks.
+            Hot leads go cold. Without a next action logged somewhere visible, follow-ups slip through the cracks.
           </li>
         </ul>
       </div>
@@ -499,7 +297,7 @@
       <div class="step-n">02</div>
       <span class="step-icon">🧠</span>
       <div class="step-title">Beam extracts the details</div>
-      <div class="step-desc">Name, status, product interest, and next action are pulled out automatically. If something is missing, Beam asks once.</div>
+      <div class="step-desc">Name, status, product interest, and next action pulled out automatically. If something is missing, Beam asks once.</div>
     </div>
     <div class="step">
       <div class="step-n">03</div>
@@ -511,7 +309,7 @@
       <div class="step-n">04</div>
       <span class="step-icon">📅</span>
       <div class="step-title">Next action is tracked</div>
-      <div class="step-desc">When a rep confirms a follow-up time, a Google Calendar event is created. A daily Telegram digest keeps upcoming actions visible.</div>
+      <div class="step-desc">When a rep confirms a follow-up time, a Google Calendar event is created. A daily Telegram digest shows upcoming actions.</div>
     </div>
   </div>
 </section>
@@ -528,12 +326,13 @@
           Reps send a message the same way they would text a colleague. Beam handles the structure, the CRM entry, and the follow-up tracking.
         </p>
         <ul class="what-list">
-          <li>Voice and text input in Mongolian via Chimege STT</li>
-          <li>Recognizes returning leads and prevents duplicate records</li>
-          <li>Google Calendar event created when a next action time is confirmed</li>
-          <li>Daily Telegram digest of upcoming follow-ups for each rep</li>
-          <li>Ask Beam about any lead by name and get an instant answer</li>
-          <li>Weekly summary report sent to management automatically</li>
+          <li><span class="check">✓</span><span>Text input via Telegram in Mongolian or English</span></li>
+          <li><span class="check">✓</span><span>Voice notes transcribed via Chimege STT <span class="opt">optional</span></span></li>
+          <li><span class="check">✓</span><span>Recognizes returning leads and prevents duplicate records</span></li>
+          <li><span class="check">✓</span><span>Google Calendar event created when a next action time is confirmed</span></li>
+          <li><span class="check">✓</span><span>Daily Telegram digest of upcoming follow-ups for each rep</span></li>
+          <li><span class="check">✓</span><span>Ask Beam about any lead by name and get an instant answer</span></li>
+          <li><span class="check">✓</span><span>Weekly summary report sent to management automatically</span></li>
         </ul>
       </div>
 
@@ -557,6 +356,96 @@
         <div class="bubble">✅ CRM-д хадгалагдлаа. Calendar-т нэмэгдлээ.</div>
         <div class="bubble-time">Today, 2:14 PM</div>
       </div>
+    </div>
+  </div>
+</div>
+
+<hr class="divider">
+
+<!-- IMPLEMENTATION -->
+<section class="section">
+  <div class="section-label">Works with your existing tools</div>
+  <div class="impl-grid">
+    <div class="impl-card">
+      <div class="impl-card-top">
+        <span class="impl-icon">☁️</span>
+        <div class="impl-title">Salesforce</div>
+      </div>
+      <div class="impl-desc">Beam writes directly into your Salesforce org via API. Leads, contacts, activities, and next steps all map to your existing fields.</div>
+      <div class="impl-note">Recommended for teams already on Salesforce. Filtered by Lead Owner so group org data stays separate.</div>
+    </div>
+    <div class="impl-card">
+      <div class="impl-card-top">
+        <span class="impl-icon">🟠</span>
+        <div class="impl-title">HubSpot</div>
+      </div>
+      <div class="impl-desc">Connects to HubSpot CRM via API. Works with the free tier for contact and deal logging, no paid seat required to get started.</div>
+      <div class="impl-note">Good entry point for teams without an existing CRM investment.</div>
+    </div>
+    <div class="impl-card">
+      <div class="impl-card-top">
+        <span class="impl-icon">◻️</span>
+        <div class="impl-title">Notion</div>
+      </div>
+      <div class="impl-desc">Beam currently runs on Notion as a CRM. Fastest to set up and ideal for piloting before committing to a full CRM migration.</div>
+      <div class="impl-note">Used in this demo. Easy to switch to Salesforce or HubSpot as the next step.</div>
+    </div>
+    <div class="impl-card">
+      <div class="impl-card-top">
+        <span class="impl-icon">🔧</span>
+        <div class="impl-title">Other systems</div>
+      </div>
+      <div class="impl-desc">If your team uses a different CRM or internal database, Beam can be adapted as long as an API or data export exists.</div>
+      <div class="impl-note">Discussed during setup. Most systems with a REST API are connectable.</div>
+    </div>
+  </div>
+
+  <div class="custom-note">
+    <strong>Every implementation is different.</strong> Beam is built around your team's existing tools and workflows, not the other way around. Field mapping, user roles, language, and integrations are all configured to fit your setup from the start.
+  </div>
+</section>
+
+<hr class="divider">
+
+<!-- TIMELINE -->
+<div class="what-wrap">
+  <div class="section">
+    <div class="section-label">Typical build timeline</div>
+    <div class="timeline">
+      <div class="tl-row">
+        <div class="tl-week">
+          <div class="tl-week-label">Weeks</div>
+          <div class="tl-week-val">1 – 2</div>
+        </div>
+        <div class="tl-content">
+          <div class="tl-title">Setup and build</div>
+          <div class="tl-desc">Discovery, CRM field mapping, Telegram bot connected, user access configured. Core logging built and tested with your team.</div>
+        </div>
+      </div>
+      <div class="tl-row">
+        <div class="tl-week">
+          <div class="tl-week-label">Weeks</div>
+          <div class="tl-week-val">3 – 4</div>
+        </div>
+        <div class="tl-content">
+          <div class="tl-title">Handover and quality control</div>
+          <div class="tl-desc">Reps using the system in real conditions. Edge cases handled, prompts refined, reporting configured. System signed off and handed over.</div>
+        </div>
+      </div>
+      <div class="tl-row">
+        <div class="tl-week">
+          <div class="tl-week-label">Week 5+</div>
+          <div class="tl-week-val"></div>
+        </div>
+        <div class="tl-content">
+          <div class="tl-title">Ongoing support</div>
+          <div class="tl-desc">Depending on your preference, continued support is available as a monthly retainer covering iterations and improvements, or on a per-ticket basis for specific requests as they come up.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="timeline-caveat">
+      Timeline is an estimate based on a standard setup. Complexity varies depending on your CRM, number of users, voice input requirements, and any custom workflows your team needs. This is figured out together during discovery.
     </div>
   </div>
 </div>
