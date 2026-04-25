@@ -435,40 +435,71 @@
       </div>
     </div>
     <div class="step-body">
-      <div class="instruction">
-        <strong>How to get started:</strong>
-        <ol>
-          <li>Open Telegram and search for <strong>@beam_urstory_bot</strong></li>
-          <li>Tap Start or send <strong>/start</strong></li>
-          <li>Beam will ask for your name. Type your full name (e.g. Болор Дорж)</li>
-          <li>Wait for admin approval. You will get a notification when you are in.</li>
-        </ol>
-      </div>
+  <div class="instruction">
+    <strong>How to get started:</strong>
+    <ol>
+      <li>Open Telegram and search for <strong>@beam_urstory_bot</strong></li>
+      <li>Tap Start or send <strong>/start</strong></li>
+      <li>Enter your full name, then your email when asked</li>
+      <li>Wait for admin approval. You will get a notification when you are in.</li>
+    </ol>
+  </div>
 
-      <a href="https://t.me/beam_urstory_bot" target="_blank" class="tg-btn">
-        <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm5.562 8.248l-1.97 9.289c-.145.658-.537.818-1.084.508l-3-2.21-1.447 1.394c-.16.16-.295.295-.605.295l.213-3.053 5.56-5.023c.242-.213-.054-.333-.373-.12L7.43 14.015l-2.97-.924c-.645-.204-.657-.645.136-.953l11.57-4.461c.537-.194 1.006.131.833.571z"/></svg>
-        Open @beam_urstory_bot
-      </a>
+  <a href="https://t.me/beam_urstory_bot" target="_blank" class="tg-btn">
+    <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm5.562 8.248l-1.97 9.289c-.145.658-.537.818-1.084.508l-3-2.21-1.447 1.394c-.16.16-.295.295-.605.295l.213-3.053 5.56-5.023c.242-.213-.054-.333-.373-.12L7.43 14.015l-2.97-.924c-.645-.204-.657-.645.136-.953l11.57-4.461c.537-.194 1.006.131.833.571z"/></svg>
+    Open @beam_urstory_bot
+  </a>
 
-      <div class="example-label">What the exchange looks like</div>
+  <!-- TWO COLUMN LAYOUT -->
+  <div style="display:grid; grid-template-columns:1fr 1fr; gap:20px; margin-bottom:24px;">
+
+    <!-- USER SIDE -->
+    <div>
+      <div class="example-label">New user</div>
       <div class="msg-bubble-wrap">
-        <div class="msg-bubble">👋 Beam-д тавтай морил! Хандалт авахын тулд өөрийн нэр овогоо оруулна уу.<br>(Жишээ: Болор Дорж)</div>
+        <div class="msg-bubble">👋 Beam-д тавтай морил!<br>Хандалт авахын тулд өөрийн нэр овогоо оруулна уу.<br><span style="color:var(--text-dim);font-size:11px;">(Жишээ: Болор Дорж)</span></div>
         <div class="msg-bubble out">Болор Дорж</div>
-        <div class="msg-bubble">✅ Хүсэлт илгээгдлээ! Admin батлах хүртэл хүлээнэ үү 🙏</div>
-      </div>
-
-      <div class="step-actions">
-        <button class="btn-main" onclick="nextStep(1)">I am connected and approved</button>
-        <button class="btn-flag" onclick="toggleFlag(1)">Flag an issue</button>
-      </div>
-      <div class="flag-form" id="flag-1">
-        <span class="flag-label">What went wrong on this step?</span>
-        <textarea placeholder="e.g. Bot did not respond, could not find the bot, request not approved..."></textarea>
-        <button class="btn-main" onclick="submitFlag(1)" style="font-size:12px; padding:8px 18px;">Send report</button>
-        <span class="flag-sent" id="flag-sent-1">Reported. Khulan will follow up.</span>
+        <div class="msg-bubble">✅ Сайн байна, Болор Дорж!<br>Одоо и-мэйл хаягаа оруулна уу.<br><span style="color:var(--text-dim);font-size:11px;">(Жишээ: name@company.com)</span></div>
+        <div class="msg-bubble out">bolordorj@email.com</div>
+        <div class="msg-bubble">✅ Хүсэлт илгээгдлээ! Admin батлах хүртэл хүлээнэ үү. 🙏</div>
+        <div class="msg-bubble" style="background:var(--accent-light);border-color:var(--accent-border);">🎉 Таны хүсэлт зөвшөөрөгдлөө! Beam-д тавтай морил, Болор Дорж. 👋<br><br>Meeting/Call-ийн мэдээллээ хэлнэ үү.</div>
       </div>
     </div>
+
+    <!-- ADMIN SIDE -->
+    <div>
+      <div class="example-label">Admin</div>
+      <div class="msg-bubble-wrap">
+        <div class="msg-bubble">🔔 Болор Дорж (@bolordorj) хандалт хүслээ.<br>📧 bolordorj@email.com<br><br>Зөвшөөрөх: /ok<br>Татгалзах: /no</div>
+        <div class="msg-bubble out">/ok</div>
+        <div class="msg-bubble">✅ Болор Дорж-д хандалт олгогдлоо.</div>
+        <div class="msg-bubble" style="opacity:0.5; font-size:11px; color:var(--text-muted); background:transparent; border-style:dashed;">If /no instead:<br>❌ Болор Дорж-н хүсэлтийг татгалзлаа.</div>
+        <div class="msg-bubble" style="opacity:0.5; font-size:11px; color:var(--text-muted); background:transparent; border-style:dashed;">If nothing pending:<br>❌ Хүсэлт олдсонгүй.</div>
+      </div>
+    </div>
+
   </div>
+
+  <!-- MOBILE STACK STYLE -->
+  <style>
+    @media (max-width: 640px) {
+      #step-1 .step-body > div[style*="grid"] {
+        grid-template-columns: 1fr !important;
+      }
+    }
+  </style>
+
+  <div class="step-actions">
+    <button class="btn-main" onclick="nextStep(1)">I am connected and approved</button>
+    <button class="btn-flag" onclick="toggleFlag(1)">Flag an issue</button>
+  </div>
+  <div class="flag-form" id="flag-1">
+    <span class="flag-label">What went wrong on this step?</span>
+    <textarea placeholder="e.g. Bot did not respond, could not find the bot, request not approved..."></textarea>
+    <button class="btn-main" onclick="submitFlag(1)" style="font-size:12px; padding:8px 18px;">Send report</button>
+    <span class="flag-sent" id="flag-sent-1">Reported. Khulan will follow up.</span>
+  </div>
+</div>
 
   <!-- STEP 2: LOG NEW LEAD -->
   <div class="step-card" id="step-2">
