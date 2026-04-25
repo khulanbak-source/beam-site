@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>beam — from conversation to action</title>
-<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <style>
   :root {
     --bg: #f6f5f1;
@@ -17,43 +17,37 @@
     --accent: #1f3d2b;
     --accent-light: rgba(31,61,43,0.07);
     --accent-border: rgba(31,61,43,0.18);
-    --warm: #c46a4a;
   }
 
   * { box-sizing: border-box; margin: 0; padding: 0; }
-
   body {
     background: var(--bg);
     color: var(--text);
-    font-family: 'IBM Plex Sans', sans-serif;
+    font-family: 'Plus Jakarta Sans', sans-serif;
     font-size: 15px;
     line-height: 1.6;
-    min-height: 100vh;
   }
 
-  /* HEADER */
+  /* ── HEADER ── */
   header {
-    padding: 28px 48px;
+    padding: 24px 40px;
     display: flex;
     align-items: center;
     justify-content: space-between;
     border-bottom: 1px solid var(--border);
+    position: sticky;
+    top: 0;
+    background: rgba(246,245,241,0.95);
+    backdrop-filter: blur(8px);
+    z-index: 100;
   }
-
   .logo {
-    font-family: 'IBM Plex Sans', sans-serif;
     font-size: 17px;
-    font-weight: 600;
+    font-weight: 500;
     color: var(--accent);
     letter-spacing: 0.01em;
   }
-
-  nav {
-    display: flex;
-    align-items: center;
-    gap: 32px;
-  }
-
+  nav { display: flex; align-items: center; gap: 24px; }
   nav a {
     font-size: 13px;
     color: var(--text-muted);
@@ -61,27 +55,56 @@
     transition: color 0.15s;
   }
   nav a:hover { color: var(--text); }
-
-  nav .nav-cta {
+  .nav-cta {
     padding: 8px 20px;
     background: var(--accent);
-    color: #fff;
+    color: #fff !important;
     border-radius: 2px;
     font-size: 13px;
     font-weight: 500;
+    transition: opacity 0.15s !important;
   }
-  nav .nav-cta:hover { opacity: 0.88; color: #fff; }
+  .nav-cta:hover { opacity: 0.85; }
+  .hamburger {
+    display: none;
+    flex-direction: column;
+    gap: 5px;
+    cursor: pointer;
+    padding: 4px;
+  }
+  .hamburger span {
+    display: block;
+    width: 22px;
+    height: 2px;
+    background: var(--text);
+    border-radius: 2px;
+    transition: 0.2s;
+  }
+  .mobile-menu {
+    display: none;
+    flex-direction: column;
+    gap: 0;
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+  }
+  .mobile-menu.open { display: flex; }
+  .mobile-menu a {
+    padding: 16px 24px;
+    font-size: 14px;
+    color: var(--text);
+    text-decoration: none;
+    border-bottom: 1px solid var(--border);
+  }
+  .mobile-menu a:last-child { border-bottom: none; }
 
-  /* HERO */
+  /* ── HERO ── */
   .hero {
-    max-width: 760px;
+    max-width: 700px;
     margin: 0 auto;
-    padding: 96px 48px 80px;
+    padding: 88px 24px 72px;
     text-align: center;
   }
-
   .hero-label {
-    font-family: 'IBM Plex Mono', monospace;
     font-size: 11px;
     color: var(--text-dim);
     letter-spacing: 0.12em;
@@ -90,45 +113,37 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 10px;
+    gap: 12px;
   }
   .hero-label::before, .hero-label::after {
     content: '';
     height: 1px;
-    width: 40px;
+    width: 36px;
     background: var(--border);
   }
-
   h1 {
-    font-size: clamp(38px, 6vw, 58px);
+    font-size: clamp(34px, 6vw, 54px);
     font-weight: 300;
     line-height: 1.15;
     letter-spacing: -0.02em;
-    color: var(--text);
     margin-bottom: 20px;
   }
-  h1 strong {
-    font-weight: 600;
-    color: var(--accent);
-  }
-
+  h1 strong { font-weight: 600; color: var(--accent); }
   .hero-sub {
     font-size: 16px;
     color: var(--text-muted);
-    max-width: 440px;
-    margin: 0 auto 48px;
+    max-width: 420px;
+    margin: 0 auto 44px;
     font-weight: 300;
     line-height: 1.75;
   }
-
   .hero-actions {
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 14px;
+    gap: 12px;
     flex-wrap: wrap;
   }
-
   .btn-main {
     display: inline-block;
     padding: 13px 32px;
@@ -139,9 +154,9 @@
     border-radius: 2px;
     text-decoration: none;
     transition: opacity 0.15s;
+    font-family: 'Plus Jakarta Sans', sans-serif;
   }
   .btn-main:hover { opacity: 0.85; }
-
   .btn-soft {
     display: inline-block;
     padding: 13px 24px;
@@ -155,29 +170,47 @@
   }
   .btn-soft:hover { border-color: var(--accent-border); color: var(--text); }
 
-  /* DIVIDER */
-  .section-divider {
-    border: none;
-    border-top: 1px solid var(--border);
-    margin: 0;
-  }
+  /* ── DIVIDER ── */
+  .divider { border: none; border-top: 1px solid var(--border); }
 
-  /* HOW IT WORKS */
-  .how {
-    max-width: 900px;
-    margin: 0 auto;
-    padding: 72px 48px;
-  }
-
+  /* ── SECTION WRAPPER ── */
+  .section { max-width: 900px; margin: 0 auto; padding: 72px 24px; }
   .section-label {
-    font-family: 'IBM Plex Mono', monospace;
     font-size: 10px;
     color: var(--text-dim);
-    letter-spacing: 0.12em;
+    letter-spacing: 0.14em;
     text-transform: uppercase;
-    margin-bottom: 40px;
+    margin-bottom: 36px;
+    font-weight: 500;
   }
 
+  /* ── PAIN POINTS ── */
+  .pain-wrap { background: var(--surface); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); }
+  .pain-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 40px;
+  }
+  .pain-col h3 {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text);
+    margin-bottom: 20px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid var(--border);
+  }
+  .pain-list { list-style: none; display: flex; flex-direction: column; gap: 14px; }
+  .pain-list li {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    font-size: 13px;
+    color: var(--text-muted);
+    line-height: 1.6;
+  }
+  .pain-emoji { font-size: 15px; flex-shrink: 0; margin-top: 1px; }
+
+  /* ── HOW IT WORKS ── */
   .steps {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
@@ -186,90 +219,67 @@
     border-radius: 3px;
     overflow: hidden;
   }
-
   .step {
-    padding: 28px 24px;
+    padding: 28px 22px;
     background: var(--surface);
     border-right: 1px solid var(--border);
   }
   .step:last-child { border-right: none; }
+  .step-n { font-size: 10px; color: var(--text-dim); margin-bottom: 14px; letter-spacing: 0.06em; }
+  .step-icon { font-size: 20px; margin-bottom: 12px; display: block; }
+  .step-title { font-size: 13px; font-weight: 600; color: var(--text); margin-bottom: 6px; }
+  .step-desc { font-size: 12px; color: var(--text-muted); line-height: 1.65; }
 
-  .step-n {
-    font-family: 'IBM Plex Mono', monospace;
-    font-size: 11px;
-    color: var(--text-dim);
-    margin-bottom: 14px;
-  }
-  .step-icon { font-size: 22px; margin-bottom: 12px; display: block; }
-  .step-title { font-size: 14px; font-weight: 500; color: var(--text); margin-bottom: 6px; }
-  .step-desc { font-size: 12px; color: var(--text-muted); line-height: 1.6; }
-
-  /* WHAT YOU GET */
-  .what {
-    background: var(--surface);
-    border-top: 1px solid var(--border);
-    border-bottom: 1px solid var(--border);
-  }
-
+  /* ── WHAT YOU GET ── */
+  .what-wrap { background: var(--surface); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); }
   .what-inner {
-    max-width: 900px;
-    margin: 0 auto;
-    padding: 72px 48px;
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: 64px;
+    gap: 60px;
     align-items: center;
   }
-
   .what-text h2 {
     font-size: 26px;
     font-weight: 400;
     line-height: 1.35;
-    margin-bottom: 16px;
+    margin-bottom: 14px;
     letter-spacing: -0.01em;
   }
   .what-text h2 strong { font-weight: 600; color: var(--accent); }
-
   .what-text p {
-    font-size: 14px;
+    font-size: 13px;
     color: var(--text-muted);
     line-height: 1.75;
-    margin-bottom: 24px;
+    margin-bottom: 22px;
   }
-
-  .what-list {
-    list-style: none;
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-  }
+  .what-list { list-style: none; display: flex; flex-direction: column; gap: 10px; }
   .what-list li {
     display: flex;
     align-items: flex-start;
     gap: 10px;
     font-size: 13px;
     color: var(--text-muted);
+    line-height: 1.55;
   }
   .what-list li::before {
-    content: '→';
+    content: 'checked';
+    font-family: 'Material Symbols Outlined', sans-serif;
+    font-size: 15px;
     color: var(--accent);
-    font-family: 'IBM Plex Mono', monospace;
-    font-size: 11px;
-    margin-top: 2px;
     flex-shrink: 0;
+    margin-top: 1px;
   }
 
-  /* MOCK CHAT */
+  /* ── MOCK CHAT ── */
   .chat-mock {
     background: var(--surface2);
     border: 1px solid var(--border);
-    border-radius: 4px;
-    padding: 20px;
+    border-radius: 6px;
+    padding: 18px;
     display: flex;
     flex-direction: column;
     gap: 10px;
   }
-
   .chat-header {
     display: flex;
     align-items: center;
@@ -279,20 +289,22 @@
     margin-bottom: 4px;
   }
   .chat-avatar {
-    width: 32px; height: 32px;
+    width: 30px; height: 30px;
     border-radius: 50%;
     background: var(--accent);
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 14px;
+    font-size: 13px;
+    color: #fff;
+    font-weight: 600;
+    flex-shrink: 0;
   }
-  .chat-name { font-size: 13px; font-weight: 500; }
+  .chat-name { font-size: 13px; font-weight: 600; }
   .chat-sub { font-size: 11px; color: var(--text-muted); }
-
   .bubble {
-    max-width: 85%;
-    padding: 10px 14px;
+    max-width: 88%;
+    padding: 10px 13px;
     border-radius: 3px 12px 12px 12px;
     font-size: 12px;
     line-height: 1.55;
@@ -310,27 +322,19 @@
   .bubble-time {
     font-size: 10px;
     color: var(--text-dim);
-    font-family: 'IBM Plex Mono', monospace;
-    margin-top: 2px;
     padding: 0 2px;
+    align-self: flex-end;
   }
 
-  /* LINKS SECTION */
-  .links {
-    max-width: 900px;
-    margin: 0 auto;
-    padding: 72px 48px;
-  }
-
+  /* ── LINKS ── */
   .links-grid {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
-    gap: 16px;
+    gap: 14px;
   }
-
   .link-card {
     display: block;
-    padding: 28px 24px;
+    padding: 26px 22px;
     background: var(--surface);
     border: 1px solid var(--border);
     border-radius: 3px;
@@ -341,19 +345,15 @@
     border-color: var(--accent-border);
     box-shadow: 0 2px 12px rgba(0,0,0,0.05);
   }
-  .link-card-icon { font-size: 20px; margin-bottom: 12px; display: block; }
-  .link-card-title { font-size: 14px; font-weight: 500; color: var(--text); margin-bottom: 6px; }
-  .link-card-desc { font-size: 12px; color: var(--text-muted); line-height: 1.6; margin-bottom: 16px; }
-  .link-card-arrow {
-    font-family: 'IBM Plex Mono', monospace;
-    font-size: 11px;
-    color: var(--accent);
-  }
+  .link-card-icon { font-size: 18px; margin-bottom: 12px; display: block; }
+  .link-card-title { font-size: 14px; font-weight: 600; color: var(--text); margin-bottom: 6px; }
+  .link-card-desc { font-size: 12px; color: var(--text-muted); line-height: 1.65; margin-bottom: 14px; }
+  .link-card-arrow { font-size: 12px; color: var(--accent); font-weight: 500; }
 
-  /* FOOTER */
+  /* ── FOOTER ── */
   footer {
     border-top: 1px solid var(--border);
-    padding: 28px 48px;
+    padding: 24px 40px;
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -361,7 +361,7 @@
     gap: 12px;
   }
   .footer-left { font-size: 12px; color: var(--text-dim); }
-  .footer-right { display: flex; gap: 24px; }
+  .footer-right { display: flex; gap: 20px; flex-wrap: wrap; }
   .footer-right a {
     font-size: 12px;
     color: var(--text-dim);
@@ -370,17 +370,28 @@
   }
   .footer-right a:hover { color: var(--text); }
 
+  /* ── MOBILE ── */
   @media (max-width: 720px) {
-    header { padding: 20px 24px; }
-    .hero { padding: 64px 24px 56px; }
-    .how, .links { padding: 56px 24px; }
+    header { padding: 18px 20px; }
+    nav { display: none; }
+    .hamburger { display: flex; }
+    .hero { padding: 56px 20px 52px; }
+    .section { padding: 52px 20px; }
+
+    .pain-grid { grid-template-columns: 1fr; gap: 32px; }
+
     .steps { grid-template-columns: 1fr 1fr; }
     .step { border-bottom: 1px solid var(--border); }
-    .step:nth-child(2n) { border-right: none; }
-    .what-inner { grid-template-columns: 1fr; gap: 36px; padding: 56px 24px; }
+    .step:nth-child(2) { border-right: none; }
+    .step:nth-child(3) { border-bottom: none; }
+    .step:nth-child(4) { border-right: none; border-bottom: none; }
+
+    .what-inner { grid-template-columns: 1fr; gap: 32px; }
+
     .links-grid { grid-template-columns: 1fr; }
-    nav { gap: 16px; }
-    footer { padding: 24px; }
+
+    footer { padding: 20px; flex-direction: column; gap: 16px; align-items: flex-start; }
+    .footer-right { gap: 16px; }
   }
 </style>
 </head>
@@ -392,16 +403,26 @@
     <a href="/onboarding">Try demo</a>
     <a href="/pricing-calculator">Pricing</a>
     <a href="/analytics">Analytics</a>
-    <a href="/onboarding" class="nav-cta">Get started →</a>
+    <a href="/onboarding" class="nav-cta">Get started</a>
   </nav>
+  <div class="hamburger" onclick="toggleMenu()">
+    <span></span><span></span><span></span>
+  </div>
 </header>
+
+<div class="mobile-menu" id="mobileMenu">
+  <a href="/onboarding">Try the demo</a>
+  <a href="/pricing-calculator">Pricing calculator</a>
+  <a href="/analytics">Analytics dashboard</a>
+  <a href="/onboarding" style="color: var(--accent); font-weight: 500;">Get started</a>
+</div>
 
 <!-- HERO -->
 <section class="hero">
   <div class="hero-label">AI sales automation</div>
   <h1>From <strong>conversation</strong><br>to action.</h1>
   <p class="hero-sub">
-    Sales reps send a voice note or message after a meeting. Beam handles the rest — logging, reminders, and follow-ups.
+    Sales reps send a voice note or message after a meeting. Beam extracts the key details and logs them into the CRM automatically.
   </p>
   <div class="hero-actions">
     <a href="/onboarding" class="btn-main">Try the demo</a>
@@ -409,117 +430,179 @@
   </div>
 </section>
 
-<hr class="section-divider">
+<hr class="divider">
+
+<!-- PAIN POINTS -->
+<div class="pain-wrap">
+  <div class="section">
+    <div class="section-label">Who this is for</div>
+    <div class="pain-grid">
+      <div class="pain-col">
+        <h3>Sales reps</h3>
+        <ul class="pain-list">
+          <li>
+            <span class="pain-emoji">😩</span>
+            Logging feels like a second job. After a full day of meetings, filling in CRM fields is the last thing anyone wants to do.
+          </li>
+          <li>
+            <span class="pain-emoji">🕐</span>
+            Details go missing. By the time the rep sits down to log, half the conversation is already forgotten.
+          </li>
+          <li>
+            <span class="pain-emoji">📋</span>
+            Too many fields. Name, status, source, product, notes, next step — each entry takes 5 to 10 minutes to do properly.
+          </li>
+          <li>
+            <span class="pain-emoji">📱</span>
+            The tool is wrong for the job. Reps live on their phone and in messaging apps, not inside a CRM dashboard.
+          </li>
+        </ul>
+      </div>
+      <div class="pain-col">
+        <h3>Sales managers</h3>
+        <ul class="pain-list">
+          <li>
+            <span class="pain-emoji">🔁</span>
+            Constantly chasing updates. "Did you log this?" is a daily conversation that shouldn't need to happen.
+          </li>
+          <li>
+            <span class="pain-emoji">📉</span>
+            No visibility into what is working. Without consistent logs, there is no way to see which channels, products, or approaches are converting.
+          </li>
+          <li>
+            <span class="pain-emoji">🤷</span>
+            Hard to coach. If there is no record of what was said or what the next step is, there is nothing to review or improve.
+          </li>
+          <li>
+            <span class="pain-emoji">🔥</span>
+            Hot leads go cold. Without a clear next action logged somewhere visible, follow-ups slip through the cracks.
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+
+<hr class="divider">
 
 <!-- HOW IT WORKS -->
-<section class="how">
+<section class="section">
   <div class="section-label">How it works</div>
   <div class="steps">
     <div class="step">
       <div class="step-n">01</div>
       <span class="step-icon">💬</span>
       <div class="step-title">Rep sends a message</div>
-      <div class="step-desc">Voice note or text in Telegram — however they naturally talk after a meeting.</div>
+      <div class="step-desc">Voice note or text in Telegram, right after a meeting. No app to open, no form to fill.</div>
     </div>
     <div class="step">
       <div class="step-n">02</div>
       <span class="step-icon">🧠</span>
       <div class="step-title">Beam extracts the details</div>
-      <div class="step-desc">Name, status, product, next action — pulled automatically. Missing info is asked once.</div>
+      <div class="step-desc">Name, status, product interest, and next action are pulled out automatically. If something is missing, Beam asks once.</div>
     </div>
     <div class="step">
       <div class="step-n">03</div>
       <span class="step-icon">📋</span>
       <div class="step-title">CRM is updated</div>
-      <div class="step-desc">Record saved or updated. No forms, no manual entry, no duplicate leads.</div>
+      <div class="step-desc">New leads are created. Existing ones are updated. No duplicate entries, no manual data entry.</div>
     </div>
     <div class="step">
       <div class="step-n">04</div>
-      <span class="step-icon">🔔</span>
-      <div class="step-title">Reminder is set</div>
-      <div class="step-desc">Next action goes to Google Calendar. Beam sends a Telegram reminder when it's due.</div>
+      <span class="step-icon">📅</span>
+      <div class="step-title">Next action is tracked</div>
+      <div class="step-desc">When a rep confirms a follow-up time, a Google Calendar event is created. A daily Telegram digest keeps upcoming actions visible.</div>
     </div>
   </div>
 </section>
+
+<hr class="divider">
 
 <!-- WHAT YOU GET -->
-<section class="what">
-  <div class="what-inner">
-    <div class="what-text">
-      <h2>Everything logged.<br><strong>Nothing forgotten.</strong></h2>
-      <p>Beam sits quietly in Telegram. Reps talk to it like they'd talk to a colleague — and it takes care of the rest.</p>
-      <ul class="what-list">
-        <li>Mongolian voice & text input via Chimege STT</li>
-        <li>Finds existing leads, prevents duplicates</li>
-        <li>Calendar events created automatically</li>
-        <li>Query any lead by name, anytime</li>
-        <li>Weekly summary report for management</li>
-      </ul>
-    </div>
+<div class="what-wrap">
+  <div class="section">
+    <div class="what-inner">
+      <div class="what-text">
+        <h2>Everything captured.<br><strong>Nothing to fill in.</strong></h2>
+        <p>
+          Reps send a message the same way they would text a colleague. Beam handles the structure, the CRM entry, and the follow-up tracking.
+        </p>
+        <ul class="what-list">
+          <li>Voice and text input in Mongolian via Chimege STT</li>
+          <li>Recognizes returning leads and prevents duplicate records</li>
+          <li>Google Calendar event created when a next action time is confirmed</li>
+          <li>Daily Telegram digest of upcoming follow-ups for each rep</li>
+          <li>Ask Beam about any lead by name and get an instant answer</li>
+          <li>Weekly summary report sent to management automatically</li>
+        </ul>
+      </div>
 
-    <!-- MOCK CHAT -->
-    <div class="chat-mock">
-      <div class="chat-header">
-        <div class="chat-avatar">⚡</div>
-        <div>
-          <div class="chat-name">beam</div>
-          <div class="chat-sub">Sales assistant</div>
+      <div class="chat-mock">
+        <div class="chat-header">
+          <div class="chat-avatar">b</div>
+          <div>
+            <div class="chat-name">beam</div>
+            <div class="chat-sub">Sales assistant</div>
+          </div>
         </div>
+        <div class="bubble out">Болдтой уулзлаа. BMW X5 сонирхож байна. Мягмар 10:00д дахин холбогдох болно.</div>
+        <div class="bubble">
+          👤 Болд Нарантуяа<br>
+          📊 Prospect · Visit<br>
+          🚗 BMW X5<br>
+          📌 Мягмар 10:00д холбогдох<br><br>
+          Санууллга нэмэх үү?
+        </div>
+        <div class="bubble out">Тийм 10:00</div>
+        <div class="bubble">✅ CRM-д хадгалагдлаа. Calendar-т нэмэгдлээ.</div>
+        <div class="bubble-time">Today, 2:14 PM</div>
       </div>
-
-      <div class="bubble out">Болдтой уулзлаа. BMW X5 сонирхож байна. Мягмар 10:00д дахин холбогдох болно.</div>
-
-      <div class="bubble">
-        👤 Болд Нарантуяа<br>
-        📊 Prospect · Visit<br>
-        🚗 BMW X5<br>
-        📌 Мягмар 10:00д холбогдох<br>
-        ─<br>
-        Санууллга нэмэх үү? Тийм бол цагийг баталгаажуулна уу.
-      </div>
-
-      <div class="bubble out">Тийм 10:00</div>
-
-      <div class="bubble">✅ CRM-д хадгалагдлаа. Calendar-т нэмэгдлээ 🔔</div>
-      <div class="bubble-time">Today, 2:14 PM</div>
     </div>
   </div>
-</section>
+</div>
 
-<!-- LINKS -->
-<section class="links">
+<hr class="divider">
+
+<!-- EXPLORE -->
+<section class="section">
   <div class="section-label">Explore beam</div>
   <div class="links-grid">
     <a href="/onboarding" class="link-card">
       <span class="link-card-icon">🚀</span>
-      <div class="link-card-title">Interactive onboarding</div>
-      <div class="link-card-desc">Walk through every feature step by step — log a lead, update it, set a reminder, and query the CRM.</div>
-      <div class="link-card-arrow">Try it →</div>
+      <div class="link-card-title">Interactive demo</div>
+      <div class="link-card-desc">Walk through every feature step by step and see live data appear in a real CRM.</div>
+      <div class="link-card-arrow">Try it</div>
     </a>
     <a href="/pricing-calculator" class="link-card">
       <span class="link-card-icon">🧮</span>
-      <div class="link-card-title">Pricing & ROI calculator</div>
-      <div class="link-card-desc">Estimate your monthly cost and the time saved based on your team size and setup.</div>
-      <div class="link-card-arrow">Calculate →</div>
+      <div class="link-card-title">Pricing calculator</div>
+      <div class="link-card-desc">Estimate monthly cost and time saved based on your team size and tool stack.</div>
+      <div class="link-card-arrow">Calculate</div>
     </a>
     <a href="/analytics" class="link-card">
       <span class="link-card-icon">📊</span>
-      <div class="link-card-title">Live analytics dashboard</div>
-      <div class="link-card-desc">See real logs from the demo — input types, lead statuses, rep activity, and next actions.</div>
-      <div class="link-card-arrow">View dashboard →</div>
+      <div class="link-card-title">Analytics dashboard</div>
+      <div class="link-card-desc">Live logs from the demo showing rep activity, lead statuses, and next actions.</div>
+      <div class="link-card-arrow">View dashboard</div>
     </a>
   </div>
 </section>
 
 <footer>
-  <div class="footer-left">beam · urstory studio · ulaanbaatar</div>
+  <div class="footer-left">beam by urstory studio, ulaanbaatar</div>
   <div class="footer-right">
-    <a href="https://t.me/khulanbak" target="_blank">Contact Khulan</a>
-    <a href="/onboarding">Onboarding</a>
+    <a href="mailto:khulan@urstory.studio">khulan@urstory.studio</a>
+    <a href="/onboarding">Demo</a>
     <a href="/pricing-calculator">Pricing</a>
     <a href="/analytics">Analytics</a>
   </div>
 </footer>
+
+<script>
+function toggleMenu() {
+  document.getElementById('mobileMenu').classList.toggle('open');
+}
+</script>
 
 </body>
 </html>
