@@ -623,7 +623,7 @@ main { padding: 24px; max-width: 1400px; margin: 0 auto; }
 <script>
 // ── AUTH ENDPOINT ──
 // POST { email } → returns { success, webhook_url, client_name, user_name }
-const AUTH_ENDPOINT = 'https://n8n.urstory.studio/webhook/beam-dashboard-auth';
+const AUTH_ENDPOINT = 'https://n8n.urstory.studio/webhook/beam-analytics';
 
 let WEBHOOK_URL = '';
 let allLogs = [], filteredLogs = [];
@@ -738,7 +738,10 @@ async function loadData() {
   document.getElementById('statsGrid').innerHTML = '<div class="loading-state" style="grid-column:1/-1"><div class="spinner"></div>Fetching from n8n…</div>';
 
   try {
-    const r = await fetch(WEBHOOK_URL, { method: 'GET', headers: { 'Content-Type': 'application/json' } });
+    const session = JSON.parse(localStorage.getItem('beam_session') || '{}');
+    const company = session.client_name || '';
+    const url = company ? `${WEBHOOK_URL}?company=${encodeURIComponent(company)}` : WEBHOOK_URL;
+    const r = await fetch(url, { method: 'GET', ... });
     if (!r.ok) throw new Error(`${r.status}: ${await r.text()}`);
     const data = await r.json();
     if (!Array.isArray(data)) throw new Error('Unexpected response format from webhook.');
