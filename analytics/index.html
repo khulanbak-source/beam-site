@@ -1,0 +1,455 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Beam Analytics — Bavaria Motors</title>
+<style>
+  :root {
+    --bg: #0f1117;
+    --surface: #1a1d27;
+    --surface2: #22263a;
+    --border: #2e3350;
+    --accent: #5b6ef5;
+    --accent2: #7c3aed;
+    --green: #22c55e;
+    --yellow: #eab308;
+    --red: #ef4444;
+    --orange: #f97316;
+    --text: #e2e8f0;
+    --muted: #64748b;
+    --card-radius: 12px;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: var(--bg); color: var(--text); font-family: 'Inter', system-ui, sans-serif; min-height: 100vh; }
+
+  header { background: var(--surface); border-bottom: 1px solid var(--border); padding: 16px 24px; display: flex; align-items: center; justify-content: space-between; }
+  .logo { display: flex; align-items: center; gap: 10px; }
+  .logo-icon { width: 32px; height: 32px; background: linear-gradient(135deg, var(--accent), var(--accent2)); border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 16px; }
+  .logo-text { font-size: 18px; font-weight: 700; letter-spacing: -0.3px; }
+  .logo-sub { font-size: 12px; color: var(--muted); }
+  .header-right { display: flex; align-items: center; gap: 12px; }
+  .week-badge { background: var(--surface2); border: 1px solid var(--border); border-radius: 8px; padding: 6px 12px; font-size: 12px; color: var(--muted); }
+  .refresh-btn { background: var(--accent); color: white; border: none; border-radius: 8px; padding: 8px 16px; font-size: 13px; font-weight: 600; cursor: pointer; transition: opacity 0.2s; }
+  .refresh-btn:hover { opacity: 0.85; }
+  .refresh-btn.loading { opacity: 0.6; pointer-events: none; }
+
+  main { padding: 24px; max-width: 1400px; margin: 0 auto; }
+
+  .config-banner { background: var(--surface2); border: 1px dashed var(--border); border-radius: var(--card-radius); padding: 24px; margin-bottom: 24px; text-align: center; }
+  .config-banner h2 { font-size: 20px; margin-bottom: 8px; }
+  .config-banner p { color: var(--muted); font-size: 13px; margin-bottom: 16px; }
+  .config-row { display: flex; justify-content: center; gap: 8px; flex-wrap: wrap; margin-bottom: 10px; }
+  .config-input { background: var(--surface); border: 1px solid var(--border); color: var(--text); border-radius: 8px; padding: 9px 13px; font-size: 13px; width: 320px; max-width: 100%; }
+  .config-input:focus { outline: none; border-color: var(--accent); }
+  .config-btn { background: var(--accent); color: white; border: none; border-radius: 8px; padding: 9px 20px; font-size: 13px; font-weight: 600; cursor: pointer; }
+  .  .config-note { font-size: 11px; color: var(--muted); }
+
+  .filters { display: flex; gap: 10px; margin-bottom: 20px; flex-wrap: wrap; }
+  .filter-select { background: var(--surface); border: 1px solid var(--border); color: var(--text); border-radius: 8px; padding: 8px 12px; font-size: 13px; cursor: pointer; }
+  .filter-select:focus { outline: none; border-color: var(--accent); }
+
+  .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 14px; margin-bottom: 20px; }
+  .stat-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--card-radius); padding: 16px 20px; }
+  .stat-card.accent { border-color: var(--accent); }
+  .stat-card.green { border-color: var(--green); }
+  .stat-card.yellow { border-color: var(--yellow); }
+  .stat-card.orange { border-color: var(--orange); }
+  .stat-label { font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 8px; }
+  .stat-value { font-size: 28px; font-weight: 700; line-height: 1; }
+  .stat-sub { font-size: 11px; color: var(--muted); margin-top: 4px; }
+
+  .section-title { font-size: 12px; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: 0.6px; margin-bottom: 14px; }
+  .rep-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 14px; margin-bottom: 20px; }
+  .rep-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--card-radius); padding: 16px; }
+  .rep-name { font-size: 15px; font-weight: 600; margin-bottom: 12px; display: flex; align-items: center; gap: 8px; }
+  .rep-avatar { width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 700; flex-shrink: 0; color: white; }
+  .rep-metrics { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 10px; }
+  .rep-metric { background: var(--surface2); border-radius: 8px; padding: 8px 10px; }
+  .rep-metric-label { font-size: 10px; color: var(--muted); margin-bottom: 2px; }
+  .rep-metric-value { font-size: 16px; font-weight: 700; }
+  .bar-container { margin-top: 6px; }
+  .bar-label { display: flex; justify-content: space-between; font-size: 10px; color: var(--muted); margin-bottom: 3px; }
+  .bar-track { height: 5px; background: var(--surface2); border-radius: 3px; overflow: hidden; }
+  .bar-fill { height: 100%; border-radius: 3px; }
+
+  .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 20px; }
+  @media (max-width: 860px) { .two-col { grid-template-columns: 1fr; } }
+  .panel { background: var(--surface); border: 1px solid var(--border); border-radius: var(--card-radius); padding: 20px; }
+
+  .followup-table { width: 100%; border-collapse: collapse; }
+  .followup-table th { font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.4px; padding: 0 10px 10px; text-align: left; border-bottom: 1px solid var(--border); }
+  .followup-table td { padding: 9px 10px; border-bottom: 1px solid var(--border); font-size: 13px; vertical-align: middle; }
+  .followup-table tr:last-child td { border-bottom: none; }
+  .followup-table tr:hover td { background: var(--surface2); }
+  .badge { display: inline-block; padding: 2px 8px; border-radius: 4px; font-size: 11px; font-weight: 600; }
+  .b-hot { background: rgba(239,68,68,.15); color: var(--red); }
+  .b-prospect { background: rgba(91,110,245,.15); color: var(--accent); }
+  .b-lead { background: rgba(249,115,22,.15); color: var(--orange); }
+  .b-sold { background: rgba(34,197,94,.15); color: var(--green); }
+  .b-testdrive { background: rgba(168,85,247,.15); color: #a855f7; }
+  .b-visitor { background: rgba(234,179,8,.15); color: var(--yellow); }
+  .b-other { background: var(--surface2); color: var(--muted); }
+  .days-overdue { background: rgba(239,68,68,.15); color: var(--red); padding: 2px 8px; border-radius: 4px; font-size: 11px; font-weight: 600; }
+  .days-soon { background: rgba(234,179,8,.15); color: var(--yellow); padding: 2px 8px; border-radius: 4px; font-size: 11px; font-weight: 600; }
+  .days-ok { background: rgba(34,197,94,.15); color: var(--green); padding: 2px 8px; border-radius: 4px; font-size: 11px; font-weight: 600; }
+
+  .source-list { display: flex; flex-direction: column; gap: 9px; }
+  .source-row { display: flex; align-items: center; gap: 10px; }
+  .source-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+  .source-name { flex: 1; font-size: 12px; }
+  .source-bar { flex: 2; height: 4px; background: var(--surface2); border-radius: 2px; overflow: hidden; }
+  .source-bar-fill { height: 100%; border-radius: 2px; }
+  .source-count { font-size: 12px; font-weight: 600; min-width: 20px; text-align: right; }
+
+  .ai-item { background: var(--surface2); border-left: 3px solid var(--accent); border-radius: 0 8px 8px 0; padding: 11px 13px; margin-bottom: 9px; }
+  .ai-lead { font-size: 13px; font-weight: 600; margin-bottom: 3px; }
+  .ai-text { font-size: 12px; color: var(--muted); line-height: 1.5; }
+  .ai-rep { font-size: 11px; color: var(--accent); margin-top: 3px; }
+
+  .chart-bars { display: flex; align-items: flex-end; gap: 8px; height: 100px; }
+  .chart-bar-wrap { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 4px; }
+  .chart-bar { width: 100%; background: var(--accent); border-radius: 4px 4px 0 0; min-height: 4px; cursor: pointer; transition: background 0.2s; }
+  .chart-bar:hover { background: #7c8ff8; }
+  .chart-val { font-size: 10px; font-weight: 600; }
+  .chart-label { font-size: 10px; color: var(--muted); text-align: center; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 100%; }
+
+  .empty { color: var(--muted); font-size: 13px; font-style: italic; padding: 20px 0; text-align: center; }
+  .spinner { width: 28px; height: 28px; border: 3px solid var(--border); border-top-color: var(--accent); border-radius: 50%; animation: spin .8s linear infinite; margin: 0 auto 12px; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  .loading-state { text-align: center; padding: 50px 20px; color: var(--muted); }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo">
+    <div class="logo-icon">⚡</div>
+    <div>
+      <div class="logo-text">Beam Analytics</div>
+      <div class="logo-sub">Bavaria Motors · Sales Intelligence</div>
+    </div>
+  </div>
+  <div class="header-right">
+    <span class="week-badge" id="weekLabel">—</span>
+    <button class="refresh-btn" id="refreshBtn" onclick="loadData()">↻ Refresh</button>
+  </div>
+</header>
+
+<main>
+
+  <div id="configBanner" class="config-banner">
+    <h2>⚡ Beam Analytics</h2>
+    <p>Enter your n8n webhook URL to load live sales data securely</p>
+    <div class="config-row">
+      <input class="config-input" id="webhookUrl" placeholder="https://n8n.urstory.studio/webhook/beam-analytics" style="width:500px"/>
+    </div>
+    <button class="config-btn" onclick="saveConfig()">Connect & Load Data</button>
+    <p class="config-note" style="margin-top:10px">Your Notion token stays secure in n8n — never exposed in the browser.</p>
+  </div>
+
+  <div id="filterBar" class="filters" style="display:none">
+    <select class="filter-select" id="filterRep" onchange="applyFilters()"><option value="">All Reps</option></select>
+    <select class="filter-select" id="filterPeriod" onchange="applyFilters()">
+      <option value="week">This Week</option>
+      <option value="month">This Month</option>
+      <option value="all">All Time</option>
+    </select>
+    <select class="filter-select" id="filterStatus" onchange="applyFilters()">
+      <option value="">All Statuses</option>
+      <option>Hot</option><option>Prospect</option><option>Lead</option>
+      <option>Test Drive</option><option>Reserved</option><option>Sold</option><option>Lost</option>
+    </select>
+  </div>
+
+  <div class="stats-grid" id="statsGrid">
+    <div class="loading-state" style="grid-column:1/-1">
+      <div style="font-size:36px;margin-bottom:10px">⚡</div>
+      <div style="color:var(--text);font-size:15px;margin-bottom:6px">Beam Analytics Ready</div>
+      <div>Enter your Notion token above to load live data</div>
+    </div>
+  </div>
+
+  <div id="repSection" style="display:none">
+    <div class="section-title">👤 Performance by Rep</div>
+    <div class="rep-grid" id="repGrid"></div>
+  </div>
+
+  <div class="two-col" id="twoCol1" style="display:none">
+    <div class="panel">
+      <div class="section-title">🔔 Follow-up Tracker</div>
+      <div id="followupContent"></div>
+    </div>
+    <div class="panel">
+      <div class="section-title">📣 Source Channels</div>
+      <div id="sourceContent"></div>
+    </div>
+  </div>
+
+  <div class="two-col" id="twoCol2" style="display:none">
+    <div class="panel">
+      <div class="section-title">🤖 AI Next Actions</div>
+      <div id="aiContent"></div>
+    </div>
+    <div class="panel">
+      <div class="section-title">📊 Logs per Rep</div>
+      <div id="chartContent"></div>
+    </div>
+  </div>
+
+</main>
+
+<script>
+let WEBHOOK_URL = localStorage.getItem('beam_webhook') || '';
+let allLogs = [], filteredLogs = [];
+
+if (WEBHOOK_URL) document.getElementById('webhookUrl').value = WEBHOOK_URL;
+
+function saveConfig() {
+  const w = document.getElementById('webhookUrl').value.trim();
+  if (!w) { alert('Please enter your n8n webhook URL'); return; }
+  WEBHOOK_URL = w;
+  localStorage.setItem('beam_webhook', WEBHOOK_URL);
+  loadData();
+}
+
+function normId(id) {
+  const clean = id.replace(/-/g,'');
+  if (clean.length !== 32) return id;
+  return `${clean.slice(0,8)}-${clean.slice(8,12)}-${clean.slice(12,16)}-${clean.slice(16,20)}-${clean.slice(20)}`;
+}
+
+async function fetchAllPages() {
+  const r = await fetch(WEBHOOK_URL, {
+    method: 'GET',
+    headers: { 'Content-Type': 'application/json' }
+  });
+  if (!r.ok) { const e = await r.text(); throw new Error(`${r.status}: ${e}`); }
+  const data = await r.json();
+  // Expect array of log objects from n8n
+  if (!Array.isArray(data)) throw new Error('Expected array from webhook. Check n8n workflow output.');
+  return data;
+}
+
+function prop(page, name) {
+  const p = page.properties[name];
+  if (!p) return '';
+  switch(p.type) {
+    case 'title': return p.title.map(t=>t.plain_text).join('');
+    case 'rich_text': return p.rich_text.map(t=>t.plain_text).join('');
+    case 'select': return p.select?.name || '';
+    case 'number': return p.number ?? 0;
+    case 'date': return p.date?.start || '';
+    default: return '';
+  }
+}
+
+function parseLogs(pages) {
+  return pages.map(p => ({
+    salesperson: prop(p,'Salesperson Name'),
+    logDate: prop(p,'Log Date'),
+    inputType: prop(p,'Input Type'),
+    leadName: prop(p,'Lead Name'),
+    leadStatus: prop(p,'Lead Status'),
+    lastActivity: prop(p,'Last Activity'),
+    sourceChannel: prop(p,'Source Channel'),
+    interestedProduct: prop(p,'Interested Product'),
+    autoExtracted: +prop(p,'Fields Auto-Extracted')||0,
+    manuallyAsked: +prop(p,'Fields Manually Asked')||0,
+    hasNextAction: prop(p,'Has Next Action'),
+    nextActionLabel: prop(p,'Next Action Label'),
+    nextActionDate: prop(p,'Next Action Date'),
+    calendarSet: prop(p,'Calendar Reminder Set'),
+    actionType: prop(p,'Action Type'),
+  }));
+}
+
+async function loadData() {
+  if (!WEBHOOK_URL) return;
+  const btn = document.getElementById('refreshBtn');
+  btn.classList.add('loading'); btn.textContent = '↻ Loading...';
+  document.getElementById('statsGrid').innerHTML = '<div class="loading-state" style="grid-column:1/-1"><div class="spinner"></div>Fetching from n8n...</div>';
+  try {
+    const rows = await fetchAllPages();
+    allLogs = rows; // already parsed objects from n8n
+    document.getElementById('configBanner').style.display = 'none';
+    document.getElementById('filterBar').style.display = 'flex';
+    populateRepFilter();
+    applyFilters();
+  } catch(e) {
+    document.getElementById('statsGrid').innerHTML = `<div class="loading-state" style="grid-column:1/-1;color:var(--red)">❌ Error: ${e.message}<br><small style="color:var(--muted)">Check your webhook URL and that the n8n workflow is active</small></div>`;
+  }
+  btn.classList.remove('loading'); btn.textContent = '↻ Refresh';
+}
+
+function populateRepFilter() {
+  const reps = [...new Set(allLogs.map(l=>l.salesperson).filter(Boolean))].sort();
+  const sel = document.getElementById('filterRep');
+  sel.innerHTML = '<option value="">All Reps</option>' + reps.map(r=>`<option>${r}</option>`).join('');
+}
+
+function getWeekNum(d) {
+  const s = new Date(d.getFullYear(),0,1);
+  return Math.ceil(((d-s)/86400000+s.getDay()+1)/7);
+}
+
+function applyFilters() {
+  const rep = document.getElementById('filterRep').value;
+  const period = document.getElementById('filterPeriod').value;
+  const status = document.getElementById('filterStatus').value;
+  const now = new Date();
+  filteredLogs = allLogs.filter(l => {
+    if (rep && l.salesperson !== rep) return false;
+    if (status && l.leadStatus !== status) return false;
+    if (period !== 'all' && l.logDate) {
+      const d = new Date(l.logDate);
+      if (period === 'week') {
+        const wkStart = new Date(now); wkStart.setDate(now.getDate()-now.getDay()); wkStart.setHours(0,0,0,0);
+        if (d < wkStart) return false;
+      } else if (period === 'month') {
+        if (d.getMonth()!==now.getMonth()||d.getFullYear()!==now.getFullYear()) return false;
+      }
+    }
+    return true;
+  });
+  renderAll();
+}
+
+function renderAll() {
+  const now = new Date();
+  document.getElementById('weekLabel').textContent = `Week ${getWeekNum(now)} · ${now.toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'})}`;
+  renderStats();
+  renderReps();
+  renderFollowups();
+  renderSources();
+  renderAI();
+  renderChart();
+  document.getElementById('repSection').style.display = '';
+  document.getElementById('twoCol1').style.display = 'grid';
+  document.getElementById('twoCol2').style.display = 'grid';
+}
+
+function renderStats() {
+  const L = filteredLogs, n = L.length;
+  const voice = L.filter(l=>l.inputType==='Voice').length;
+  const withAction = L.filter(l=>l.hasNextAction==='Yes').length;
+  const newLeads = L.filter(l=>l.actionType==='New Lead').length;
+  const updates = L.filter(l=>l.actionType==='Update').length;
+  const reps = new Set(L.map(l=>l.salesperson).filter(Boolean)).size;
+  const totAuto = L.reduce((s,l)=>s+l.autoExtracted,0);
+  const totManual = L.reduce((s,l)=>s+l.manuallyAsked,0);
+  const aiScore = n ? Math.round(totAuto/(totAuto+totManual+.001)*100) : 0;
+  document.getElementById('statsGrid').innerHTML = `
+    <div class="stat-card accent"><div class="stat-label">Total Logs</div><div class="stat-value">${n}</div><div class="stat-sub">${newLeads} new · ${updates} updates</div></div>
+    <div class="stat-card"><div class="stat-label">Active Reps</div><div class="stat-value">${reps}</div><div class="stat-sub">in selected period</div></div>
+    <div class="stat-card"><div class="stat-label">Voice Usage</div><div class="stat-value">${n?Math.round(voice/n*100):0}%</div><div class="stat-sub">${voice} voice · ${n-voice} text</div></div>
+    <div class="stat-card green"><div class="stat-label">AI Extraction</div><div class="stat-value">${aiScore}%</div><div class="stat-sub">auto vs manually asked</div></div>
+    <div class="stat-card yellow"><div class="stat-label">Next Actions</div><div class="stat-value">${withAction}</div><div class="stat-sub">${n?Math.round(withAction/n*100):0}% of logs</div></div>
+    <div class="stat-card orange"><div class="stat-label">Reminders Set</div><div class="stat-value">${L.filter(l=>l.calendarSet==='Yes').length}</div><div class="stat-sub">calendar events</div></div>
+  `;
+}
+
+function renderReps() {
+  const map = {};
+  for (const l of filteredLogs) {
+    if (!l.salesperson) continue;
+    if (!map[l.salesperson]) map[l.salesperson] = {logs:0,voice:0,auto:0,manual:0,actions:0};
+    const r = map[l.salesperson];
+    r.logs++; if(l.inputType==='Voice') r.voice++;
+    r.auto+=l.autoExtracted; r.manual+=l.manuallyAsked;
+    if(l.hasNextAction==='Yes') r.actions++;
+  }
+  const entries = Object.entries(map).sort((a,b)=>b[1].logs-a[1].logs);
+  const colors = ['#5b6ef5','#7c3aed','#2563eb','#0891b2','#059669','#d97706'];
+  document.getElementById('repGrid').innerHTML = entries.length ? entries.map(([name,r],i)=>{
+    const ini = name.split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase();
+    const vPct = r.logs?Math.round(r.voice/r.logs*100):0;
+    const tot = r.auto+r.manual;
+    const aPct = tot?Math.round(r.auto/tot*100):0;
+    return `<div class="rep-card">
+      <div class="rep-name"><div class="rep-avatar" style="background:${colors[i%colors.length]}">${ini}</div>${name}</div>
+      <div class="rep-metrics">
+        <div class="rep-metric"><div class="rep-metric-label">Logs</div><div class="rep-metric-value">${r.logs}</div></div>
+        <div class="rep-metric"><div class="rep-metric-label">Next Actions</div><div class="rep-metric-value">${r.actions}</div></div>
+        <div class="rep-metric"><div class="rep-metric-label">AI Extract</div><div class="rep-metric-value" style="color:var(--green)">${aPct}%</div></div>
+        <div class="rep-metric"><div class="rep-metric-label">Voice</div><div class="rep-metric-value" style="color:var(--accent)">${vPct}%</div></div>
+      </div>
+      <div class="bar-container"><div class="bar-label"><span>Voice</span><span>${vPct}%</span></div><div class="bar-track"><div class="bar-fill" style="width:${vPct}%;background:var(--accent)"></div></div></div>
+      <div class="bar-container"><div class="bar-label"><span>AI auto-extraction</span><span>${aPct}%</span></div><div class="bar-track"><div class="bar-fill" style="width:${aPct}%;background:var(--green)"></div></div></div>
+    </div>`;
+  }).join('') : '<div class="empty">No rep data for this period</div>';
+}
+
+function renderFollowups() {
+  const now = new Date();
+  const items = filteredLogs.filter(l=>l.nextActionDate).sort((a,b)=>new Date(a.nextActionDate)-new Date(b.nextActionDate)).slice(0,10);
+  if (!items.length) { document.getElementById('followupContent').innerHTML='<div class="empty">No upcoming actions</div>'; return; }
+  const bmap = {Hot:'b-hot',Prospect:'b-prospect',Lead:'b-lead',Sold:'b-sold','Test Drive':'b-testdrive',Visitor:'b-visitor'};
+  const dayTag = ds => {
+    const diff = Math.ceil((new Date(ds)-now)/86400000);
+    const cls = diff<0?'days-overdue':diff<=2?'days-soon':'days-ok';
+    const lbl = diff<0?`${Math.abs(diff)}d overdue`:diff===0?'Today':`${diff}d`;
+    return `<span class="${cls}">${lbl}</span>`;
+  };
+  document.getElementById('followupContent').innerHTML = `<table class="followup-table">
+    <thead><tr><th>Lead</th><th>Status</th><th>Rep</th><th>Due</th></tr></thead>
+    <tbody>${items.map(l=>`<tr>
+      <td><div style="font-weight:600">${l.leadName||'—'}</div><div style="font-size:11px;color:var(--muted)">${(l.nextActionLabel||'').slice(0,45)}</div></td>
+      <td><span class="badge ${bmap[l.leadStatus]||'b-other'}">${l.leadStatus||'—'}</span></td>
+      <td style="color:var(--muted);font-size:12px">${l.salesperson||'—'}</td>
+      <td>${dayTag(l.nextActionDate)}</td>
+    </tr>`).join('')}</tbody>
+  </table>`;
+}
+
+function renderSources() {
+  const map = {};
+  for (const l of filteredLogs) { const s=l.sourceChannel||'Other'; map[s]=(map[s]||0)+1; }
+  const sorted = Object.entries(map).sort((a,b)=>b[1]-a[1]);
+  const max = sorted[0]?.[1]||1;
+  const colors = ['#5b6ef5','#7c3aed','#2563eb','#0891b2','#059669','#d97706','#dc2626','#db2777','#65a30d','#c026d3','#0d9488','#ea580c'];
+  document.getElementById('sourceContent').innerHTML = sorted.length ? `<div class="source-list">${
+    sorted.map(([name,count],i)=>`<div class="source-row">
+      <div class="source-dot" style="background:${colors[i%colors.length]}"></div>
+      <div class="source-name">${name}</div>
+      <div class="source-bar"><div class="source-bar-fill" style="width:${Math.round(count/max*100)}%;background:${colors[i%colors.length]}"></div></div>
+      <div class="source-count">${count}</div>
+    </div>`).join('')
+  }</div>` : '<div class="empty">No source data</div>';
+}
+
+function renderAI() {
+  const leadMap = {};
+  for (const l of filteredLogs) {
+    if (l.hasNextAction!=='Yes'||!l.leadName) continue;
+    if (!leadMap[l.leadName]||new Date(l.logDate)>new Date(leadMap[l.leadName].logDate)) leadMap[l.leadName]=l;
+  }
+  const leads = Object.values(leadMap).sort((a,b)=>new Date(a.nextActionDate||0)-new Date(b.nextActionDate||0)).slice(0,6);
+  const sc = {Hot:'var(--red)',Prospect:'var(--accent)',Lead:'var(--orange)','Test Drive':'#a855f7',Hot:'var(--red)'};
+  document.getElementById('aiContent').innerHTML = leads.length ? leads.map(l=>`
+    <div class="ai-item">
+      <div class="ai-lead" style="color:${sc[l.leadStatus]||'var(--text)'}">${l.leadName} <span style="font-weight:400;font-size:11px;color:var(--muted)">${l.leadStatus}</span></div>
+      <div class="ai-text">📌 ${l.nextActionLabel||'Follow up'}</div>
+      ${l.nextActionDate?`<div class="ai-text">⏰ ${new Date(l.nextActionDate).toLocaleDateString('en-US',{weekday:'short',month:'short',day:'numeric'})}</div>`:''}
+      <div class="ai-rep">→ ${l.salesperson}</div>
+    </div>`).join('') : '<div class="empty">No pending next actions</div>';
+}
+
+function renderChart() {
+  const map = {};
+  for (const l of filteredLogs) { if(!l.salesperson) continue; map[l.salesperson]=(map[l.salesperson]||0)+1; }
+  const sorted = Object.entries(map).sort((a,b)=>b[1]-a[1]).slice(0,8);
+  const max = sorted[0]?.[1]||1;
+  document.getElementById('chartContent').innerHTML = sorted.length ? `<div class="chart-bars">${
+    sorted.map(([name,count])=>`<div class="chart-bar-wrap">
+      <div class="chart-val">${count}</div>
+      <div class="chart-bar" style="height:${Math.round(count/max*85)}px" title="${name}: ${count}"></div>
+      <div class="chart-label">${name.split(' ')[0]}</div>
+    </div>`).join('')
+  }</div>` : '<div class="empty">No data</div>';
+}
+
+if (WEBHOOK_URL) loadData();
+</script>
+</body>
+</html>
