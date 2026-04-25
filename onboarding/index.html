@@ -743,11 +743,27 @@ function initCalendar() {
   renderCalendar();
 }
 
+function parseUBDate(dateStr) {
+  if (!dateStr) return null;
+  if (dateStr.includes('T') && !dateStr.includes('+') && !dateStr.includes('Z')) {
+    return new Date(dateStr + '+08:00');
+  }
+  return new Date(dateStr);
+}
+
+function localDateStr(d) {
+  // Format date as YYYY-MM-DD using LOCAL time, not UTC
+  const y = d.getFullYear();
+  const m = String(d.getMonth() + 1).padStart(2, '0');
+  const day = String(d.getDate()).padStart(2, '0');
+  return `${y}-${m}-${day}`;
+}
+
 function getWeekStart(d) {
   const day = new Date(d);
   const dow = day.getDay();
   day.setDate(day.getDate() + (dow === 0 ? -6 : 1 - dow));
-  day.setHours(0,0,0,0);
+  day.setHours(0, 0, 0, 0);
   return day;
 }
 
@@ -770,15 +786,6 @@ function statusBadgeStyle(status) {
   return { Hot:'background:#f0997b;color:#4A1B0C', Prospect:'background:#9FE1CB;color:#04342C', Lead:'background:#B5D4F4;color:#042C53', 'Test Drive':'background:#EEEDFE;color:#26215C', Reserved:'background:#C0DD97;color:#173404', Sold:'background:#D3D1C7;color:#2C2C2A' }[status] || 'background:var(--surface2);color:var(--text-muted)';
 }
 
-function parseUBDate(dateStr) {
-  if (!dateStr) return null;
-  // If no timezone suffix, treat as Ulaanbaatar time (UTC+8)
-  if (dateStr.includes('T') && !dateStr.includes('+') && !dateStr.includes('Z')) {
-    return new Date(dateStr + '+08:00');
-  }
-  return new Date(dateStr);
-}  
-
 function renderCalendar() {
   const ws = calWeekStart;
   const we = new Date(ws); we.setDate(ws.getDate() + 6);
@@ -786,25 +793,37 @@ function renderCalendar() {
   const labelEl = document.getElementById('calWeekLabel');
   if (labelEl) labelEl.textContent = fmt(ws) + ' – ' + fmt(we) + ', ' + we.getFullYear();
 
-  const today = new Date(); today.setHours(0,0,0,0);
+  const today = new Date(); today.setHours(0, 0, 0, 0);
   const grid = document.getElementById('calGrid');
   if (!grid) return;
 
-  const headers = ['Mon','Tue','Wed','Thu','Fri','Sat','Sun'].map(d => `<div class="cal-day-header">${d}</div>`).join('');
+  const headers = ['Mon','Tue','Wed','Thu','Fri','Sat','Sun'].map(d =>
+    `<div class="cal-day-header">${d}</div>`
+  ).join('');
+
   const days = [];
   for (let i = 0; i < 7; i++) {
     const day = new Date(ws); day.setDate(ws.getDate() + i);
-    const dayStr = day.toISOString().split('T')[0];
+    const dayStr = localDateStr(day); // ← use local date, not UTC
     const isToday = day.getTime() === today.getTime();
-    const dayEvents = calEvents.filter(e => e.nextActionDate && e.nextActionDate.slice(0,10) === dayStr);
+
+    const dayEvents = calEvents.filter(e =>
+      e.nextActionDate && e.nextActionDate.slice(0, 10) === dayStr
+    );
+
     const eventHtml = dayEvents.map(e => {
       const idx = calEvents.indexOf(e);
       const title = e.leadName || 'Lead';
-      const time = e.nextActionDate && e.nextActionDate.includes('T')
-        ? parseUBDate(e.nextActionDate).toLocaleTimeString('en-US', {hour:'2-digit', minute:'2-digit'}) : '';
-      return `<div class="cal-event ${statusClass(e.leadStatus)}" data-idx="${idx}" title="${title}">${time ? time+' · ' : ''}${title}</div>`;
+      const parsed = parseUBDate(e.nextActionDate);
+      const time = e.nextActionDate.includes('T') && parsed
+        ? parsed.toLocaleTimeString('en-US', { hour:'2-digit', minute:'2-digit' }) : '';
+      return `<div class="cal-event ${statusClass(e.leadStatus)}" data-idx="${idx}" title="${title}">${time ? time + ' · ' : ''}${title}</div>`;
     }).join('');
-    days.push(`<div class="cal-day${isToday?' today':''}"><div class="cal-day-num">${day.getDate()}</div>${eventHtml}</div>`);
+
+    days.push(`<div class="cal-day${isToday ? ' today' : ''}">
+      <div class="cal-day-num">${day.getDate()}</div>
+      ${eventHtml}
+    </div>`);
   }
 
   grid.innerHTML = headers + days.join('');
@@ -817,9 +836,10 @@ function renderCalendar() {
 function showCalDetail(idx) {
   const e = calEvents[idx];
   if (!e) return;
-  const dateStr = e.nextActionDate
-    ? parseUBDate(e.nextActionDate).toLocaleDateString('en-US', {weekday:'long', month:'long', day:'numeric'}) +
-      (e.nextActionDate.includes('T') ? ' · ' + parseUBDate(e.nextActionDate).toLocaleTimeString('en-US', {hour:'2-digit', minute:'2-digit'}) : '')
+  const parsed = parseUBDate(e.nextActionDate);
+  const dateStr = parsed
+    ? parsed.toLocaleDateString('en-US', { weekday:'long', month:'long', day:'numeric' }) +
+      (e.nextActionDate.includes('T') ? ' · ' + parsed.toLocaleTimeString('en-US', { hour:'2-digit', minute:'2-digit' }) : '')
     : '—';
   document.getElementById('calDetailTitle').textContent = e.leadName || 'Event detail';
   document.getElementById('calDetailBody').innerHTML = `
