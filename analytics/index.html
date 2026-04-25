@@ -741,7 +741,7 @@ async function loadData() {
     const session = JSON.parse(localStorage.getItem('beam_session') || '{}');
     const company = session.client_name || '';
     const url = company ? `${WEBHOOK_URL}?company=${encodeURIComponent(company)}` : WEBHOOK_URL;
-    const r = await fetch(url, { method: 'GET', ... });
+    const r = await fetch(url, { method: 'GET', headers: { 'Content-Type': 'application/json' } });
     if (!r.ok) throw new Error(`${r.status}: ${await r.text()}`);
     const data = await r.json();
     if (!Array.isArray(data)) throw new Error('Unexpected response format from webhook.');
