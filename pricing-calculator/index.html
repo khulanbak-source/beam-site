@@ -335,7 +335,7 @@
 <body>
 
 <div class="header">
-  <div class="logo">beam</div>
+  <div class="logo">beam<span class="logo-bar">|</span></div>
   <div class="header-tag">Pricing & ROI Calculator — v1.1</div>
 </div>
 
@@ -548,11 +548,11 @@
     <div class="card">
       <div class="card-header"><span class="card-step">07</span><span class="card-title">Support Model</span></div>
       <div class="card-body">
-        <div class="section-label">How does the client want ongoing support?</div>
+        <div class="section-label">Ongoing support model</div>
         <div class="pill-group">
           <div class="pill active" data-group="supportModel" data-val="retainer" onclick="pickOption(this,'supportModel')">Retainer<span class="pill-note">Fixed monthly · all small changes included</span></div>
           <div class="pill" data-group="supportModel" data-val="ticket" onclick="pickOption(this,'supportModel')">Ticket-based<span class="pill-note">₮50k / $15 per change request</span></div>
-          <div class="pill" data-group="supportModel" data-val="none" onclick="pickOption(this,'supportModel')">Setup only<span class="pill-note">No ongoing support</span></div>
+
         </div>
         <div id="supportNote" class="note-box" style="margin-top:14px"></div>
       </div>
@@ -575,15 +575,22 @@
     </div>
 
     <div class="result-card">
-      <div class="result-header">Monthly Cost Estimate</div>
+      <div class="result-header" style="display:flex; justify-content:space-between; align-items:center;">
+        Monthly Cost Estimate
+        <span style="font-size:10px; color:var(--text-dim); text-transform:none; letter-spacing:0; font-family:'Plus Jakarta Sans',sans-serif;">USD · excl. tax</span>
+      </div>
       <div class="result-body">
         <div class="result-main" id="totalMonthly"><span>$</span>0</div>
         <div class="result-sub" id="totalSub">/month total</div>
         <div class="result-rows" id="costRows"></div>
+        <div id="aiCostNote" style="display:none; font-size:11px; padding:10px 0 0 0; line-height:1.6;"></div>
         <div class="divider"></div>
         <div style="display:flex; justify-content:space-between; font-size:12px; color:var(--text-muted)">
           <span>One-time setup fee</span>
-          <span id="setupFee" style="font-family:'IBM Plex Mono',monospace; font-weight:600; font-size:14px; color:var(--text)">$0</span>
+          <span style="display:flex; align-items:baseline; gap:6px;">
+            <span id="setupFee" style="font-family:'IBM Plex Mono',monospace; font-weight:600; font-size:14px; color:var(--text)">$0</span>
+            <span style="font-size:10px; color:var(--text-dim)">USD excl. tax</span>
+          </span>
         </div>
         <div style="display:flex; justify-content:space-between; font-size:12px; color:var(--text-muted); margin-top:8px">
           <span id="retainerLabel">Monthly retainer</span>
@@ -703,21 +710,25 @@ const sttData = {
   google:   { note: 'Google Cloud STT: $0.006/min (Standard). First 60min/month free.', costPerCall: 0.006 }
 };
 
+const AI_RETAINER_INCLUDE = 15; // USD of Claude AI usage absorbed in retainer
+
 const supportData = {
   retainer: {
-    note: '✅ Recommended. Fixed monthly fee covers small changes, prompt tuning, CRM field updates, and priority response. n8n infrastructure included.',
-    pros: ['Predictable monthly cost', 'Bug fixes and small changes included', 'n8n hosting and infrastructure covered', 'Priority response when something breaks'],
+    note: '✅ Recommended. Fixed monthly retainer covers: prompt tuning, CRM field updates, small workflow changes, priority support, n8n hosting, and a monthly usage report showing log trends and before/after comparison. Claude AI usage up to $15/mo is absorbed — usage detail included in invoice. Overage billed at cost.',
+    pros: [
+      'Predictable monthly cost',
+      'n8n hosting and infrastructure covered',
+      'Up to $15/mo Claude AI usage absorbed',
+      'Monthly usage report (log trends, before vs. now comparison)',
+      'Bug fixes and small changes included',
+      'Priority response when something breaks',
+    ],
     cons: ['Minimum 3-month engagement', 'Major new modules quoted separately']
   },
   ticket: {
-    note: '🎫 Per-ticket pricing: ₮50,000 / $15 per scoped change request. Bug fixes always free. No monthly commitment required.',
-    pros: ['Pay only when you request a change', 'No monthly commitment', 'Bug fixes always free'],
-    cons: ['n8n hosting billed separately (~$10/mo)', 'Response time slower than retainer']
-  },
-  none: {
-    note: '⚙️ Setup only. Beam builds, configures, and launches your workflow. No ongoing support after handover.',
-    pros: ['Lowest upfront cost', 'Good fit for short pilots or proofs of concept'],
-    cons: ['No support after launch', 'Infrastructure hosting billed separately', 'Any change after launch billed at ticket rate']
+    note: '🎫 Per-ticket pricing: ₮50,000 / $15 per scoped change request. Bug fixes always free. Monthly invoice includes: tickets + full Claude AI usage + n8n hosting ($20/mo).',
+    pros: ['Pay only when you request a change', 'No monthly commitment', 'Bug fixes always free', 'Full cost transparency — AI usage invoiced at cost'],
+    cons: ['n8n hosting ($20/mo) billed separately', 'AI usage invoiced in full (not absorbed)', 'Response time slower than retainer']
   }
 };
 
@@ -777,6 +788,7 @@ document.getElementById('crmEnterprise').addEventListener('change', function() {
 
 // ───────────── RECALC ─────────────
 function recalc() {
+  const fmt = v => '$' + (+v).toFixed(0);
   updateRoiPanels();
 
   const totalUsers = state.reps + state.admins;
@@ -854,9 +866,7 @@ function recalc() {
       </div>
       <div class="explain-box">
         <strong>${cm.blurb}</strong><br>
-        Best for: ${cm.fits}<br><br>
-        <strong>What these tokens are:</strong> Every log call sends your system prompt + AI agent instructions (~1,000 tokens), conversation memory from Simple Memory node (~400 tokens), and the rep's message or transcript (~400 tokens). The AI replies with structured JSON and a follow-up question if fields are missing (~400 tokens).<br><br>
-        💡 <strong>Prompt caching tip:</strong> Your system prompt is identical on every call — enabling <code>cache_control</code> in the API cuts its input cost by 90%. Estimated saving: <strong>~$${cacheSavingMonthly.toFixed(2)}/month</strong> for ${state.reps} rep${state.reps > 1 ? 's' : ''}.
+        Best for: ${cm.fits}
       </div>`;
     updateEl('aiNote', aiNoteHTML);
   } else {
@@ -868,6 +878,17 @@ function recalc() {
   }
 
   const aiMonthly = aiCostPerLog * state.reps * state.logs * workDays;
+
+  // Compute overage up front so it's available throughout render
+  let aiOverage = 0, aiDisplay = '', aiCls = '';
+  if (state.supportModel === 'retainer') {
+    aiOverage  = Math.max(0, aiMonthly - AI_RETAINER_INCLUDE);
+    aiDisplay  = aiOverage > 0 ? `+${fmt(aiOverage)} overage` : '✓ absorbed';
+    aiCls      = aiOverage > 0 ? 'orange' : 'green';
+  } else {
+    aiDisplay  = fmt(aiMonthly);
+    aiCls      = 'blue';
+  }
 
   // STT
   let sttMonthly = 0;
@@ -885,17 +906,37 @@ function recalc() {
     : crm.note
   );
 
-  // Beam fees
-  const setupFees    = { intl: { small:2500, mid:5000, large:12000 }, local: { small:1250, mid:2500, large:6000 } };
-  const retainerFees = { intl: { small:500,  mid:1200, large:3000  }, local: { small:250,  mid:600,  large:1500 } };
-  const setupFee    = setupFees[state.region][state.size];
-  const retainerFee = retainerFees[state.region][state.size];
+  // Retainer: scales with rep count
+  const retainerTier = [
+    { max: 7,        intl: 500,  local: 250  },
+    { max: 20,       intl: 800,  local: 400  },
+    { max: Infinity, intl: 2000, local: 1000 },
+  ].find(t => state.reps <= t.max);
+  const retainerFee = isLocal ? retainerTier.local : retainerTier.intl;
 
-  // n8n
-  const n8nMonthly = state.reps <= 5 ? 0 : (state.reps <= 20 ? 20 : 50);
+  // n8n — free under retainer, $20/mo invoiced under ticket
+  const n8nMonthly = state.supportModel === 'retainer' ? 0 : 20;
 
-  // Total
-  const totalMonthly = aiMonthly + sttMonthly + crmMonthly + n8nMonthly + inp.monthlyCost;
+  // Client-facing monthly infrastructure cost
+  // Retainer: client pays only AI overage + CRM (if not enterprise/free) + input channel fees
+  // Ticket: client pays full AI + n8n $20 + input channel fees (tickets are variable, excluded here)
+  const totalMonthly = state.supportModel === 'retainer'
+    ? aiOverage + sttMonthly + crmMonthly + inp.monthlyCost
+    : aiMonthly + sttMonthly + crmMonthly + n8nMonthly + inp.monthlyCost;
+
+  // Difficulty + Setup fee (must come before ROI so payback can use setupFee)
+  const diffScore = inp.difficulty + crm.integration + (state.voice ? 1 : 0) + (state.ai === 'copilot' ? 2 : 0) + (state.ai === 'teams' ? 2 : 0);
+  let diffLabel, diffClass, diffTime;
+  if (diffScore <= 2)      { diffLabel='LOW';    diffClass='diff-low'; diffTime='1–2 weeks'; }
+  else if (diffScore <= 5) { diffLabel='MEDIUM'; diffClass='diff-mid'; diffTime='2–4 weeks'; }
+  else                     { diffLabel='HIGH';   diffClass='diff-high';diffTime='4–8 weeks'; }
+
+  const setupFeeMap = {
+    LOW:    { intl: 2000, local: 1000 },
+    MEDIUM: { intl: 2500, local: 1250 },
+    HIGH:   { intl: 4000, local: 2000 },
+  };
+  const setupFee = isLocal ? setupFeeMap[diffLabel].local : setupFeeMap[diffLabel].intl;
 
   // ROI
   const minPerMonth  = state.timeSaved * state.logs * workDays;
@@ -906,15 +947,7 @@ function recalc() {
   const roiRatio     = totalMonthly > 0 ? (totalValue / totalMonthly) : 99;
   const payback      = setupFee / Math.max(totalValue - totalMonthly, 1);
 
-  // Difficulty
-  const diffScore = inp.difficulty + crm.integration + (state.voice ? 1 : 0) + (state.ai === 'copilot' ? 2 : 0) + (state.ai === 'teams' ? 2 : 0);
-  let diffLabel, diffClass, diffTime;
-  if (diffScore <= 2)      { diffLabel='LOW';    diffClass='diff-low'; diffTime='1–2 weeks'; }
-  else if (diffScore <= 5) { diffLabel='MEDIUM'; diffClass='diff-mid'; diffTime='2–4 weeks'; }
-  else                     { diffLabel='HIGH';   diffClass='diff-high';diffTime='4–8 weeks'; }
-
   // ── RENDER ──
-  const fmt = v => '$' + (+v).toFixed(0);
 
   const db = document.getElementById('diffBadge');
   db.textContent = diffLabel; db.className = `diff-badge ${diffClass}`;
@@ -926,19 +959,38 @@ function recalc() {
     • AI provider: ${state.ai === 'copilot' ? 'Enterprise setup adds complexity' : 'Standard API'}`);
 
   document.getElementById('totalMonthly').innerHTML = `<span>$</span>${totalMonthly.toFixed(0)}`;
-  document.getElementById('totalSub').textContent = `/month · ${totalUsers} total users`;
+  const monthlySubLabel = state.supportModel === 'retainer'
+    ? (totalMonthly === 0 ? 'Extra monthly costs — fully covered by retainer' : '/month extra beyond retainer fee')
+    : '/month infrastructure cost (excl. variable tickets)';
+  document.getElementById('totalSub').textContent = monthlySubLabel;
   document.getElementById('setupFee').textContent = fmt(setupFee);
 
-  const retainerDisplay = state.supportModel === 'retainer' ? fmt(retainerFee)+'/mo' : state.supportModel === 'ticket' ? '₮50k / $15 per ticket' : 'Not included';
+  const retainerDisplay = state.supportModel === 'retainer' ? fmt(retainerFee)+'/mo' : '₮50k / $15 per ticket';
   document.getElementById('retainerFee').textContent = retainerDisplay;
-  document.getElementById('retainerLabel').textContent = state.supportModel === 'retainer' ? 'Monthly retainer' : state.supportModel === 'ticket' ? 'Support (ticket-based)' : 'Support';
+  document.getElementById('retainerLabel').textContent = state.supportModel === 'retainer' ? 'Monthly retainer (incl. AI + n8n)' : 'Support (ticket-based)';
+
+  // Show AI note under cost summary
+  const aiNoteEl = document.getElementById('aiCostNote');
+  if (aiNoteEl) {
+    if (state.supportModel === 'retainer') {
+      const overageTxt = aiOverage > 0
+        ? `<span style="color:var(--accent3)">⚠ This month's usage ($${aiMonthly.toFixed(2)}) exceeds the $${AI_RETAINER_INCLUDE} included — <strong>$${aiOverage.toFixed(2)} overage</strong> will be invoiced separately.</span>`
+        : `<span style="color:var(--accent2)">✓ Claude AI usage ($${aiMonthly.toFixed(2)}/mo) is within the $${AI_RETAINER_INCLUDE} absorbed in your retainer.</span>`;
+      aiNoteEl.innerHTML = overageTxt;
+      aiNoteEl.style.display = 'block';
+    } else {
+      aiNoteEl.innerHTML = `Claude AI usage ($${aiMonthly.toFixed(2)}/mo) + n8n ($20/mo) invoiced monthly alongside tickets.`;
+      aiNoteEl.style.display = 'block';
+    }
+  }
 
   const aiLabel = state.ai === 'claude' ? `Claude · ${claudeModels[state.claudeModel].name}` : state.ai;
+
   document.getElementById('costRows').innerHTML = [
-    { label: `AI model · ${aiLabel}`, val: fmt(aiMonthly), cls: 'blue' },
+    { label: `AI model · ${aiLabel}`, val: aiDisplay, cls: aiCls },
     { label: 'Voice STT', val: state.voice ? fmt(sttMonthly) : '—', cls: '' },
     { label: `CRM · ${state.crm}${state.crmEnterprise?' (enterprise)':''}`, val: crmMonthly===0?'✓ included':fmt(crmMonthly), cls: crmMonthly===0?'green':'' },
-    { label: 'Automation (n8n)', val: n8nMonthly===0?'Free':fmt(n8nMonthly), cls: '' },
+    { label: 'Automation (n8n)', val: n8nMonthly===0?'✓ included':'$20/mo', cls: n8nMonthly===0?'green':'' },
     { label: `Input · ${state.input}`, val: inp.monthlyCost===0?'Free':fmt(inp.monthlyCost), cls: '' },
   ].map(r => `<div class="result-row"><span class="r-label">${r.label}</span><span class="r-val ${r.cls}">${r.val}</span></div>`).join('');
 
@@ -979,10 +1031,23 @@ function recalc() {
     <div class="breakdown-section">
       <div class="breakdown-section-title">Beam Service Fees</div>
       <div class="breakdown-row"><span>Setup fee (one-time)</span><span class="bv">${fmt(setupFee)}</span></div>
+      <div class="breakdown-row" style="padding-left:12px"><span style="font-size:11px;color:var(--text-dim)">Flat rate — complexity is in the stack, not headcount</span><span class="bv" style="font-size:11px;color:var(--text-dim)">${isLocal ? 'MN pricing' : 'Intl pricing'}</span></div>
       <div class="breakdown-row"><span>Support model</span><span class="bv">${{retainer:'Retainer',ticket:'Ticket-based',none:'None'}[state.supportModel]}</span></div>
-      ${state.supportModel==='retainer'?`<div class="breakdown-row"><span>Monthly retainer</span><span class="bv" style="color:var(--accent)">${fmt(retainerFee)}/mo</span></div><div class="breakdown-row"><span>Includes</span><span class="bv">Fixes, tuning, n8n hosting</span></div>`:''}
-      ${state.supportModel==='ticket'?`<div class="breakdown-row"><span>Per ticket</span><span class="bv">₮50,000 / $15</span></div><div class="breakdown-row"><span>n8n hosting</span><span class="bv">~$20–50/mo (billed separately)</span></div><div class="breakdown-row"><span>Bug fixes</span><span class="bv">Always free</span></div>`:''}
-      ${state.supportModel==='none'?`<div class="breakdown-row"><span>Post-setup support</span><span class="bv" style="color:var(--accent3)">Not included</span></div><div class="breakdown-row"><span>n8n hosting</span><span class="bv" style="color:var(--accent3)">Client responsibility</span></div>`:''}
+      ${state.supportModel==='retainer'?`
+        <div class="breakdown-row"><span>Monthly retainer <span style="font-size:10px;color:var(--text-dim)">(${state.reps} rep${state.reps>1?'s':''})</span></span><span class="bv" style="color:var(--accent)">${fmt(retainerFee)}/mo</span></div>
+        <div class="breakdown-row" style="padding-left:12px"><span style="font-size:11px">↳ n8n hosting</span><span class="bv" style="font-size:11px;color:var(--accent2)">Included</span></div>
+        <div class="breakdown-row" style="padding-left:12px"><span style="font-size:11px">↳ Claude AI up to $${AI_RETAINER_INCLUDE}/mo</span><span class="bv" style="font-size:11px;color:var(--accent2)">Included</span></div>
+        <div class="breakdown-row" style="padding-left:12px"><span style="font-size:11px">↳ Monthly usage report</span><span class="bv" style="font-size:11px;color:var(--accent2)">Included</span></div>
+        <div class="breakdown-row" style="padding-left:12px"><span style="font-size:11px">↳ Bug fixes + small changes</span><span class="bv" style="font-size:11px;color:var(--accent2)">Included</span></div>
+        ${aiOverage > 0 ? `<div class="breakdown-row" style="padding-left:12px"><span style="font-size:11px;color:var(--accent3)">↳ AI overage (>${'$'}${AI_RETAINER_INCLUDE})</span><span class="bv" style="font-size:11px;color:var(--accent3)">${'$'}${aiOverage.toFixed(2)} invoiced</span></div>` : ''}
+      `:''}
+      ${state.supportModel==='ticket'?`
+        <div class="breakdown-row"><span>Per change request</span><span class="bv">₮50,000 / $15</span></div>
+        <div class="breakdown-row"><span>n8n hosting</span><span class="bv" style="color:var(--accent3)">$20/mo invoiced</span></div>
+        <div class="breakdown-row"><span>Claude AI usage</span><span class="bv" style="color:var(--accent3)">${fmt(aiMonthly)}/mo invoiced</span></div>
+        <div class="breakdown-row"><span>Bug fixes</span><span class="bv">Always free</span></div>
+        <div class="note-box" style="margin-top:8px">Monthly invoice = tickets + $${aiMonthly.toFixed(2)} AI usage + $20 n8n. AI usage detail included.</div>
+      `:''}
       ${isLocal?'<div class="note-box" style="margin-top:8px">Mongolia pricing applied (50% of international). All amounts in USD.</div>':''}
     </div>
     <div class="breakdown-section">
@@ -1013,13 +1078,23 @@ function generatePDF() {
   const aiMonthly  = aiCPL * s.reps * s.logs * workDays;
   const sttMonthly = s.voice ? sttData[s.stt].costPerCall * s.voicePerDay * s.reps * workDays : 0;
   const crmMonthly = s.crmEnterprise ? 0 : (crm.free ? 0 : crm.perSeat * totalUsers);
-  const n8nMonthly = s.reps <= 5 ? 0 : (s.reps <= 20 ? 20 : 50);
+  const n8nMonthly = s.supportModel === 'retainer' ? 0 : 20;
   const totalMonthly = aiMonthly + sttMonthly + crmMonthly + n8nMonthly + inp.monthlyCost;
 
-  const setupFees    = { intl:{small:2500,mid:5000,large:12000}, local:{small:1250,mid:2500,large:6000} };
-  const retainerFees = { intl:{small:500,mid:1200,large:3000},   local:{small:250,mid:600,large:1500}   };
-  const setupFee    = setupFees[s.region][s.size];
-  const retainerFee = retainerFees[s.region][s.size];
+  const isLocalPDF = s.region === 'local';
+  // Recalculate diffScore for PDF
+  const inpPDF = inputData[s.input];
+  const crmPDF = crmData[s.crm];
+  const diffScorePDF = inpPDF.difficulty + crmPDF.integration + (s.voice ? 1 : 0) + (s.ai === 'copilot' ? 2 : 0);
+  const diffLabelPDF = diffScorePDF <= 2 ? 'LOW' : diffScorePDF <= 5 ? 'MEDIUM' : 'HIGH';
+  const setupFeeMap = { LOW:{intl:2000,local:1000}, MEDIUM:{intl:2500,local:1250}, HIGH:{intl:4000,local:2000} };
+  const setupFee = isLocalPDF ? setupFeeMap[diffLabelPDF].local : setupFeeMap[diffLabelPDF].intl;
+  const retainerTierPDF = [
+    { max: 7,        intl: 500,  local: 250  },
+    { max: 20,       intl: 800,  local: 400  },
+    { max: Infinity, intl: 2000, local: 1000 },
+  ].find(t => s.reps <= t.max);
+  const retainerFee = isLocalPDF ? retainerTierPDF.local : retainerTierPDF.intl;
 
   const hoursSaved   = (s.timeSaved * s.logs * workDays) / 60;
   const laborSaved   = hoursSaved * s.reps * s.salary;
@@ -1097,13 +1172,22 @@ function generatePDF() {
     </div>
   </div>`;
 
-  const w = window.open('','_blank','width=900,height=700');
-  w.document.write(`<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Beam Proposal — ${today}</title>
+  // Use a hidden iframe — avoids popup blocker issues
+  let iframe = document.getElementById('_pdfFrame');
+  if (iframe) iframe.remove();
+  iframe = document.createElement('iframe');
+  iframe.id = '_pdfFrame';
+  iframe.style.cssText = 'position:fixed;top:-9999px;left:-9999px;width:900px;height:700px;border:none;';
+  document.body.appendChild(iframe);
+
+  const iDoc = iframe.contentDocument || iframe.contentWindow.document;
+  iDoc.open();
+  iDoc.write(`<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Beam Proposal — ${today}</title>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
     <style>*{box-sizing:border-box;margin:0;padding:0}body{background:#fff;font-family:'Plus Jakarta Sans',sans-serif}@media print{@page{size:A4;margin:0}body{-webkit-print-color-adjust:exact;print-color-adjust:exact}}</style>
     </head><body>${html}</body></html>`);
-  w.document.close();
-  setTimeout(() => { w.focus(); w.print(); }, 800);
+  iDoc.close();
+  setTimeout(() => { iframe.contentWindow.focus(); iframe.contentWindow.print(); }, 900);
 }
 
 // Init
