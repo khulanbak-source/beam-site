@@ -743,12 +743,26 @@ function initCalendar() {
   renderCalendar();
 }
 
-function parseUBDate(dateStr) {
-  if (!dateStr) return null;
-  if (dateStr.includes('T') && !dateStr.includes('+') && !dateStr.includes('Z')) {
-    return new Date(dateStr + '+08:00');
-  }
-  return new Date(dateStr);
+function extractTime(dateStr) {
+  if (!dateStr || !dateStr.includes('T')) return '';
+  const timePart = dateStr.split('T')[1];
+  if (!timePart) return '';
+  const [h, m] = timePart.split(':');
+  const hour = parseInt(h);
+  const minute = (m || '00').slice(0, 2);
+  const ampm = hour >= 12 ? 'PM' : 'AM';
+  const h12 = hour % 12 || 12;
+  return `${h12}:${minute} ${ampm}`;
+}
+
+function extractDateLabel(dateStr) {
+  if (!dateStr) return '—';
+  const datePart = dateStr.split('T')[0];
+  const [y, mo, d] = datePart.split('-').map(Number);
+  const days = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+  const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  const dow = new Date(y, mo - 1, d).getDay();
+  return `${days[dow]}, ${months[mo-1]} ${d}`;
 }
 
 function localDateStr(d) {
@@ -814,9 +828,7 @@ function renderCalendar() {
     const eventHtml = dayEvents.map(e => {
       const idx = calEvents.indexOf(e);
       const title = e.leadName || 'Lead';
-      const parsed = parseUBDate(e.nextActionDate);
-      const time = e.nextActionDate.includes('T') && parsed
-        ? parsed.toLocaleTimeString('en-US', { hour:'2-digit', minute:'2-digit' }) : '';
+      const time = extractTime(e.nextActionDate);
       return `<div class="cal-event ${statusClass(e.leadStatus)}" data-idx="${idx}" title="${title}">${time ? time + ' · ' : ''}${title}</div>`;
     }).join('');
 
@@ -836,20 +848,18 @@ function renderCalendar() {
 function showCalDetail(idx) {
   const e = calEvents[idx];
   if (!e) return;
-  const parsed = parseUBDate(e.nextActionDate);
-  const dateStr = parsed
-    ? parsed.toLocaleDateString('en-US', { weekday:'long', month:'long', day:'numeric' }) +
-      (e.nextActionDate.includes('T') ? ' · ' + parsed.toLocaleTimeString('en-US', { hour:'2-digit', minute:'2-digit' }) : '')
-    : '—';
-  document.getElementById('calDetailTitle').textContent = e.leadName || 'Event detail';
-  document.getElementById('calDetailBody').innerHTML = `
-    <div class="cal-detail-row"><span class="cal-detail-label">Status</span><span class="cal-detail-val"><span class="status-badge" style="${statusBadgeStyle(e.leadStatus)}">${e.leadStatus||'—'}</span></span></div>
-    <div class="cal-detail-row"><span class="cal-detail-label">When</span><span class="cal-detail-val">${dateStr}</span></div>
-    <div class="cal-detail-row"><span class="cal-detail-label">Action</span><span class="cal-detail-val">${e.nextActionLabel||'—'}</span></div>
-    <div class="cal-detail-row"><span class="cal-detail-label">Product</span><span class="cal-detail-val">${e.interestedProduct||'—'}</span></div>
-    <div class="cal-detail-row"><span class="cal-detail-label">Source</span><span class="cal-detail-val">${e.sourceChannel||'—'}</span></div>
-    <div class="cal-detail-row"><span class="cal-detail-label">Logged</span><span class="cal-detail-val">${e.logDate||'—'}</span></div>`;
-  document.getElementById('calDetail').classList.add('visible');
+  const datePart = extractDateLabel(e.nextActionDate);
+const timePart = extractTime(e.nextActionDate);
+const dateStr = timePart ? `${datePart} · ${timePart}` : datePart;
+document.getElementById('calDetailTitle').textContent = e.leadName || 'Event detail';
+document.getElementById('calDetailBody').innerHTML = `
+  <div class="cal-detail-row"><span class="cal-detail-label">Status</span><span class="cal-detail-val"><span class="status-badge" style="${statusBadgeStyle(e.leadStatus)}">${e.leadStatus||'—'}</span></span></div>
+  <div class="cal-detail-row"><span class="cal-detail-label">When</span><span class="cal-detail-val">${dateStr}</span></div>
+  <div class="cal-detail-row"><span class="cal-detail-label">Action</span><span class="cal-detail-val">${e.nextActionLabel||'—'}</span></div>
+  <div class="cal-detail-row"><span class="cal-detail-label">Product</span><span class="cal-detail-val">${e.interestedProduct||'—'}</span></div>
+  <div class="cal-detail-row"><span class="cal-detail-label">Source</span><span class="cal-detail-val">${e.sourceChannel||'—'}</span></div>
+  <div class="cal-detail-row"><span class="cal-detail-label">Logged</span><span class="cal-detail-val">${e.logDate||'—'}</span></div>`;
+document.getElementById('calDetail').classList.add('visible');
 }
 
 function closeCalDetail() {
