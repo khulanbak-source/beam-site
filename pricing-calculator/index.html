@@ -1151,8 +1151,8 @@ function generatePDF() {
         </div>
         <div style="font-size:12px">
           ${[['AI Model',fmt(aiMonthly)],s.voice?['Voice STT',fmt(sttMonthly)]:null,['CRM',crmMonthly===0?'Included':fmt(crmMonthly)],['Automation (n8n)',n8nMonthly===0?'Free':fmt(n8nMonthly)],['Input Channel',inp.monthlyCost===0?'Free':fmt(inp.monthlyCost)]].filter(Boolean).map(r=>`<div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid #f0ede7"><span style="color:#7a7670">${r[0]}</span><span style="font-family:'IBM Plex Mono',monospace;font-weight:500">${r[1]}</span></div>`).join('')}
-          <div style="display:flex;justify-content:space-between;padding:10px 0;margin-top:4px"><span style="color:#7a7670;font-size:11px">One-time setup fee</span><span style="font-family:'IBM Plex Mono',monospace;font-weight:600">${fmt(setupFee)}</span></div>
-          <div style="display:flex;justify-content:space-between;padding:6px 0"><span style="color:#7a7670;font-size:11px">Monthly retainer</span><span style="font-family:'IBM Plex Mono',monospace;font-weight:600;color:#1f3d2b">${fmt(retainerFee)}/mo</span></div>
+          <div style="display:flex;justify-content:space-between;padding:10px 0;margin-top:4px"><span style="color:#7a7670;font-size:11px">One-time setup fee <span style="opacity:0.6">(excl. tax)</span></span><span style="font-family:'IBM Plex Mono',monospace;font-weight:600">${fmt(setupFee)}</span></div>
+          <div style="display:flex;justify-content:space-between;padding:6px 0"><span style="color:#7a7670;font-size:11px">Monthly retainer <span style="opacity:0.6">(excl. tax)</span></span><span style="font-family:'IBM Plex Mono',monospace;font-weight:600;color:#1f3d2b">${fmt(retainerFee)}/mo</span></div>
         </div>
         <div style="margin-top:20px">
           <div style="font-size:10px;font-weight:700;color:#1f3d2b;text-transform:uppercase;letter-spacing:0.12em;margin-bottom:12px">ROI Analysis</div>
