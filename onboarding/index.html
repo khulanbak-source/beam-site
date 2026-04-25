@@ -181,6 +181,9 @@
   font-size:11px; color:var(--accent); cursor:pointer; text-decoration:underline;
   background:none; border:none; font-family:inherit; padding:0; margin-left:8px;
 }
+.crm-table th { white-space: nowrap; }
+.crm-table td { white-space: nowrap; }
+.crm-table td:nth-child(7) { white-space: normal; min-width: 140px; }
 
 
   /* INSTRUCTION */
@@ -1104,7 +1107,7 @@ async function verifyEmail() {
 
 function onVerified() {
   const { user_name, client_name } = session;
-
+https://github.com/khulanbak-source/beam-site/blob/main/onboarding/index.html
   // Personalize header
   if (user_name) {
     document.getElementById('headerName').textContent = user_name;
@@ -1189,31 +1192,61 @@ function buildCRMTable(logs, userName) {
   if (!logs.length) {
     return `<div class="crm-empty">No leads logged yet by ${userName || 'you'}.<br>Log your first lead above and hit refresh.</div>`;
   }
-  const rows = logs
-    .sort((a, b) => new Date(b.logDate || 0) - new Date(a.logDate || 0))
-    .slice(0, 20)
-    .map(l => `<tr>
-      <td><span class="crm-name">${l.leadName || '—'}</span></td>
-      <td><span class="crm-status">${l.leadStatus || '—'}</span></td>
+
+  const sorted = logs.sort((a, b) => new Date(b.logDate || 0) - new Date(a.logDate || 0)).slice(0, 30);
+
+  const statusColor = {
+    Hot: '#c46a4a', Reserved: '#1f3d2b', 'Test Drive': '#7a7670',
+    Prospect: '#1f3d2b', Lead: '#7a7670', Sold: '#16a34a', Lost: '#b8b4ac'
+  };
+
+  const rows = sorted.map(l => {
+    const sc = statusColor[l.leadStatus] || 'var(--text-dim)';
+    const nextDate = l.nextActionDate ? l.nextActionDate.slice(0, 10) : '—';
+    const aiScore = (l.autoExtracted + l.manuallyAsked) > 0
+      ? Math.round(l.autoExtracted / (l.autoExtracted + l.manuallyAsked) * 100) + '%'
+      : '—';
+
+    return `<tr>
+      <td><span class="crm-name">${l.leadName || '—'}</span><br>
+          <span style="font-size:10px;color:var(--text-dim)">${l.actionType || ''}</span></td>
+      <td><span class="crm-status" style="background:${sc}18;border-color:${sc}44;color:${sc}">${l.leadStatus || '—'}</span></td>
       <td>${l.lastActivity || '—'}</td>
+      <td>${l.sourceChannel || '—'}</td>
       <td>${l.interestedProduct || '—'}</td>
-      <td>${l.nextActionLabel ? l.nextActionLabel.slice(0, 40) : '—'}</td>
-      <td>${l.logDate || '—'}</td>
-    </tr>`).join('');
+      <td>${l.inputType || '—'}</td>
+      <td style="max-width:160px;white-space:normal;font-size:11px">${l.nextActionLabel || '—'}</td>
+      <td>${nextDate}</td>
+      <td style="text-align:center">${l.calendarSet === 'Yes' ? '✅' : '—'}</td>
+      <td style="text-align:center">${aiScore}</td>
+      <td style="color:var(--text-dim)">${l.logDate || '—'}</td>
+    </tr>`;
+  }).join('');
 
   return `
-    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">
-      <span style="font-size:11px;color:var(--text-muted)">${logs.length} lead${logs.length !== 1 ? 's' : ''} logged by you</span>
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;flex-wrap:wrap;gap:8px">
+      <span style="font-size:11px;color:var(--text-muted)">${logs.length} log${logs.length !== 1 ? 's' : ''} by you</span>
       <button class="crm-refresh" onclick="loadCRMData()">↻ Refresh</button>
     </div>
-    <table class="crm-table">
-      <thead><tr>
-        <th>Name</th><th>Status</th><th>Activity</th>
-        <th>Product</th><th>Next Action</th><th>Date</th>
-      </tr></thead>
-      <tbody>${rows}</tbody>
-    </table>`;
-} 
+    <div style="overflow-x:auto">
+      <table class="crm-table">
+        <thead><tr>
+          <th>Lead</th>
+          <th>Status</th>
+          <th>Activity</th>
+          <th>Source</th>
+          <th>Product</th>
+          <th>Input</th>
+          <th>Next Action</th>
+          <th>Action Date</th>
+          <th>📅</th>
+          <th>AI%</th>
+          <th>Logged</th>
+        </tr></thead>
+        <tbody>${rows}</tbody>
+      </table>
+    </div>`;
+}
 
 // ── NAVIGATION ──
 function nextStep(from) {
