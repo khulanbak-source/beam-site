@@ -20,6 +20,9 @@
     --warn: #c46a4a;
     --warn-light: rgba(196,106,74,0.08);
     --warn-border: rgba(196,106,74,0.22);
+    --green: #16a34a;
+    --green-light: rgba(22,163,74,0.07);
+    --green-border: rgba(22,163,74,0.2);
   }
 
   * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -48,6 +51,28 @@
   }
   .logo { font-size: 17px; font-weight: 500; color: var(--accent); text-decoration: none; }
   .header-tag { font-size: 12px; color: var(--text-dim); }
+  .header-user {
+    display: none;
+    align-items: center;
+    gap: 10px;
+    font-size: 12px;
+    color: var(--text-muted);
+  }
+  .header-user.visible { display: flex; }
+  .header-user-name {
+    font-weight: 600;
+    color: var(--accent);
+    font-size: 13px;
+  }
+  .header-company {
+    background: var(--accent-light);
+    border: 1px solid var(--accent-border);
+    border-radius: 2px;
+    padding: 2px 8px;
+    font-size: 11px;
+    color: var(--accent);
+    font-weight: 500;
+  }
 
   /* PROGRESS */
   .progress-wrap {
@@ -228,9 +253,22 @@
     font-weight: 500;
     display: flex;
     align-items: center;
+    justify-content: space-between;
     gap: 8px;
   }
+  .iframe-label-left { display: flex; align-items: center; gap: 8px; }
   .iframe-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--accent); flex-shrink: 0; }
+  .iframe-company-badge {
+    font-size: 10px;
+    background: var(--accent-light);
+    border: 1px solid var(--accent-border);
+    border-radius: 2px;
+    padding: 1px 7px;
+    color: var(--accent);
+    font-weight: 600;
+    display: none;
+  }
+  .iframe-company-badge.visible { display: inline-block; }
   .iframe-section iframe { display: block; width: 100%; border: none; }
 
   /* ACTIONS */
@@ -253,6 +291,7 @@
     transition: opacity 0.15s;
   }
   .btn-main:hover { opacity: 0.85; }
+  .btn-main:disabled { opacity: 0.5; pointer-events: none; }
   .btn-flag {
     padding: 11px 18px;
     background: transparent;
@@ -266,6 +305,133 @@
     margin-left: auto;
   }
   .btn-flag:hover { background: var(--warn-light); }
+
+  /* EMAIL VERIFY SECTION */
+  .email-verify-section {
+    display: none;
+    margin-top: 20px;
+    padding: 20px;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 3px;
+    animation: fadeUp 0.2s ease;
+  }
+  .email-verify-section.visible { display: block; }
+  .ev-label {
+    font-size: 13px;
+    font-weight: 600;
+    margin-bottom: 4px;
+    color: var(--text);
+  }
+  .ev-sub {
+    font-size: 12px;
+    color: var(--text-muted);
+    margin-bottom: 14px;
+  }
+  .ev-row {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    flex-wrap: wrap;
+  }
+  .ev-input {
+    flex: 1;
+    min-width: 200px;
+    padding: 10px 13px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 2px;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-size: 13px;
+    color: var(--text);
+    transition: border-color 0.15s;
+    outline: none;
+  }
+  .ev-input:focus { border-color: var(--accent); }
+  .ev-input::placeholder { color: var(--text-dim); }
+  .ev-input.error { border-color: var(--warn); }
+  .ev-btn {
+    padding: 10px 20px;
+    background: var(--accent);
+    color: #fff;
+    border: none;
+    border-radius: 2px;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: opacity 0.15s;
+  }
+  .ev-btn:hover { opacity: 0.85; }
+  .ev-btn:disabled { opacity: 0.5; pointer-events: none; }
+  .ev-error {
+    display: none;
+    margin-top: 10px;
+    padding: 10px 13px;
+    background: var(--warn-light);
+    border: 1px solid var(--warn-border);
+    border-radius: 2px;
+    font-size: 12px;
+    color: var(--warn);
+  }
+  .ev-error.visible { display: block; }
+  .ev-spinner {
+    width: 16px; height: 16px;
+    border: 2px solid var(--border);
+    border-top-color: var(--accent);
+    border-radius: 50%;
+    animation: spin .7s linear infinite;
+    display: none;
+    flex-shrink: 0;
+  }
+  .ev-spinner.visible { display: block; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  /* WELCOME BOX */
+  .welcome-box {
+    display: none;
+    padding: 16px 20px;
+    background: var(--green-light);
+    border: 1px solid var(--green-border);
+    border-radius: 3px;
+    margin-bottom: 20px;
+    font-size: 13px;
+    animation: fadeUp 0.2s ease;
+  }
+  .welcome-box.visible { display: flex; align-items: center; gap: 12px; }
+  .welcome-check { font-size: 20px; }
+  .welcome-name { font-weight: 600; color: var(--green); font-size: 14px; margin-bottom: 2px; }
+  .welcome-company { font-size: 12px; color: var(--text-muted); }
+
+  /* ANALYTICS LINK BOX */
+  .analytics-box {
+    display: none;
+    align-items: center;
+    justify-content: space-between;
+    padding: 13px 16px;
+    background: var(--accent-light);
+    border: 1px solid var(--accent-border);
+    border-radius: 3px;
+    margin-bottom: 24px;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+  .analytics-box.visible { display: flex; }
+  .analytics-box-text { font-size: 12px; color: var(--text-muted); }
+  .analytics-box-text strong { color: var(--accent); }
+  .analytics-link {
+    font-size: 12px;
+    color: var(--accent);
+    font-weight: 600;
+    text-decoration: none;
+    border: 1px solid var(--accent-border);
+    border-radius: 2px;
+    padding: 6px 14px;
+    white-space: nowrap;
+    transition: background 0.15s;
+  }
+  .analytics-link:hover { background: var(--accent-light); }
 
   /* FLAG FORM */
   .flag-form {
@@ -383,6 +549,8 @@
     .step-body { padding: 20px; }
     .msg-bubble { max-width: 95%; }
     footer { padding: 20px; flex-direction: column; align-items: flex-start; }
+    .ev-row { flex-direction: column; }
+    .ev-input, .ev-btn { width: 100%; }
   }
 </style>
 </head>
@@ -390,7 +558,11 @@
 
 <header>
   <a href="/" class="logo">beam</a>
-  <span class="header-tag">Interactive demo</span>
+  <div class="header-user" id="headerUser">
+    <span id="headerName" class="header-user-name"></span>
+    <span id="headerCompany" class="header-company"></span>
+  </div>
+  <span class="header-tag" id="headerTag">Interactive demo</span>
 </header>
 
 <!-- PROGRESS -->
@@ -435,72 +607,78 @@
       </div>
     </div>
     <div class="step-body">
-  <div class="instruction">
-    <strong>How to get started:</strong>
-    <ol>
-      <li>Open Telegram and search for <strong>@beam_urstory_bot</strong></li>
-      <li>Tap Start or send <strong>/start</strong></li>
-      <li>Enter your full name, then your email when asked</li>
-      <li>Wait for admin approval. You will get a notification when you are in.</li>
-    </ol>
-  </div>
+      <div class="instruction">
+        <strong>How to get started:</strong>
+        <ol>
+          <li>Open Telegram and search for <strong>@beam_urstory_bot</strong></li>
+          <li>Tap Start or send <strong>/start</strong></li>
+          <li>Enter your full name, then your email, then your company when asked</li>
+          <li>Wait for admin approval — you will get a notification when you are in</li>
+        </ol>
+      </div>
 
-  <a href="https://t.me/beam_urstory_bot" target="_blank" class="tg-btn">
-    <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm5.562 8.248l-1.97 9.289c-.145.658-.537.818-1.084.508l-3-2.21-1.447 1.394c-.16.16-.295.295-.605.295l.213-3.053 5.56-5.023c.242-.213-.054-.333-.373-.12L7.43 14.015l-2.97-.924c-.645-.204-.657-.645.136-.953l11.57-4.461c.537-.194 1.006.131.833.571z"/></svg>
-    Open @beam_urstory_bot
-  </a>
+      <a href="https://t.me/beam_urstory_bot" target="_blank" class="tg-btn">
+        <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm5.562 8.248l-1.97 9.289c-.145.658-.537.818-1.084.508l-3-2.21-1.447 1.394c-.16.16-.295.295-.605.295l.213-3.053 5.56-5.023c.242-.213-.054-.333-.373-.12L7.43 14.015l-2.97-.924c-.645-.204-.657-.645.136-.953l11.57-4.461c.537-.194 1.006.131.833.571z"/></svg>
+        Open @beam_urstory_bot
+      </a>
 
-  <!-- TWO COLUMN LAYOUT -->
-  <div style="display:grid; grid-template-columns:1fr 1fr; gap:20px; margin-bottom:24px;">
+      <div style="display:grid; grid-template-columns:1fr 1fr; gap:20px; margin-bottom:24px;">
+        <div>
+          <div class="example-label">New user</div>
+          <div class="msg-bubble-wrap">
+            <div class="msg-bubble">👋 Beam-д тавтай морил!<br>Хандалт авахын тулд өөрийн нэр овогоо оруулна уу.<br><span style="color:var(--text-dim);font-size:11px;">(Жишээ: Болор Дорж)</span></div>
+            <div class="msg-bubble out">Болор Дорж</div>
+            <div class="msg-bubble">✅ Сайн байна, <strong>Болор Дорж</strong>!<br>Одоо и-мэйл хаягаа оруулна уу.<br><span style="color:var(--text-dim);font-size:11px;">(Жишээ: name@company.com)</span></div>
+            <div class="msg-bubble out">bolordorj@email.com</div>
+            <div class="msg-bubble">✅ Сайн байна!<br>Одоо компанийн нэрээ оруулна уу.<br><span style="color:var(--text-dim);font-size:11px;">(Жишээ: Bavaria Motors)</span></div>
+            <div class="msg-bubble out">Bavaria Motors</div>
+            <div class="msg-bubble">✅ Хүсэлт илгээгдлээ! Admin батлах хүртэл хүлээнэ үү. 🙏</div>
+            <div class="msg-bubble" style="background:var(--accent-light);border-color:var(--accent-border);">🎉 Таны хүсэлт зөвшөөрөгдлөө! Beam-д тавтай морил, Болор Дорж. 👋<br><br>Meeting/Call-ийн мэдээллээ хэлнэ үү.</div>
+          </div>
+        </div>
+        <div>
+          <div class="example-label">Admin</div>
+          <div class="msg-bubble-wrap">
+            <div class="msg-bubble">🔔 <strong>Болор Дорж</strong> (@bolordorj) хандалт хүслээ.<br>📧 bolordorj@email.com<br><br>Зөвшөөрөх: /ok<br>Татгалзах: /no<br><br><span style="color:var(--text-dim);font-size:11px;">⚠️ Нэг зэрэг нэг хүсэлт шийдвэрлэхийг зөвлөж байна.</span></div>
+            <div class="msg-bubble out">/ok</div>
+            <div class="msg-bubble">✅ Болор Дорж-д хандалт олгогдлоо.</div>
+            <div class="msg-bubble" style="opacity:0.45; font-size:11px; color:var(--text-muted); background:transparent; border-style:dashed;">If /no: ❌ Болор Дорж-н хүсэлтийг татгалзлаа.</div>
+            <div class="msg-bubble" style="opacity:0.45; font-size:11px; color:var(--text-muted); background:transparent; border-style:dashed;">Nothing pending: ❌ Хүсэлт олдсонгүй.</div>
+          </div>
+        </div>
+      </div>
 
-    <!-- USER SIDE -->
-    <div>
-      <div class="example-label">New user</div>
-      <div class="msg-bubble-wrap">
-        <div class="msg-bubble">👋 Beam-д тавтай морил!<br>Хандалт авахын тулд өөрийн нэр овогоо оруулна уу.<br><span style="color:var(--text-dim);font-size:11px;">(Жишээ: Болор Дорж)</span></div>
-        <div class="msg-bubble out">Болор Дорж</div>
-        <div class="msg-bubble">✅ Сайн байна, Болор Дорж!<br>Одоо и-мэйл хаягаа оруулна уу.<br><span style="color:var(--text-dim);font-size:11px;">(Жишээ: name@company.com)</span></div>
-        <div class="msg-bubble out">bolordorj@email.com</div>
-        <div class="msg-bubble">✅ Хүсэлт илгээгдлээ! Admin батлах хүртэл хүлээнэ үү. 🙏</div>
-        <div class="msg-bubble" style="background:var(--accent-light);border-color:var(--accent-border);">🎉 Таны хүсэлт зөвшөөрөгдлөө! Beam-д тавтай морил, Болор Дорж. 👋<br><br>Meeting/Call-ийн мэдээллээ хэлнэ үү.</div>
+      <style>
+        @media (max-width: 640px) {
+          #step-1 .step-body > div[style*="grid"] { grid-template-columns: 1fr !important; }
+        }
+      </style>
+
+      <div class="step-actions">
+        <button class="btn-main" id="approvedBtn" onclick="showEmailVerify()">I am connected and approved</button>
+        <button class="btn-flag" onclick="toggleFlag(1)">Flag an issue</button>
+      </div>
+
+      <!-- EMAIL VERIFY SECTION -->
+      <div class="email-verify-section" id="emailVerifySection">
+        <div class="ev-label">Confirm your registration</div>
+        <div class="ev-sub">Enter the email you registered with to verify your access and personalise the demo.</div>
+        <div class="ev-row">
+          <input class="ev-input" id="emailVerifyInput" type="email" placeholder="you@company.com" onkeydown="if(event.key==='Enter') verifyEmail()"/>
+          <div class="ev-spinner" id="evSpinner"></div>
+          <button class="ev-btn" id="evBtn" onclick="verifyEmail()">Verify & continue</button>
+        </div>
+        <div class="ev-error" id="evError"></div>
+      </div>
+
+      <div class="flag-form" id="flag-1">
+        <span class="flag-label">What went wrong on this step?</span>
+        <textarea placeholder="e.g. Bot did not respond, could not find the bot, request not approved..."></textarea>
+        <button class="btn-main" onclick="submitFlag(1)" style="font-size:12px; padding:8px 18px;">Send report</button>
+        <span class="flag-sent" id="flag-sent-1">Reported. Khulan will follow up.</span>
       </div>
     </div>
-
-    <!-- ADMIN SIDE -->
-    <div>
-      <div class="example-label">Admin</div>
-      <div class="msg-bubble-wrap">
-        <div class="msg-bubble">🔔 Болор Дорж (@bolordorj) хандалт хүслээ.<br>📧 bolordorj@email.com<br><br>Зөвшөөрөх: /ok<br>Татгалзах: /no</div>
-        <div class="msg-bubble out">/ok</div>
-        <div class="msg-bubble">✅ Болор Дорж-д хандалт олгогдлоо.</div>
-        <div class="msg-bubble" style="opacity:0.5; font-size:11px; color:var(--text-muted); background:transparent; border-style:dashed;">If /no instead:<br>❌ Болор Дорж-н хүсэлтийг татгалзлаа.</div>
-        <div class="msg-bubble" style="opacity:0.5; font-size:11px; color:var(--text-muted); background:transparent; border-style:dashed;">If nothing pending:<br>❌ Хүсэлт олдсонгүй.</div>
-      </div>
-    </div>
-
   </div>
-
-  <!-- MOBILE STACK STYLE -->
-  <style>
-    @media (max-width: 640px) {
-      #step-1 .step-body > div[style*="grid"] {
-        grid-template-columns: 1fr !important;
-      }
-    }
-  </style>
-
-  <div class="step-actions">
-    <button class="btn-main" onclick="nextStep(1)">I am connected and approved</button>
-    <button class="btn-flag" onclick="toggleFlag(1)">Flag an issue</button>
-  </div>
-  <div class="flag-form" id="flag-1">
-    <span class="flag-label">What went wrong on this step?</span>
-    <textarea placeholder="e.g. Bot did not respond, could not find the bot, request not approved..."></textarea>
-    <button class="btn-main" onclick="submitFlag(1)" style="font-size:12px; padding:8px 18px;">Send report</button>
-    <span class="flag-sent" id="flag-sent-1">Reported. Khulan will follow up.</span>
-  </div>
-  </div>
-</div>
 
   <!-- STEP 2: LOG NEW LEAD -->
   <div class="step-card" id="step-2">
@@ -508,10 +686,26 @@
       <div class="step-icon">📝</div>
       <div>
         <div class="step-title">Log a new client interaction</div>
-        <div class="step-subtitle">Send a voice note or text message describing a meeting or call. Beam extracts everything and asks you to confirm before saving.</div>
+        <div class="step-subtitle" id="step2Subtitle">Send a voice note or text message describing a meeting or call. Beam extracts everything and asks you to confirm before saving.</div>
       </div>
     </div>
     <div class="step-body">
+
+      <!-- Welcome box — shown after auth -->
+      <div class="welcome-box" id="welcomeBox">
+        <div class="welcome-check">✅</div>
+        <div>
+          <div class="welcome-name" id="welcomeName"></div>
+          <div class="welcome-company" id="welcomeCompany"></div>
+        </div>
+      </div>
+
+      <!-- Analytics link — shown after auth -->
+      <div class="analytics-box" id="analyticsBox">
+        <div class="analytics-box-text">Your analytics dashboard is filtered to <strong id="analyticsCompany"></strong></div>
+        <a class="analytics-link" id="analyticsLink" href="https://khulanbak-source.github.io/beam-analytics/" target="_blank">Open dashboard →</a>
+      </div>
+
       <div class="instruction">
         <strong>What to do:</strong> Send a message to @beam_urstory_bot describing a real or fictional client meeting. Include the person's name, what happened, and what they are interested in.
       </div>
@@ -543,8 +737,11 @@
 
       <div class="iframe-section">
         <div class="iframe-label">
-          <div class="iframe-dot"></div>
-          Live CRM — beam leads database
+          <div class="iframe-label-left">
+            <div class="iframe-dot"></div>
+            Live CRM — beam leads database
+          </div>
+          <span class="iframe-company-badge" id="crmBadge"></span>
         </div>
         <iframe src="https://urstory.notion.site/ebd//3265bc947e1980ff816af3b4a804018d?v=3265bc947e19800b8bf2000cc7f5cb8f" height="400" allowfullscreen></iframe>
       </div>
@@ -589,7 +786,7 @@
           📊 Test Drive · Call<br>
           🚗 BMW X3<br>
           💬 X3 авах магадлалтай. Test drive ирэх долоо хоногт.<br><br>
-          Санууллга нэмэх үү?
+          Санулга нэмэх үү?
         </div>
         <div class="msg-bubble out">Засах</div>
         <div class="msg-bubble">✅ CRM-д амжилттай шинэчлэгдлээ.</div>
@@ -602,8 +799,11 @@
 
       <div class="iframe-section">
         <div class="iframe-label">
-          <div class="iframe-dot"></div>
-          Live CRM — verify the update appeared
+          <div class="iframe-label-left">
+            <div class="iframe-dot"></div>
+            Live CRM — verify the update appeared
+          </div>
+          <span class="iframe-company-badge" id="crmBadge2"></span>
         </div>
         <iframe src="https://urstory.notion.site/ebd//3265bc947e1980ff816af3b4a804018d?v=3265bc947e19800b8bf2000cc7f5cb8f" height="400" allowfullscreen></iframe>
       </div>
@@ -647,7 +847,7 @@
           🚗 Mercedes GLE<br>
           📌 Пүрэв 14:00д уулзах<br>
           ⏰ 2026-04-30T14:00<br><br>
-          Санууллга нэмэх үү?
+          Санулга нэмэх үү?
         </div>
         <div class="msg-bubble out">Тийм 14:00</div>
         <div class="msg-bubble">✅ CRM-д хадгалагдлаа. Calendar-т нэмэгдлээ.</div>
@@ -655,13 +855,15 @@
 
       <div class="expect-box">
         <strong>What to look for</strong>
-        A new event should appear in the calendar below at the date and time you specified.
+        A new event should appear in the shared demo calendar below at the date and time you specified.
       </div>
 
       <div class="iframe-section">
         <div class="iframe-label">
-          <div class="iframe-dot"></div>
-          beam demo calendar — live events
+          <div class="iframe-label-left">
+            <div class="iframe-dot"></div>
+            beam demo calendar — live events
+          </div>
         </div>
         <iframe src="https://calendar.google.com/calendar/embed?src=b7f60b9e512e8d953bc74f405822ae94ff9b7a8b60c6855787edc0062a14b456%40group.calendar.google.com&ctz=Asia%2FUlaanbaatar" height="420" scrolling="no"></iframe>
       </div>
@@ -726,7 +928,7 @@
 
       <div class="inner-divider"></div>
 
-      <div class="example-label">Also try: your upcoming actions for the week</div>
+      <div class="example-label">Your upcoming actions for the week</div>
       <div class="msg-bubble-wrap">
         <div class="msg-bubble out">/reminders <span class="msg-copy" onclick="copyMsg(this)">Copy</span></div>
         <div class="msg-bubble">
@@ -760,7 +962,7 @@
     <div class="step-body">
       <div class="congrats-wrap">
         <span class="congrats-emoji">🎉</span>
-        <div class="congrats-title">You have tested the full beam flow.</div>
+        <div class="congrats-title" id="congratsTitle">You have tested the full beam flow.</div>
         <div class="congrats-sub">
           You have seen how beam captures sales conversations, keeps the CRM updated automatically, and tracks next actions without any manual data entry.
         </div>
@@ -776,14 +978,12 @@
         <div class="contact-card">
           <div class="contact-name">Khulan Bat</div>
           <div class="contact-role">Founder, beam / Urstory Studio</div>
-          <a href="mailto:khulan@urstory.studio" class="contact-link">
-            khulan@urstory.studio
-          </a>
+          <a href="mailto:khulan@urstory.studio" class="contact-link">khulan@urstory.studio</a>
         </div>
         <div class="explore-links">
           <a href="/">Back to home</a>
           <a href="/pricing-calculator">Pricing calculator</a>
-          <a href="/analytics">Analytics dashboard</a>
+          <a id="dashboardLink" href="https://khulanbak-source.github.io/beam-analytics/" target="_blank">Analytics dashboard</a>
         </div>
       </div>
     </div>
@@ -802,6 +1002,125 @@
 </footer>
 
 <script>
+const AUTH_ENDPOINT = 'https://n8n.urstory.studio/webhook/beam-analytics';
+
+// Session state
+let session = null;
+
+// ── EMAIL VERIFY ──
+function showEmailVerify() {
+  document.getElementById('approvedBtn').style.display = 'none';
+  const section = document.getElementById('emailVerifySection');
+  section.classList.add('visible');
+  document.getElementById('emailVerifyInput').focus();
+}
+
+async function verifyEmail() {
+  const input = document.getElementById('emailVerifyInput');
+  const email = input.value.trim();
+  const errEl = document.getElementById('evError');
+  const spinner = document.getElementById('evSpinner');
+  const btn = document.getElementById('evBtn');
+
+  errEl.classList.remove('visible');
+  input.classList.remove('error');
+
+  if (!email || !email.includes('@')) {
+    input.classList.add('error');
+    errEl.textContent = 'Please enter a valid email address.';
+    errEl.classList.add('visible');
+    return;
+  }
+
+  btn.disabled = true;
+  btn.textContent = 'Checking…';
+  spinner.classList.add('visible');
+
+  try {
+    const res = await fetch(AUTH_ENDPOINT, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email })
+    });
+
+    if (!res.ok) throw new Error('Server error ' + res.status);
+    const data = await res.json();
+
+    if (!data.success) {
+      throw new Error(data.error || 'Email not found. Make sure you are approved before continuing.');
+    }
+
+    // Store session
+    session = {
+      email,
+      user_name: data.user_name || '',
+      client_name: data.client_name || '',
+      role: data.role || ''
+    };
+
+    onVerified();
+
+  } catch(e) {
+    errEl.textContent = e.message;
+    errEl.classList.add('visible');
+    input.classList.add('error');
+  }
+
+  btn.disabled = false;
+  btn.textContent = 'Verify & continue';
+  spinner.classList.remove('visible');
+}
+
+function onVerified() {
+  const { user_name, client_name } = session;
+
+  // Personalize header
+  if (user_name) {
+    document.getElementById('headerName').textContent = user_name;
+    document.getElementById('headerTag').style.display = 'none';
+  }
+  if (client_name) {
+    document.getElementById('headerCompany').textContent = client_name;
+  }
+  if (user_name || client_name) {
+    document.getElementById('headerUser').classList.add('visible');
+  }
+
+  // Personalize Step 2 welcome box
+  document.getElementById('welcomeName').textContent =
+    user_name ? 'Welcome back, ' + user_name + '!' : 'Welcome!';
+  document.getElementById('welcomeCompany').textContent =
+    client_name ? 'Logged in as ' + client_name + ' · CRM data shown below' : 'Access verified';
+  document.getElementById('welcomeBox').classList.add('visible');
+
+  // Analytics box
+  if (client_name) {
+    document.getElementById('analyticsCompany').textContent = client_name;
+    const analyticsUrl = 'https://khulanbak-source.github.io/beam-analytics/';
+    document.getElementById('analyticsLink').href = analyticsUrl;
+    document.getElementById('analyticsBox').classList.add('visible');
+  }
+
+  // CRM badges
+  if (client_name) {
+    ['crmBadge','crmBadge2'].forEach(id => {
+      const el = document.getElementById(id);
+      el.textContent = client_name;
+      el.classList.add('visible');
+    });
+  }
+
+  // Congrats personalization
+  if (user_name) {
+    document.getElementById('congratsTitle').textContent =
+      user_name + ', you have tested the full beam flow.';
+  }
+
+  // Proceed to step 2
+  nextStep(1);
+}
+
+// ── NAVIGATION ──
 function nextStep(from) {
   const next = from + 1;
   if (next > 6) return;
@@ -816,6 +1135,7 @@ function nextStep(from) {
   window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
+// ── FLAG ──
 function toggleFlag(step) {
   document.getElementById('flag-' + step).classList.toggle('visible');
 }
@@ -829,9 +1149,9 @@ function submitFlag(step) {
   btn.style.display = 'none';
   ta.disabled = true;
   sent.style.display = 'inline';
-  console.log('Flag step ' + step + ':', ta.value);
 }
 
+// ── COPY ──
 function copyMsg(el) {
   const bubble = el.closest('.msg-bubble').cloneNode(true);
   bubble.querySelector('.msg-copy')?.remove();
