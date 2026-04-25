@@ -1,0 +1,1587 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Beam — Pricing & ROI Calculator</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #f6f5f1;
+    --surface: #ffffff;
+    --surface2: #f0ede7;
+    --border: #dedad2;
+    --border-active: #1f3d2b;
+    --text: #2b2b2b;
+    --text-muted: #7a7670;
+    --text-dim: #b8b4ac;
+    --accent: #1f3d2b;
+    --accent2: #1f3d2b;
+    --accent3: #c46a4a;
+    --warn: #c46a4a;
+    --pill-bg: #f0ede7;
+    --pill-active: #1f3d2b;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-size: 14px;
+    line-height: 1.6;
+    min-height: 100vh;
+  }
+
+  /* HEADER */
+  .header {
+    border-bottom: 1px solid var(--border);
+    padding: 24px 40px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: sticky;
+    top: 0;
+    background: rgba(246,245,241,0.96);
+    backdrop-filter: blur(8px);
+    z-index: 100;
+  }
+
+  .logo {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-size: 18px;
+    font-weight: 500;
+    letter-spacing: 0.01em;
+    color: var(--text);
+    display: flex;
+    align-items: center;
+    gap: 0;
+  }
+
+  .logo-bar {
+    color: var(--accent);
+    font-weight: 300;
+    margin: 0 6px 0 8px;
+    font-size: 20px;
+    line-height: 1;
+    opacity: 0.7;
+  }
+
+  .logo span { color: var(--accent); }
+
+  .header-tag {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    color: var(--text-muted);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+
+  /* LAYOUT */
+  .container {
+    max-width: 1280px;
+    margin: 0 auto;
+    padding: 40px;
+    display: grid;
+    grid-template-columns: 1fr 400px;
+    gap: 32px;
+    align-items: start;
+  }
+
+  .config-panel { display: flex; flex-direction: column; gap: 28px; }
+
+  /* SECTION CARDS */
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    overflow: hidden;
+  }
+
+  .card-header {
+    padding: 16px 20px;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .card-step {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px;
+    color: var(--accent);
+    background: rgba(31,61,43,0.08);
+    border: 1px solid rgba(31,61,43,0.18);
+    border-radius: 2px;
+    padding: 2px 8px;
+    letter-spacing: 0.08em;
+  }
+
+  .card-title {
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 0.01em;
+    color: var(--text);
+    font-family: 'Plus Jakarta Sans', sans-serif;
+  }
+
+  .card-body { padding: 20px; }
+
+  /* PILL SELECTORS */
+  .pill-group {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 8px;
+  }
+
+  .pill {
+    cursor: pointer;
+    padding: 7px 14px;
+    border-radius: 2px;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 12px;
+    font-weight: 500;
+    border: 1px solid var(--border);
+    background: var(--pill-bg);
+    color: var(--text-muted);
+    transition: all 0.15s ease;
+    user-select: none;
+    position: relative;
+  }
+
+  .pill:hover { border-color: rgba(74,158,255,0.4); color: var(--text); }
+
+  .pill.active {
+    border-color: var(--accent);
+    background: rgba(31,61,43,0.08);
+    color: var(--accent);
+  }
+
+  .pill.multi.active {
+    border-color: var(--accent3);
+    background: rgba(196,106,74,0.08);
+    color: var(--accent3);
+  }
+
+  .pill .pill-note {
+    display: block;
+    font-size: 9px;
+    color: var(--text-dim);
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    margin-top: 1px;
+    font-weight: 400;
+  }
+
+  .pill.active .pill-note { color: rgba(31,61,43,0.55); }
+  .pill.multi.active .pill-note { color: rgba(196,106,74,0.6); }
+
+  /* SLIDER */
+  .slider-row {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin-top: 12px;
+  }
+
+  .slider-label { font-size: 12px; color: var(--text-muted); min-width: 120px; }
+
+  input[type=range] {
+    flex: 1;
+    -webkit-appearance: none;
+    height: 2px;
+    background: var(--border);
+    border-radius: 1px;
+    outline: none;
+  }
+
+  input[type=range]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    background: var(--accent);
+    cursor: pointer;
+    border: 2px solid var(--bg);
+    box-shadow: 0 0 0 1px var(--accent);
+  }
+
+  .slider-val {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text);
+    min-width: 48px;
+    text-align: right;
+  }
+
+  /* SECTION LABELS */
+  .section-label {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px;
+    color: var(--text-dim);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    margin-bottom: 10px;
+    margin-top: 18px;
+  }
+
+  .section-label:first-child { margin-top: 0; }
+
+  /* TOGGLE */
+  .toggle-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 12px 0;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .toggle-row:last-child { border-bottom: none; }
+
+  .toggle-info { flex: 1; }
+  .toggle-info .t-label { font-size: 13px; font-weight: 500; }
+  .toggle-info .t-sub { font-size: 11px; color: var(--text-muted); margin-top: 2px; }
+
+  .toggle {
+    position: relative;
+    width: 36px;
+    height: 20px;
+    cursor: pointer;
+    flex-shrink: 0;
+    margin-left: 16px;
+  }
+
+  .toggle input { opacity: 0; width: 0; height: 0; }
+
+  .toggle-track {
+    position: absolute;
+    inset: 0;
+    background: #d8d4cc;
+    border-radius: 10px;
+    transition: 0.2s;
+  }
+
+  .toggle input:checked + .toggle-track { background: var(--accent); }
+
+  .toggle-thumb {
+    position: absolute;
+    top: 3px;
+    left: 3px;
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    background: #fff;
+    transition: 0.2s;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.15);
+  }
+
+  .toggle input:checked ~ .toggle-thumb { left: 19px; }
+
+  /* REGION TOGGLE */
+  .region-tabs {
+    display: flex;
+    border: 1px solid var(--border);
+    border-radius: 3px;
+    overflow: hidden;
+    margin-top: 10px;
+    width: fit-content;
+  }
+
+  .region-tab {
+    padding: 8px 20px;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    cursor: pointer;
+    color: var(--text-muted);
+    background: var(--surface2);
+    border: none;
+    transition: all 0.15s;
+    letter-spacing: 0.05em;
+  }
+
+  .region-tab.active {
+    background: var(--accent);
+    color: #fff;
+  }
+
+  /* PROS/CONS */
+  .pro-con-box {
+    margin-top: 10px;
+    padding: 12px;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 3px;
+    font-size: 12px;
+  }
+
+  .pro { color: var(--accent2); }
+  .con { color: var(--accent3); }
+
+  .pro-con-box div { margin: 3px 0; }
+
+  /* RESULTS PANEL */
+  .results-panel {
+    position: sticky;
+    top: 89px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .result-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    overflow: hidden;
+  }
+
+  .result-header {
+    padding: 14px 20px;
+    border-bottom: 1px solid var(--border);
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+  }
+
+  .result-body { padding: 20px; }
+
+  .result-main {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 36px;
+    font-weight: 600;
+    color: var(--text);
+    line-height: 1;
+    margin-bottom: 4px;
+  }
+
+  .result-main span { font-size: 18px; color: var(--text-muted); }
+
+  .result-sub {
+    font-size: 12px;
+    color: var(--text-muted);
+    margin-bottom: 20px;
+  }
+
+  .result-rows { display: flex; flex-direction: column; gap: 0; }
+
+  .result-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    padding: 9px 0;
+    border-bottom: 1px solid var(--border);
+    font-size: 12px;
+  }
+
+  .result-row:last-child { border-bottom: none; }
+
+  .result-row .r-label { color: var(--text-muted); }
+
+  .result-row .r-val {
+    font-family: 'IBM Plex Mono', monospace;
+    font-weight: 500;
+    font-size: 13px;
+  }
+
+  .result-row .r-val.green { color: var(--accent2); }
+  .result-row .r-val.blue { color: var(--accent); }
+  .result-row .r-val.orange { color: var(--warn); }
+  .result-row .r-val.red { color: var(--accent3); }
+
+  /* ROI METER */
+  .roi-meter {
+    margin: 16px 0 8px;
+  }
+
+  .roi-bar-bg {
+    height: 6px;
+    background: var(--border);
+    border-radius: 3px;
+    overflow: hidden;
+  }
+
+  .roi-bar-fill {
+    height: 100%;
+    border-radius: 3px;
+    background: linear-gradient(90deg, var(--accent), var(--accent3));
+    transition: width 0.4s ease;
+    min-width: 0;
+  }
+
+  .roi-label-row {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 6px;
+    font-size: 11px;
+    color: var(--text-muted);
+    font-family: 'IBM Plex Mono', monospace;
+  }
+
+  .roi-big {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 28px;
+    font-weight: 600;
+    color: var(--accent2);
+    margin: 8px 0 2px;
+  }
+
+  /* BREAKDOWN TABLE */
+  .breakdown {
+    font-size: 12px;
+  }
+
+  .breakdown-section {
+    margin-bottom: 16px;
+  }
+
+  .breakdown-section-title {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px;
+    color: var(--accent);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    margin-bottom: 8px;
+    padding-bottom: 6px;
+    border-bottom: 1px solid rgba(31,61,43,0.12);
+  }
+
+  .breakdown-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 5px 0;
+    color: var(--text-muted);
+  }
+
+  .breakdown-row .bv {
+    font-family: 'IBM Plex Mono', monospace;
+    color: var(--text);
+  }
+
+  /* DIFFICULTY */
+  .diff-badge {
+    display: inline-block;
+    padding: 3px 10px;
+    border-radius: 2px;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.05em;
+  }
+
+  .diff-low { background: rgba(31,61,43,0.08); color: var(--accent); border: 1px solid rgba(31,61,43,0.2); }
+  .diff-mid { background: rgba(196,106,74,0.08); color: var(--accent3); border: 1px solid rgba(196,106,74,0.2); }
+  .diff-high { background: rgba(180,40,20,0.08); color: #b42814; border: 1px solid rgba(180,40,20,0.2); }
+
+  /* NOTE BOX */
+  .note-box {
+    background: rgba(31,61,43,0.04);
+    border: 1px solid rgba(31,61,43,0.12);
+    border-radius: 3px;
+    padding: 12px;
+    font-size: 11px;
+    color: var(--text-muted);
+    line-height: 1.6;
+    margin-top: 12px;
+  }
+
+  .note-box strong { color: var(--text); }
+
+  /* TAGS */
+  .tag {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 2px;
+    font-size: 10px;
+    font-family: 'IBM Plex Mono', monospace;
+    background: rgba(31,61,43,0.08);
+    color: var(--accent);
+    border: 1px solid rgba(31,61,43,0.15);
+    margin: 2px;
+  }
+
+  .tag.green {
+    background: rgba(196,106,74,0.08);
+    color: var(--accent3);
+    border-color: rgba(196,106,74,0.15);
+  }
+
+  .divider {
+    height: 1px;
+    background: var(--border);
+    margin: 16px 0;
+  }
+
+  /* ENTERPRISE BADGE */
+  .enterprise-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 10px;
+    background: rgba(31,61,43,0.06);
+    border: 1px solid rgba(31,61,43,0.15);
+    border-radius: 3px;
+    font-size: 11px;
+    color: var(--accent);
+    margin-top: 8px;
+  }
+
+  @media (max-width: 900px) {
+    .container { grid-template-columns: 1fr; padding: 20px; }
+    .results-panel { position: static; }
+    .header { padding: 16px 20px; }
+  }
+
+  /* PDF EXPORT */
+  .pdf-btn {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 18px;
+    background: var(--accent);
+    color: #fff;
+    border: none;
+    border-radius: 3px;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    letter-spacing: 0.03em;
+    transition: opacity 0.15s;
+    width: 100%;
+    justify-content: center;
+    margin-top: 4px;
+  }
+  .pdf-btn:hover { opacity: 0.85; }
+  .pdf-btn svg { flex-shrink: 0; }
+
+  /* PDF PRINT TEMPLATE */
+  #pdfTemplate {
+    display: none;
+    position: fixed;
+    top: -9999px;
+    left: -9999px;
+    width: 794px;
+    background: #fff;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    color: #2b2b2b;
+  }
+
+  @media print {
+    body > *:not(#pdfTemplate) { display: none !important; }
+    #pdfTemplate {
+      display: block !important;
+      position: static !important;
+      top: auto !important;
+      left: auto !important;
+      width: 100% !important;
+    }
+    @page { margin: 0; size: A4; }
+  }
+
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="logo">beam<span class="logo-bar">|</span></div>
+  <div class="header-tag">Pricing & ROI Calculator — v1.0</div>
+</div>
+
+<div class="container">
+  <!-- LEFT: CONFIG -->
+  <div class="config-panel">
+
+    <!-- STEP 1: Company Size -->
+    <div class="card">
+      <div class="card-header">
+        <span class="card-step">01</span>
+        <span class="card-title">Company Profile</span>
+      </div>
+      <div class="card-body">
+        <div class="section-label">Company Size</div>
+        <div class="pill-group">
+          <div class="pill active" data-group="size" data-val="small" onclick="pickOption(this,'size')">
+            Small
+            <span class="pill-note">1–20 employees</span>
+          </div>
+          <div class="pill" data-group="size" data-val="mid" onclick="pickOption(this,'size')">
+            Mid-Market
+            <span class="pill-note">20–200 employees</span>
+          </div>
+          <div class="pill" data-group="size" data-val="large" onclick="pickOption(this,'size')">
+            Enterprise
+            <span class="pill-note">200+ employees</span>
+          </div>
+        </div>
+
+        <div class="section-label" style="margin-top:20px">Sales Representatives (Users)</div>
+        <div class="slider-row">
+          <span class="slider-label">Sales reps</span>
+          <input type="range" id="repsSlider" min="1" max="50" value="5" oninput="updateSlider('reps',this.value)">
+          <span class="slider-val" id="repsVal">5</span>
+        </div>
+        <div class="slider-row">
+          <span class="slider-label">Admin seats</span>
+          <input type="range" id="adminsSlider" min="1" max="10" value="2" oninput="updateSlider('admins',this.value)">
+          <span class="slider-val" id="adminsVal">2</span>
+        </div>
+
+        <div class="section-label" style="margin-top:20px">Region / Pricing</div>
+        <div class="region-tabs">
+          <button class="region-tab active" onclick="setRegion('intl', this)">🌍 International</button>
+          <button class="region-tab" onclick="setRegion('local', this)">🇲🇳 Mongolia</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- STEP 2: Input Channel -->
+    <div class="card">
+      <div class="card-header">
+        <span class="card-step">02</span>
+        <span class="card-title">Input Channel</span>
+      </div>
+      <div class="card-body">
+        <div class="section-label">Where do reps send updates? (choose one)</div>
+        <div class="pill-group">
+          <div class="pill active" data-group="input" data-val="telegram" onclick="pickOption(this,'input')">
+            Telegram
+            <span class="pill-note">Free · Easy setup</span>
+          </div>
+          <div class="pill" data-group="input" data-val="whatsapp" onclick="pickOption(this,'input')">
+            WhatsApp
+            <span class="pill-note">Meta API required</span>
+          </div>
+          <div class="pill" data-group="input" data-val="slack" onclick="pickOption(this,'input')">
+            Slack
+            <span class="pill-note">Free tier / paid plans</span>
+          </div>
+          <div class="pill" data-group="input" data-val="teams" onclick="pickOption(this,'input')">
+            MS Teams
+            <span class="pill-note">Requires M365</span>
+          </div>
+          <div class="pill" data-group="input" data-val="viber" onclick="pickOption(this,'input')">
+            Viber
+            <span class="pill-note">Limited API</span>
+          </div>
+        </div>
+        <div id="inputNote" class="note-box" style="margin-top:14px"></div>
+      </div>
+    </div>
+
+    <!-- STEP 3: Voice STT -->
+    <div class="card">
+      <div class="card-header">
+        <span class="card-step">03</span>
+        <span class="card-title">Voice-to-Text (STT)</span>
+      </div>
+      <div class="card-body">
+        <div class="toggle-row">
+          <div class="toggle-info">
+            <div class="t-label">Enable Voice Input</div>
+            <div class="t-sub">Reps send voice notes instead of typing</div>
+          </div>
+          <label class="toggle">
+            <input type="checkbox" id="voiceToggle" onchange="recalc()">
+            <div class="toggle-track"></div>
+            <div class="toggle-thumb"></div>
+          </label>
+        </div>
+
+        <div id="voiceOptions" style="display:none; margin-top:16px">
+          <div class="section-label">STT Provider</div>
+          <div class="pill-group">
+            <div class="pill active" data-group="stt" data-val="chimege" onclick="pickOption(this,'stt')">
+              Chimege
+              <span class="pill-note">Mongolian-native · ~₮15/call</span>
+            </div>
+            <div class="pill" data-group="stt" data-val="whisper" onclick="pickOption(this,'stt')">
+              Whisper (OpenAI)
+              <span class="pill-note">$0.006/min · multilingual</span>
+            </div>
+            <div class="pill" data-group="stt" data-val="google" onclick="pickOption(this,'stt')">
+              Google STT
+              <span class="pill-note">$0.006/min · GCP</span>
+            </div>
+          </div>
+
+          <div class="slider-row" style="margin-top:16px">
+            <span class="slider-label">Voice notes/rep/day</span>
+            <input type="range" id="voicePerDaySlider" min="1" max="20" value="5" oninput="updateSlider('voicePerDay',this.value)">
+            <span class="slider-val" id="voicePerDayVal">5</span>
+          </div>
+          <div id="sttNote" class="note-box" style="margin-top:12px"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- STEP 4: AI Model -->
+    <div class="card">
+      <div class="card-header">
+        <span class="card-step">04</span>
+        <span class="card-title">AI Model (Reasoning Engine)</span>
+      </div>
+      <div class="card-body">
+        <div class="section-label">Choose AI provider</div>
+        <div class="pill-group">
+          <div class="pill active" data-group="ai" data-val="claude" onclick="pickOption(this,'ai')">
+            Claude (Anthropic)
+            <span class="pill-note">~$3/M tokens in · Best reasoning</span>
+          </div>
+          <div class="pill" data-group="ai" data-val="gpt4o" onclick="pickOption(this,'ai')">
+            GPT-4o (OpenAI)
+            <span class="pill-note">~$2.50/M tokens in</span>
+          </div>
+          <div class="pill" data-group="ai" data-val="copilot" onclick="pickOption(this,'ai')">
+            Copilot (Microsoft)
+            <span class="pill-note">M365 subscription based</span>
+          </div>
+          <div class="pill" data-group="ai" data-val="gemini" onclick="pickOption(this,'ai')">
+            Gemini (Google)
+            <span class="pill-note">$1.25/M tokens · GCP</span>
+          </div>
+        </div>
+        <div id="aiNote" class="note-box" style="margin-top:14px"></div>
+      </div>
+    </div>
+
+    <!-- STEP 5: CRM / Output -->
+    <div class="card">
+      <div class="card-header">
+        <span class="card-step">05</span>
+        <span class="card-title">CRM Output</span>
+      </div>
+      <div class="card-body">
+        <div class="section-label">Target CRM system</div>
+        <div class="pill-group">
+          <div class="pill active" data-group="crm" data-val="notion" onclick="pickOption(this,'crm')">
+            Notion
+            <span class="pill-note">~$8–16/seat/mo</span>
+          </div>
+          <div class="pill" data-group="crm" data-val="hubspot" onclick="pickOption(this,'crm')">
+            HubSpot
+            <span class="pill-note">Free–$45/seat/mo</span>
+          </div>
+          <div class="pill" data-group="crm" data-val="salesforce" onclick="pickOption(this,'crm')">
+            Salesforce
+            <span class="pill-note">$25–$300/seat/mo</span>
+          </div>
+          <div class="pill" data-group="crm" data-val="airtable" onclick="pickOption(this,'crm')">
+            Airtable
+            <span class="pill-note">~$10–20/seat/mo</span>
+          </div>
+        </div>
+
+        <div style="margin-top:16px">
+          <div class="toggle-row">
+            <div class="toggle-info">
+              <div class="t-label">Enterprise / Existing License</div>
+              <div class="t-sub">Company already pays for this CRM</div>
+            </div>
+            <label class="toggle">
+              <input type="checkbox" id="crmEnterprise" onchange="recalc()">
+              <div class="toggle-track"></div>
+              <div class="toggle-thumb"></div>
+            </label>
+          </div>
+        </div>
+        <div id="crmNote" class="note-box" style="margin-top:12px"></div>
+      </div>
+    </div>
+
+    <!-- STEP 6: ROI Inputs -->
+    <div class="card">
+      <div class="card-header">
+        <span class="card-step">06</span>
+        <span class="card-title">ROI Assumptions</span>
+      </div>
+      <div class="card-body">
+
+        <div class="section-label">ROI Mode</div>
+        <div class="pill-group">
+          <div class="pill active" data-group="roiMode" data-val="labor" onclick="pickOption(this,'roiMode')">
+            Labor Savings
+            <span class="pill-note">Time saved x hourly rate</span>
+          </div>
+          <div class="pill" data-group="roiMode" data-val="revenue" onclick="pickOption(this,'roiMode')">
+            Revenue at Stake
+            <span class="pill-note">Missed deals prevented</span>
+          </div>
+          <div class="pill" data-group="roiMode" data-val="both" onclick="pickOption(this,'roiMode')">
+            Combined
+            <span class="pill-note">Labor + revenue</span>
+          </div>
+        </div>
+
+        <div id="laborInputs" style="margin-top:16px">
+          <div class="section-label">Labor Savings Inputs</div>
+          <div class="slider-row">
+            <span class="slider-label">Avg. hourly salary</span>
+            <input type="range" id="salarySlider" min="3" max="60" value="9" oninput="updateSlider('salary',this.value)">
+            <span class="slider-val" id="salaryVal">$9</span>
+          </div>
+          <div class="slider-row">
+            <span class="slider-label">Logs per rep / day</span>
+            <input type="range" id="logsSlider" min="2" max="20" value="6" oninput="updateSlider('logs',this.value)">
+            <span class="slider-val" id="logsVal">6</span>
+          </div>
+          <div class="slider-row">
+            <span class="slider-label">Min saved per log</span>
+            <input type="range" id="timeSavedSlider" min="2" max="30" value="8" oninput="updateSlider('timeSaved',this.value)">
+            <span class="slider-val" id="timeSavedVal">8 min</span>
+          </div>
+        </div>
+
+        <div id="revenueInputs" style="margin-top:16px; display:none">
+          <div class="section-label">Revenue at Stake Inputs</div>
+          <div class="slider-row">
+            <span class="slider-label">Avg. deal value</span>
+            <input type="range" id="dealValueSlider" min="500" max="500000" step="500" value="50000" oninput="updateSlider('dealValue',this.value)">
+            <span class="slider-val" id="dealValueVal">$50k</span>
+          </div>
+          <div class="slider-row">
+            <span class="slider-label">Deals / rep / month</span>
+            <input type="range" id="dealsSlider" min="1" max="30" value="8" oninput="updateSlider('deals',this.value)">
+            <span class="slider-val" id="dealsVal">8</span>
+          </div>
+          <div class="slider-row">
+            <span class="slider-label">% lost to no follow-up</span>
+            <input type="range" id="missRateSlider" min="1" max="30" value="5" oninput="updateSlider('missRate',this.value)">
+            <span class="slider-val" id="missRateVal">5%</span>
+          </div>
+          <div class="slider-row">
+            <span class="slider-label">% recovered by Beam</span>
+            <input type="range" id="recoverRateSlider" min="10" max="80" value="40" oninput="updateSlider('recoverRate',this.value)">
+            <span class="slider-val" id="recoverRateVal">40%</span>
+          </div>
+          <div class="note-box" style="margin-top:12px">
+            <strong>Logic:</strong> Reps x deals/mo x avg deal x miss rate x recovery rate = monthly revenue Beam protects by ensuring no lead falls through the cracks.
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- STEP 7: Support Model -->
+    <div class="card">
+      <div class="card-header">
+        <span class="card-step">07</span>
+        <span class="card-title">Support Model</span>
+      </div>
+      <div class="card-body">
+        <div class="section-label">How does the client want ongoing support?</div>
+        <div class="pill-group">
+          <div class="pill active" data-group="supportModel" data-val="retainer" onclick="pickOption(this,'supportModel')">
+            Retainer
+            <span class="pill-note">Fixed monthly · all small changes included</span>
+          </div>
+          <div class="pill" data-group="supportModel" data-val="ticket" onclick="pickOption(this,'supportModel')">
+            Ticket-based
+            <span class="pill-note">₮50k / $15 per change request</span>
+          </div>
+          <div class="pill" data-group="supportModel" data-val="none" onclick="pickOption(this,'supportModel')">
+            Setup only
+            <span class="pill-note">No ongoing support</span>
+          </div>
+        </div>
+        <div id="supportNote" class="note-box" style="margin-top:14px"></div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- RIGHT: RESULTS -->
+  <div class="results-panel">
+
+    <!-- DIFFICULTY -->
+    <div class="result-card">
+      <div class="result-header">Implementation Complexity</div>
+      <div class="result-body">
+        <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:12px">
+          <span id="diffBadge" class="diff-badge diff-low">LOW</span>
+          <span id="diffEst" style="font-family:'IBM Plex Mono',monospace; font-size:11px; color:var(--text-muted)">Est. 1–2 weeks</span>
+        </div>
+        <div id="diffDetails" class="breakdown" style="color:var(--text-muted); font-size:12px; line-height:1.7"></div>
+      </div>
+    </div>
+
+    <!-- COST SUMMARY -->
+    <div class="result-card">
+      <div class="result-header">Monthly Cost Estimate</div>
+      <div class="result-body">
+        <div class="result-main" id="totalMonthly"><span>$</span>0</div>
+        <div class="result-sub" id="totalSub">/month total</div>
+
+        <div class="result-rows" id="costRows"></div>
+
+        <div class="divider"></div>
+        <div style="display:flex; justify-content:space-between; font-size:12px; color:var(--text-muted)">
+          <span>One-time setup fee</span>
+          <span id="setupFee" style="font-family:'IBM Plex Mono',monospace; font-weight:600; font-size:14px; color:var(--text)">$0</span>
+        </div>
+        <div style="display:flex; justify-content:space-between; font-size:12px; color:var(--text-muted); margin-top:8px">
+          <span id="retainerLabel">Monthly retainer</span>
+          <span id="retainerFee" style="font-family:'IBM Plex Mono',monospace; font-weight:600; font-size:13px; color:var(--accent)">$0</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- ROI -->
+    <div class="result-card">
+      <div class="result-header">ROI Analysis</div>
+      <div class="result-body">
+        <div style="font-size:11px; color:var(--text-muted); margin-bottom:4px" id="roiSavedLabel">Monthly Value Saved</div>
+        <div class="roi-big" id="roiSaved">$0</div>
+        <div class="roi-meter">
+          <div class="roi-bar-bg">
+            <div class="roi-bar-fill" id="roiBar" style="width:0%"></div>
+          </div>
+          <div class="roi-label-row">
+            <span>Cost</span>
+            <span id="roiRatioLabel">0×</span>
+            <span>Value</span>
+          </div>
+        </div>
+
+        <div class="result-rows">
+          <div class="result-row">
+            <span class="r-label">Hours saved / rep / month</span>
+            <span class="r-val blue" id="hoursSaved">—</span>
+          </div>
+          <div class="result-row">
+            <span class="r-label">Payback period</span>
+            <span class="r-val orange" id="payback">—</span>
+          </div>
+          <div class="result-row">
+            <span class="r-label">ROI ratio</span>
+            <span class="r-val green" id="roiRatio">—</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- FULL BREAKDOWN -->
+    <div class="result-card">
+      <div class="result-header">Detailed Breakdown</div>
+      <div class="result-body">
+        <div id="fullBreakdown"></div>
+      </div>
+    </div>
+
+    <!-- PDF EXPORT -->
+    <div class="result-card">
+      <div class="result-header">Export</div>
+      <div class="result-body">
+        <div style="font-size:11px; color:var(--text-muted); margin-bottom:12px; line-height:1.6;">
+          Generates a 1-page PDF summary with your selected tech stack, cost estimate, and ROI analysis. Ready to attach to a proposal.
+        </div>
+        <button class="pdf-btn" onclick="generatePDF()">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+            <polyline points="7 10 12 15 17 10"/>
+            <line x1="12" y1="15" x2="12" y2="3"/>
+          </svg>
+          Download PDF Summary
+        </button>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- PDF TEMPLATE -->
+<div id="pdfTemplate"></div>
+
+
+<script>
+// ───────────── STATE ─────────────
+const state = {
+  size: 'small',
+  reps: 5,
+  admins: 2,
+  region: 'intl',
+  input: 'telegram',
+  voice: false,
+  stt: 'chimege',
+  voicePerDay: 5,
+  ai: 'claude',
+  crm: 'notion',
+  crmEnterprise: false,
+  salary: 9,
+  roiMode: 'labor',
+  supportModel: 'retainer',
+  dealValue: 50000,
+  deals: 8,
+  missRate: 5,
+  recoverRate: 40,
+  logs: 6,
+  timeSaved: 8
+};
+
+// ───────────── DATA MAPS ─────────────
+
+const inputData = {
+  telegram: {
+    note: '✅ Free API, no message fees. Fast to set up via Telegram Bot API. Best choice for lean teams. Already battle-tested with Beam.',
+    setupCost: 0, monthlyCost: 0, difficulty: 0, time: '3–5 days'
+  },
+  whatsapp: {
+    note: '⚠️ Requires Meta Business API. Per-message pricing (~$0.005–$0.015/msg). Approval process adds 1–2 weeks. High adoption in consumer markets.',
+    setupCost: 200, monthlyCost: 30, difficulty: 2, time: '3–5 weeks'
+  },
+  slack: {
+    note: '⚙️ Slack free tier limited to 90-day history. Paid from $7.25/seat/mo. Easy API, good for tech teams already on Slack.',
+    setupCost: 100, monthlyCost: 0, difficulty: 1, time: '1–2 weeks'
+  },
+  teams: {
+    note: '🏢 Requires Microsoft 365 subscription ($6–$22/user/mo). Complex bot registration. Best when company already uses M365 — marginal extra cost.',
+    setupCost: 400, monthlyCost: 0, difficulty: 3, time: '3–6 weeks'
+  },
+  viber: {
+    note: '🔴 Viber API (Rakuten) is limited and poorly documented. Webhook support exists but bot functionality is constrained. Not recommended for production.',
+    setupCost: 150, monthlyCost: 10, difficulty: 3, time: '4–6 weeks'
+  }
+};
+
+const aiData = {
+  claude: {
+    note: '🧠 Best structured-extraction reasoning. Haiku model (~$0.25/M tokens) excellent for CRM logging at low cost. Recommended for Beam.',
+    costPerLog: 0.003, enterprise: false,
+    pros: ['Best reasoning for structured data', 'Low cost at Haiku tier', 'No lock-in to Microsoft/Google'],
+    cons: ['Separate API subscription', 'No bundled enterprise deal']
+  },
+  gpt4o: {
+    note: '🤖 Strong all-rounder. GPT-4o-mini is cost-effective (~$0.15/M). Wide ecosystem. Compatible with most tools.',
+    costPerLog: 0.003, enterprise: false,
+    pros: ['Wide tool ecosystem', 'Cheaper mini model available', 'Good multilingual support'],
+    cons: ['OpenAI pricing can spike', 'No enterprise bundle unless Azure']
+  },
+  copilot: {
+    note: '🏢 If company has Microsoft 365 Copilot (~$30/user/mo), AI calls can be $0 marginal cost. Only viable if M365 is already paid.',
+    costPerLog: 0, enterprise: true,
+    pros: ['$0 marginal if M365 Copilot active', 'Deep MS ecosystem integration', 'Teams-native'],
+    cons: ['Requires M365 Copilot license ($30/user)', 'Less flexible API access', 'Complex to orchestrate in n8n']
+  },
+  gemini: {
+    note: '🔵 Google Gemini 1.5 Flash is extremely cheap (~$0.075/M tokens). Best if company runs on Google Workspace.',
+    costPerLog: 0.001, enterprise: true,
+    pros: ['Very low cost', 'Google Workspace integration', 'Free tier available'],
+    cons: ['Less proven for CRM extraction', 'Enterprise bundle needs GCP contract']
+  }
+};
+
+const crmData = {
+  notion: {
+    perSeat: 8, free: false,
+    note: 'Notion Plus: ~$8–16/seat/mo. Free tier limited. Good for prototype → switch to real CRM at scale.',
+    enterpriseNote: 'Enterprise plan negotiated per org. If already subscribed, Beam integration is $0 extra CRM cost.',
+    integration: 1
+  },
+  hubspot: {
+    perSeat: 0, free: true,
+    note: 'HubSpot CRM is free for unlimited contacts. Paid seats for Sales Hub features from $45/seat/mo. Free tier sufficient for basic logging.',
+    enterpriseNote: 'If on Sales Hub Enterprise, API limits are removed — no extra cost for Beam.',
+    integration: 2
+  },
+  salesforce: {
+    perSeat: 75, free: false,
+    note: 'Salesforce Essentials ~$25/seat/mo, Professional $75/seat/mo. Most powerful but complex API integration.',
+    enterpriseNote: 'Enterprise/Unlimited already paid — Beam adds no CRM cost. API integration complexity is higher.',
+    integration: 3
+  },
+  airtable: {
+    perSeat: 10, free: false,
+    note: 'Airtable Free tier limited. Plus plan ~$10/seat/mo. Flexible, API-friendly. Good middle ground.',
+    enterpriseNote: 'Enterprise plan covers unlimited automation — Beam would run with no marginal CRM cost.',
+    integration: 1
+  }
+};
+
+const supportData = {
+  retainer: {
+    note: '✅ Recommended. Fixed monthly fee covers small changes, prompt tuning, CRM field updates, and priority response. n8n infrastructure included.',
+    pros: ['Predictable monthly cost', 'Bug fixes and small changes included', 'n8n hosting and infrastructure covered', 'Priority response when something breaks'],
+    cons: ['Minimum 3-month engagement', 'Covers small changes only — new modules or major features quoted separately']
+  },
+  ticket: {
+    note: '🎫 Per-ticket pricing: ₮50,000 / $15 per scoped change request. Bug fixes always free. New modules quoted separately. No monthly commitment required.',
+    pros: ['Pay only when you request a change', 'No monthly commitment', 'Fixed price per ticket — no hourly estimates', 'Bug fixes always free'],
+    cons: ['n8n hosting billed separately (~$10/mo)', 'Response time slower than retainer', 'Each new module quoted separately']
+  },
+  none: {
+    note: '⚙️ ⚠️ Setup only. Beam builds, configures, and launches your workflow. No ongoing changes or support included after handover. Bug fixes and new changes billed at ticket rate.',
+    pros: ['Lowest upfront cost', 'Good fit for short pilots or proofs of concept', 'No monthly commitment'],
+    cons: ['No included support after launch', 'Infrastructure hosting billed separately (~$10/mo)', 'Any change after launch billed at ticket rate']
+  }
+};
+
+const sttData = {
+  chimege: {
+    note: 'Mongolian-native STT. Priced at ₮3,000/hour = ₮50/min. A 60s voice note ≈ ₮50 (~$0.014). Best accuracy for Mongolian-language reps.',
+    costPerCall: 0.014
+  },
+  whisper: {
+    note: 'OpenAI Whisper API: $0.006/min. 60s note = $0.006. Strong multilingual, handles accents well.',
+    costPerCall: 0.006
+  },
+  google: {
+    note: 'Google Cloud STT: $0.006/min (Standard). $0.009/min (Medical/Enhanced). First 60min/month free.',
+    costPerCall: 0.006
+  }
+};
+
+// ───────────── SELECTORS ─────────────
+
+function pickOption(el, group) {
+  document.querySelectorAll(`[data-group="${group}"]`).forEach(p => p.classList.remove('active', 'multi'));
+  el.classList.add('active');
+  state[group] = el.dataset.val;
+  recalc();
+}
+
+function updateSlider(key, val) {
+  state[key] = +val;
+  let display = val;
+  if (key === 'salary') display = '$' + val;
+  else if (key === 'timeSaved') display = val + ' min';
+  else if (key === 'missRate' || key === 'recoverRate') display = val + '%';
+  else if (key === 'dealValue') display = +val >= 1000 ? '$' + (+val/1000).toFixed(0) + 'k' : '$' + val;
+  document.getElementById(key + 'Val').textContent = display;
+  // show/hide ROI panels
+  if (key === 'roiMode' || true) updateRoiPanels();
+  recalc();
+}
+
+function updateRoiPanels() {
+  const mode = state.roiMode;
+  document.getElementById('laborInputs').style.display = (mode === 'labor' || mode === 'both') ? 'block' : 'none';
+  document.getElementById('revenueInputs').style.display = (mode === 'revenue' || mode === 'both') ? 'block' : 'none';
+}
+
+function setRegion(r, el) {
+  document.querySelectorAll('.region-tab').forEach(t => t.classList.remove('active'));
+  el.classList.add('active');
+  state.region = r;
+  recalc();
+}
+
+document.getElementById('voiceToggle').addEventListener('change', function() {
+  state.voice = this.checked;
+  document.getElementById('voiceOptions').style.display = this.checked ? 'block' : 'none';
+  recalc();
+});
+
+document.getElementById('crmEnterprise').addEventListener('change', function() {
+  state.crmEnterprise = this.checked;
+  recalc();
+});
+
+// ───────────── CALC ─────────────
+
+function recalc() {
+  updateRoiPanels();
+  // Support model note
+  const sup = supportData[state.supportModel];
+  if (sup) {
+    let supHtml = sup.note + '<div class="pro-con-box" style="margin-top:10px">';
+    sup.pros.forEach(p => supHtml += `<div class="pro">✓ ${p}</div>`);
+    sup.cons.forEach(c => supHtml += `<div class="con">✗ ${c}</div>`);
+    supHtml += '</div>';
+    updateEl('supportNote', supHtml);
+  }
+  const totalUsers = state.reps + state.admins;
+  const workDays = 22;
+  const isLocal = state.region === 'local';
+  const fx = 3450; // MNT per USD
+
+  // --- INPUT CHANNEL ---
+  const inp = inputData[state.input];
+  updateEl('inputNote', inp.note);
+
+  // --- AI ---
+  const ai = aiData[state.ai];
+  let aiNote = ai.note;
+  if (ai.enterprise) aiNote += '\n\n💡 If your company already has an enterprise license for this provider, AI costs may be $0 marginal.';
+  updateEl('aiNote', aiNote.replace(/\n\n/g, '<br><br>'));
+  
+  const aiMonthly = ai.costPerLog * state.reps * state.logs * workDays;
+
+  // --- STT ---
+  let sttMonthly = 0;
+  if (state.voice) {
+    const stt = sttData[state.stt];
+    sttMonthly = stt.costPerCall * state.voicePerDay * state.reps * workDays;
+    updateEl('sttNote', stt.note);
+  }
+
+  // --- CRM ---
+  const crm = crmData[state.crm];
+  let crmMonthly = state.crmEnterprise ? 0 : (crm.free ? 0 : crm.perSeat * totalUsers);
+  updateEl('crmNote', state.crmEnterprise ? 
+    `<span style="color:var(--accent2)">✅ Enterprise/existing license detected</span><br>${crm.enterpriseNote}` : 
+    crm.note
+  );
+
+  // --- Beam Service ---
+  const setupFees = { intl: { small: 2500, mid: 5000, large: 12000 }, local: { small: 1250, mid: 2500, large: 6000 } };
+  const retainerFees = { intl: { small: 500, mid: 1200, large: 3000 }, local: { small: 250, mid: 600, large: 1500 } };
+  const setupFee = setupFees[state.region][state.size];
+  const retainerFee = retainerFees[state.region][state.size];
+
+  // --- n8n (self-hosted or cloud) ---
+  const n8nMonthly = state.reps <= 5 ? 0 : (state.reps <= 20 ? 20 : 50);
+
+  // --- Total ---
+  const totalMonthly = aiMonthly + sttMonthly + crmMonthly + n8nMonthly + inp.monthlyCost;
+
+  // --- ROI ---
+  const minPerMonth = state.timeSaved * state.logs * workDays;
+  const hoursSaved = (minPerMonth / 60);
+  const laborSaved = hoursSaved * state.reps * state.salary;
+  // Revenue at stake
+  const revenueSaved = state.reps * state.deals * state.dealValue * (state.missRate/100) * (state.recoverRate/100);
+  const totalValueSaved =
+    state.roiMode === 'labor' ? laborSaved :
+    state.roiMode === 'revenue' ? revenueSaved :
+    laborSaved + revenueSaved;
+  const roiRatio = totalMonthly > 0 ? (totalValueSaved / totalMonthly) : 99;
+  const paybackMonths = setupFee / Math.max(totalValueSaved - totalMonthly, 1);
+
+  // --- Difficulty ---
+  const diffScore = inp.difficulty + crm.integration + (state.voice ? 1 : 0) + (state.ai === 'copilot' ? 2 : 0) + (state.ai === 'teams' ? 2 : 0);
+  let diffLabel, diffClass, diffTime;
+  if (diffScore <= 2) { diffLabel = 'LOW'; diffClass = 'diff-low'; diffTime = '1–2 weeks'; }
+  else if (diffScore <= 5) { diffLabel = 'MEDIUM'; diffClass = 'diff-mid'; diffTime = '2–4 weeks'; }
+  else { diffLabel = 'HIGH'; diffClass = 'diff-high'; diffTime = '4–8 weeks'; }
+
+  const diffDetails = `Integration complexity based on:<br>
+    • Input channel: ${['Simple','Moderate','Complex','Very complex'][inp.difficulty]}<br>
+    • CRM integration: ${['Simple','Moderate','Complex'][crm.integration - 1]}<br>
+    • Voice/STT: ${state.voice ? 'Adds 3–5 days' : 'Not included'}<br>
+    • AI provider: ${state.ai === 'copilot' || state.ai === 'teams' ? 'Enterprise setup adds complexity' : 'Standard API'}`;
+
+  // ── RENDER ──
+
+  // Difficulty
+  const db = document.getElementById('diffBadge');
+  db.textContent = diffLabel;
+  db.className = `diff-badge ${diffClass}`;
+  document.getElementById('diffEst').textContent = `Est. ${diffTime}`;
+  updateEl('diffDetails', diffDetails);
+
+  // Cost summary
+  const fmt = v => '$' + v.toFixed(0);
+  document.getElementById('totalMonthly').innerHTML = `<span>$</span>${totalMonthly.toFixed(0)}`;
+  document.getElementById('totalSub').textContent = `/month · ${totalUsers} total users`;
+  document.getElementById('setupFee').textContent = fmt(setupFee);
+  const retainerDisplay = state.supportModel === 'retainer'
+    ? fmt(retainerFee) + '/mo'
+    : state.supportModel === 'ticket'
+    ? '₮50k / $15 per ticket'
+    : 'Not included';
+  document.getElementById('retainerFee').textContent = retainerDisplay;
+  // Update retainer label
+  const retainerLabel = document.getElementById('retainerLabel');
+  if (retainerLabel) {
+    retainerLabel.textContent = state.supportModel === 'retainer'
+      ? 'Monthly retainer'
+      : state.supportModel === 'ticket'
+      ? 'Support (ticket-based)'
+      : 'Support';
+  }
+
+  const costRowsData = [
+    { label: 'AI model (API)', val: fmt(aiMonthly), cls: 'blue' },
+    { label: 'Voice STT', val: state.voice ? fmt(sttMonthly) : '—', cls: '' },
+    { label: `CRM · ${state.crm}${state.crmEnterprise ? ' (enterprise)' : ''}`, val: crmMonthly === 0 ? '✓ included' : fmt(crmMonthly), cls: crmMonthly === 0 ? 'green' : '' },
+    { label: 'Automation (n8n)', val: n8nMonthly === 0 ? 'Free' : fmt(n8nMonthly), cls: '' },
+    { label: `Input · ${state.input}${inp.monthlyCost > 0 ? '' : ''}`, val: inp.monthlyCost === 0 ? 'Free' : fmt(inp.monthlyCost), cls: '' },
+  ];
+
+  document.getElementById('costRows').innerHTML = costRowsData.map(r =>
+    `<div class="result-row"><span class="r-label">${r.label}</span><span class="r-val ${r.cls}">${r.val}</span></div>`
+  ).join('');
+
+  // ROI
+  document.getElementById('roiSaved').textContent = '$' + totalValueSaved.toFixed(0);
+  document.getElementById('hoursSaved').textContent = (hoursSaved).toFixed(1) + ' hrs';
+  document.getElementById('payback').textContent = paybackMonths.toFixed(1) + ' months';
+  document.getElementById('roiRatio').textContent = roiRatio.toFixed(1) + '×';
+  document.getElementById('roiRatioLabel').textContent = roiRatio.toFixed(1) + '×';
+  const barPct = Math.min((totalValueSaved / (totalValueSaved + totalMonthly)) * 100, 100);
+  document.getElementById('roiBar').style.width = barPct + '%';
+
+  // Full breakdown
+  const aiInfo = aiData[state.ai];
+  document.getElementById('fullBreakdown').innerHTML = `
+    <div class="breakdown-section">
+      <div class="breakdown-section-title">AI Provider · ${state.ai}</div>
+      <div class="breakdown-row"><span>Monthly AI API cost</span><span class="bv">${fmt(aiMonthly)}</span></div>
+      <div class="breakdown-row"><span>Cost per log entry</span><span class="bv">$${ai.costPerLog.toFixed(4)}</span></div>
+      <div class="breakdown-row"><span>Logs processed/month</span><span class="bv">${(state.reps * state.logs * workDays).toLocaleString()}</span></div>
+      ${ai.enterprise ? `<div class="enterprise-row">⚡ Enterprise bundle may cover this cost</div>` : ''}
+      <div class="pro-con-box" style="margin-top:8px">
+        ${aiInfo.pros.map(p => `<div class="pro">✓ ${p}</div>`).join('')}
+        ${aiInfo.cons.map(c => `<div class="con">✗ ${c}</div>`).join('')}
+      </div>
+    </div>
+    ${state.voice ? `
+    <div class="breakdown-section">
+      <div class="breakdown-section-title">Voice STT · ${state.stt}</div>
+      <div class="breakdown-row"><span>Monthly STT cost</span><span class="bv">${fmt(sttMonthly)}</span></div>
+      <div class="breakdown-row"><span>Voice notes/month</span><span class="bv">${(state.voicePerDay * state.reps * workDays).toLocaleString()}</span></div>
+      <div class="breakdown-row"><span>Cost per call</span><span class="bv">$${sttData[state.stt].costPerCall.toFixed(4)}</span></div>
+      ${state.stt === 'chimege' ? `<div class="note-box" style="margin-top:8px">Chimege pricing: ₮3,000/hr = ₮50/min. A 60s note ≈ ₮50 = $0.014 USD. Source: Chimege STT-Long API.</div>` : ''}
+    </div>` : ''}
+    <div class="breakdown-section">
+      <div class="breakdown-section-title">CRM · ${state.crm}</div>
+      <div class="breakdown-row"><span>Seats (${totalUsers} users)</span><span class="bv">${state.crmEnterprise ? 'Enterprise' : (crm.free ? 'Free tier' : `$${crm.perSeat}/seat`)}</span></div>
+      <div class="breakdown-row"><span>Monthly CRM cost</span><span class="bv">${crmMonthly === 0 ? '$0 (covered)' : fmt(crmMonthly)}</span></div>
+      <div class="breakdown-row"><span>API integration</span><span class="bv">${['','Simple','Moderate','Complex'][crm.integration]}</span></div>
+    </div>
+    <div class="breakdown-section">
+      <div class="breakdown-section-title">Beam Service Fees</div>
+      <div class="breakdown-row"><span>Setup fee (one-time)</span><span class="bv">${fmt(setupFee)}</span></div>
+      <div class="breakdown-row"><span>Support model</span><span class="bv">${{retainer:'Retainer',ticket:'Ticket-based',none:'None'}[state.supportModel]}</span></div>
+      ${state.supportModel === 'retainer' ? `<div class="breakdown-row"><span>Monthly retainer</span><span class="bv" style="color:var(--accent)">${fmt(retainerFee)}/mo</span></div>
+      <div class="breakdown-row"><span>Includes</span><span class="bv">Fixes, tuning, n8n hosting</span></div>` : ''}
+      ${state.supportModel === 'ticket' ? `<div class="breakdown-row"><span>Per ticket</span><span class="bv">₮50,000 / $15</span></div>
+      <div class="breakdown-row"><span>n8n hosting</span><span class="bv">~$20–50/mo (billed separately)</span></div>
+      <div class="breakdown-row"><span>Bug fixes</span><span class="bv">Always free</span></div>` : ''}
+      ${state.supportModel === 'none' ? `<div class="breakdown-row"><span>Post-setup support</span><span class="bv" style="color:var(--accent3)">Not included</span></div><div class="breakdown-row"><span>n8n hosting</span><span class="bv" style="color:var(--accent3)">~$20–50/mo (client responsibility)</span></div><div class="breakdown-row"><span>Infrastructure</span><span class="bv">Discuss hosting arrangement at kickoff</span></div>` : ''}
+      ${isLocal ? `<div class="note-box" style="margin-top:8px">Mongolia pricing applied (50% of international). All amounts in USD.</div>` : ''}
+    </div>
+    <div class="breakdown-section">
+      <div class="breakdown-section-title">ROI Calculation · ${state.roiMode === 'labor' ? 'Labor Savings' : state.roiMode === 'revenue' ? 'Revenue at Stake' : 'Combined'}</div>
+      ${state.roiMode !== 'revenue' ? `
+      <div class="breakdown-row"><span>Hours saved/rep/mo</span><span class="bv">${hoursSaved.toFixed(1)} hrs</span></div>
+      <div class="breakdown-row"><span>Hourly rate</span><span class="bv">$${state.salary}/hr</span></div>
+      <div class="breakdown-row"><span>Monthly labor saved</span><span class="bv" style="color:var(--accent2)">${fmt(laborSaved)}</span></div>
+      ` : ''}
+      ${state.roiMode !== 'labor' ? `
+      <div class="breakdown-row"><span>Deals/rep/mo</span><span class="bv">${state.deals}</span></div>
+      <div class="breakdown-row"><span>Avg deal value</span><span class="bv">$${state.dealValue.toLocaleString()}</span></div>
+      <div class="breakdown-row"><span>Lost to no follow-up</span><span class="bv">${state.missRate}%</span></div>
+      <div class="breakdown-row"><span>Recovered by Beam</span><span class="bv">${state.recoverRate}%</span></div>
+      <div class="breakdown-row"><span>Revenue protected/mo</span><span class="bv" style="color:var(--accent3)">${fmt(revenueSaved)}</span></div>
+      ` : ''}
+      <div class="breakdown-row" style="border-top:1px solid var(--border); margin-top:4px; padding-top:8px"><span><strong>Total value saved/mo</strong></span><span class="bv" style="color:var(--accent2); font-size:14px">${fmt(totalValueSaved)}</span></div>
+    </div>
+  `;
+}
+
+function updateEl(id, html) {
+  const el = document.getElementById(id);
+  if (el) el.innerHTML = html;
+}
+
+// Init
+recalc();
+
+
+// ───────────── PDF EXPORT ─────────────
+function generatePDF() {
+  const s = state;
+  const inp = inputData[s.input];
+  const ai = aiData[s.ai];
+  const crm = crmData[s.crm];
+  const stt = s.voice ? sttData[s.stt] : null;
+  const workDays = 22;
+  const fx = 3450;
+  const isLocal = s.region === 'local';
+  const totalUsers = s.reps + s.admins;
+
+  // Recalculate values
+  const aiMonthly = ai.costPerLog * s.reps * s.logs * workDays;
+  const sttMonthly = s.voice ? stt.costPerCall * s.voicePerDay * s.reps * workDays : 0;
+  const crmMonthly = s.crmEnterprise ? 0 : (crm.free ? 0 : crm.perSeat * totalUsers);
+  const n8nMonthly = s.reps <= 5 ? 0 : (s.reps <= 20 ? 20 : 50);
+  const inputMonthly = inp.monthlyCost;
+  const totalMonthly = aiMonthly + sttMonthly + crmMonthly + n8nMonthly + inputMonthly;
+
+  const setupFees = { intl: { small: 2500, mid: 5000, large: 12000 }, local: { small: 1250, mid: 2500, large: 6000 } };
+  const retainerFees = { intl: { small: 500, mid: 1200, large: 3000 }, local: { small: 250, mid: 600, large: 1500 } };
+  const setupFee = setupFees[s.region][s.size];
+  const retainerFee = retainerFees[s.region][s.size];
+
+  const minPerMonth = s.timeSaved * s.logs * workDays;
+  const hoursSaved = minPerMonth / 60;
+  const laborSaved = hoursSaved * s.reps * s.salary;
+  const revenueSaved = s.reps * s.deals * s.dealValue * (s.missRate/100) * (s.recoverRate/100);
+  const totalValueSaved = s.roiMode === 'labor' ? laborSaved : s.roiMode === 'revenue' ? revenueSaved : laborSaved + revenueSaved;
+  const roiRatio = totalMonthly > 0 ? (totalValueSaved / totalMonthly) : 99;
+  const paybackMonths = setupFee / Math.max(totalValueSaved - totalMonthly, 1);
+
+  const fmt = v => '$' + (+v).toFixed(0);
+  const today = new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+
+  const sizeLabel = { small: 'Small (1–20 employees)', mid: 'Mid-Market (20–200 employees)', large: 'Enterprise (200+)' }[s.size];
+  const regionLabel = s.region === 'local' ? 'Mongolia' : 'International';
+  const roiModeLabel = { labor: 'Labor Savings', revenue: 'Revenue at Stake', both: 'Combined' }[s.roiMode];
+
+  const stackRows = [
+    ['Input Channel', s.input.charAt(0).toUpperCase() + s.input.slice(1), inp.monthlyCost === 0 ? 'Free' : fmt(inp.monthlyCost) + '/mo'],
+    ['AI Model', { claude: 'Claude (Anthropic)', gpt4o: 'GPT-4o (OpenAI)', copilot: 'Copilot (Microsoft)', gemini: 'Gemini (Google)' }[s.ai], fmt(aiMonthly) + '/mo'],
+    ['CRM', s.crm.charAt(0).toUpperCase() + s.crm.slice(1), s.crmEnterprise ? 'Enterprise (included)' : (crmMonthly === 0 ? 'Free' : fmt(crmMonthly) + '/mo')],
+    ['Automation', 'n8n', n8nMonthly === 0 ? 'Free' : fmt(n8nMonthly) + '/mo'],
+  ];
+  if (s.voice) stackRows.push(['Voice STT', { chimege: 'Chimege', whisper: 'Whisper (OpenAI)', google: 'Google STT' }[s.stt], fmt(sttMonthly) + '/mo']);
+
+  const html = `
+  <div style="padding: 56px 60px; font-family: 'Plus Jakarta Sans', sans-serif; color: #2b2b2b; font-size: 13px; line-height: 1.6; max-width: 794px;">
+
+    <!-- HEADER -->
+    <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:40px; padding-bottom:24px; border-bottom:2px solid #1f3d2b;">
+      <div>
+        <div style="font-family:'Plus Jakarta Sans',sans-serif; font-size:26px; font-weight:500; color:#2b2b2b; letter-spacing:-0.02em;">
+          beam <span style="color:#1f3d2b; font-weight:300; margin:0 2px;">|</span>
+        </div>
+        <div style="font-size:11px; color:#7a7670; margin-top:4px; letter-spacing:0.08em; text-transform:uppercase;">AI Sales Automation</div>
+      </div>
+      <div style="text-align:right;">
+        <div style="font-size:16px; font-weight:600; color:#2b2b2b;">Proposal Summary</div>
+        <div style="font-size:11px; color:#7a7670; margin-top:4px;">${today}</div>
+        <div style="font-size:11px; color:#7a7670;">${regionLabel} · ${sizeLabel}</div>
+      </div>
+    </div>
+
+    <!-- TWO COLUMN -->
+    <div style="display:grid; grid-template-columns:1fr 1fr; gap:32px; margin-bottom:32px;">
+
+      <!-- TECH STACK -->
+      <div>
+        <div style="font-size:10px; font-weight:700; color:#1f3d2b; text-transform:uppercase; letter-spacing:0.12em; margin-bottom:14px;">Tech Stack</div>
+        <table style="width:100%; border-collapse:collapse; font-size:12px;">
+          <tr style="background:#f6f5f1;">
+            <th style="padding:7px 10px; text-align:left; font-weight:600; font-size:10px; text-transform:uppercase; letter-spacing:0.08em; color:#7a7670; border-bottom:1px solid #dedad2;">Component</th>
+            <th style="padding:7px 10px; text-align:left; font-weight:600; font-size:10px; text-transform:uppercase; letter-spacing:0.08em; color:#7a7670; border-bottom:1px solid #dedad2;">Choice</th>
+            <th style="padding:7px 10px; text-align:right; font-weight:600; font-size:10px; text-transform:uppercase; letter-spacing:0.08em; color:#7a7670; border-bottom:1px solid #dedad2;">Cost</th>
+          </tr>
+          ${stackRows.map((r,i) => `
+          <tr style="background:${i%2===0?'#fff':'#faf9f7'};">
+            <td style="padding:8px 10px; color:#7a7670; border-bottom:1px solid #f0ede7;">${r[0]}</td>
+            <td style="padding:8px 10px; font-weight:500; border-bottom:1px solid #f0ede7;">${r[1]}</td>
+            <td style="padding:8px 10px; text-align:right; font-family:'IBM Plex Mono',monospace; font-size:11px; border-bottom:1px solid #f0ede7;">${r[2]}</td>
+          </tr>`).join('')}
+        </table>
+
+        <div style="margin-top:20px;">
+          <div style="font-size:10px; font-weight:700; color:#1f3d2b; text-transform:uppercase; letter-spacing:0.12em; margin-bottom:12px;">Team Setup</div>
+          <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px;">
+            ${[
+              ['Sales Reps', s.reps + ' users'],
+              ['Admin Seats', s.admins + ' users'],
+              ['Region', regionLabel],
+              ['Voice Input', s.voice ? 'Enabled' : 'Text only'],
+            ].map(r => `<div style="background:#f6f5f1; padding:10px 12px; border-radius:3px;">
+              <div style="font-size:10px; color:#7a7670; margin-bottom:2px;">${r[0]}</div>
+              <div style="font-weight:600; font-size:13px;">${r[1]}</div>
+            </div>`).join('')}
+          </div>
+        </div>
+      </div>
+
+      <!-- COST + ROI -->
+      <div>
+        <div style="font-size:10px; font-weight:700; color:#1f3d2b; text-transform:uppercase; letter-spacing:0.12em; margin-bottom:14px;">Cost Estimate</div>
+
+        <div style="background:#f6f5f1; border-radius:4px; padding:16px 18px; margin-bottom:16px;">
+          <div style="font-size:11px; color:#7a7670; margin-bottom:4px;">Monthly Running Cost</div>
+          <div style="font-size:32px; font-weight:700; color:#2b2b2b; line-height:1; font-family:'IBM Plex Mono',monospace;">${fmt(totalMonthly)}</div>
+          <div style="font-size:11px; color:#7a7670; margin-top:4px;">/ month · ${totalUsers} total users</div>
+        </div>
+
+        <div style="font-size:12px;">
+          ${[
+            ['AI Model', fmt(aiMonthly)],
+            s.voice ? ['Voice STT', fmt(sttMonthly)] : null,
+            ['CRM', crmMonthly === 0 ? 'Included' : fmt(crmMonthly)],
+            ['Automation (n8n)', n8nMonthly === 0 ? 'Free' : fmt(n8nMonthly)],
+            ['Input Channel', inputMonthly === 0 ? 'Free' : fmt(inputMonthly)],
+          ].filter(Boolean).map(r => `
+          <div style="display:flex; justify-content:space-between; padding:6px 0; border-bottom:1px solid #f0ede7;">
+            <span style="color:#7a7670;">${r[0]}</span>
+            <span style="font-family:'IBM Plex Mono',monospace; font-weight:500;">${r[1]}</span>
+          </div>`).join('')}
+          <div style="display:flex; justify-content:space-between; padding:10px 0; margin-top:4px;">
+            <span style="color:#7a7670; font-size:11px;">One-time setup fee</span>
+            <span style="font-family:'IBM Plex Mono',monospace; font-weight:600;">${fmt(setupFee)}</span>
+          </div>
+          <div style="display:flex; justify-content:space-between; padding:6px 0;">
+            <span style="color:#7a7670; font-size:11px;">Monthly retainer (optional)</span>
+            <span style="font-family:'IBM Plex Mono',monospace; font-weight:600; color:#1f3d2b;">${fmt(retainerFee)}/mo</span>
+          </div>
+        </div>
+
+        <!-- ROI -->
+        <div style="margin-top:20px;">
+          <div style="font-size:10px; font-weight:700; color:#1f3d2b; text-transform:uppercase; letter-spacing:0.12em; margin-bottom:12px;">ROI Analysis · ${roiModeLabel}</div>
+
+          <div style="background:#1f3d2b; border-radius:4px; padding:16px 18px; color:#fff; margin-bottom:12px;">
+            <div style="font-size:10px; opacity:0.7; margin-bottom:4px; text-transform:uppercase; letter-spacing:0.08em;">Monthly Value Saved</div>
+            <div style="font-size:28px; font-weight:700; line-height:1; font-family:'IBM Plex Mono',monospace;">${fmt(totalValueSaved)}</div>
+          </div>
+
+          <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:8px;">
+            ${[
+              ['ROI Ratio', roiRatio.toFixed(1) + '×'],
+              ['Payback', paybackMonths.toFixed(1) + ' mo'],
+              ['Hrs saved/rep', hoursSaved.toFixed(1) + ' hrs'],
+            ].map(r => `<div style="background:#f6f5f1; padding:10px 12px; border-radius:3px; text-align:center;">
+              <div style="font-size:10px; color:#7a7670; margin-bottom:3px;">${r[0]}</div>
+              <div style="font-weight:700; font-size:15px; font-family:'IBM Plex Mono',monospace;">${r[1]}</div>
+            </div>`).join('')}
+          </div>
+          ${s.roiMode !== 'labor' ? `
+          <div style="margin-top:10px; padding:10px 12px; background:#fff8f5; border:1px solid #f0d8cc; border-radius:3px; font-size:11px; color:#7a7670;">
+            <strong style="color:#c46a4a;">Revenue at stake:</strong> ${s.reps} reps × ${s.deals} deals/mo × $${(+s.dealValue).toLocaleString()} avg × ${s.missRate}% miss rate × ${s.recoverRate}% recovery = <strong>${fmt(revenueSaved)}/mo protected</strong>
+          </div>` : ''}
+        </div>
+      </div>
+    </div>
+
+    <!-- FOOTER -->
+    <div style="border-top:1px solid #dedad2; padding-top:16px; display:flex; justify-content:space-between; align-items:center;">
+      <div style="font-size:11px; color:#b8b4ac;">Generated by Beam Calculator · beam | AI Sales Automation</div>
+      <div style="font-size:11px; color:#b8b4ac; font-style:italic;">Estimates based on configured assumptions. Subject to change.</div>
+    </div>
+
+  </div>`;
+
+  // Load fonts then print
+  const template = document.getElementById('pdfTemplate');
+  template.innerHTML = html;
+
+  // Use html2canvas + jsPDF approach via window.print with print styles
+  const printWindow = window.open('', '_blank', 'width=900,height=700');
+  printWindow.document.write(`<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Beam Proposal — ${today}</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: #fff; font-family: 'Plus Jakarta Sans', sans-serif; }
+  @media print {
+    @page { size: A4; margin: 0; }
+    body { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  }
+</style>
+</head>
+<body>${html}</body>
+</html>`);
+  printWindow.document.close();
+  // Wait for fonts then trigger print
+  setTimeout(() => {
+    printWindow.focus();
+    printWindow.print();
+  }, 800);
+}
+
+</script>
+</body>
+</html>
