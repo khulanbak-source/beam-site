@@ -1,0 +1,854 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Beam — Interactive Onboarding</title>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #f6f5f1;
+    --surface: #ffffff;
+    --surface2: #f0ede7;
+    --border: #dedad2;
+    --text: #2b2b2b;
+    --text-muted: #7a7670;
+    --text-dim: #b8b4ac;
+    --accent: #1f3d2b;
+    --accent-light: rgba(31,61,43,0.08);
+    --accent-border: rgba(31,61,43,0.2);
+    --warn: #c46a4a;
+    --warn-light: rgba(196,106,74,0.08);
+    --warn-border: rgba(196,106,74,0.2);
+    --success: #2d6a4f;
+    --done-bg: rgba(31,61,43,0.06);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'IBM Plex Sans', sans-serif;
+    font-size: 14px;
+    line-height: 1.6;
+    min-height: 100vh;
+  }
+
+  /* HEADER */
+  .header {
+    border-bottom: 1px solid var(--border);
+    padding: 20px 40px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: sticky;
+    top: 0;
+    background: rgba(246,245,241,0.96);
+    backdrop-filter: blur(8px);
+    z-index: 100;
+  }
+  .logo { font-family: 'IBM Plex Mono', monospace; font-size: 18px; font-weight: 600; letter-spacing: 0.05em; }
+  .logo span { color: var(--accent); }
+  .header-tag { font-family: 'IBM Plex Mono', monospace; font-size: 11px; color: var(--text-muted); letter-spacing: 0.08em; text-transform: uppercase; }
+
+  /* PROGRESS BAR */
+  .progress-wrap {
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    padding: 0 40px;
+  }
+  .progress-steps {
+    display: flex;
+    max-width: 900px;
+    margin: 0 auto;
+  }
+  .progress-step {
+    flex: 1;
+    padding: 14px 0;
+    text-align: center;
+    position: relative;
+    cursor: default;
+  }
+  .progress-step::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: var(--border);
+    transition: background 0.3s;
+  }
+  .progress-step.active::after { background: var(--accent); }
+  .progress-step.done::after { background: var(--accent); opacity: 0.4; }
+  .step-num {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 22px; height: 22px;
+    border-radius: 50%;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px;
+    font-weight: 600;
+    background: var(--border);
+    color: var(--text-muted);
+    margin-bottom: 4px;
+    transition: all 0.3s;
+  }
+  .progress-step.active .step-num { background: var(--accent); color: #fff; }
+  .progress-step.done .step-num { background: var(--done-bg); color: var(--accent); border: 1px solid var(--accent-border); }
+  .step-label { font-size: 11px; color: var(--text-dim); display: block; letter-spacing: 0.03em; }
+  .progress-step.active .step-label { color: var(--accent); font-weight: 500; }
+  .progress-step.done .step-label { color: var(--text-muted); }
+
+  /* MAIN */
+  .main { max-width: 900px; margin: 0 auto; padding: 40px; }
+
+  /* STEP CARD */
+  .step-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    overflow: hidden;
+    display: none;
+    animation: fadeIn 0.3s ease;
+  }
+  .step-card.visible { display: block; }
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(8px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .step-header {
+    padding: 20px 28px;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: flex-start;
+    gap: 16px;
+  }
+  .step-icon {
+    font-size: 24px;
+    line-height: 1;
+    flex-shrink: 0;
+    margin-top: 2px;
+  }
+  .step-title { font-size: 16px; font-weight: 600; margin-bottom: 4px; }
+  .step-subtitle { font-size: 13px; color: var(--text-muted); }
+
+  .step-body { padding: 28px; }
+
+  /* INSTRUCTION BLOCK */
+  .instruction {
+    background: var(--accent-light);
+    border: 1px solid var(--accent-border);
+    border-radius: 3px;
+    padding: 16px 18px;
+    margin-bottom: 20px;
+    font-size: 13px;
+    line-height: 1.7;
+  }
+  .instruction strong { color: var(--accent); }
+  .instruction ol, .instruction ul { padding-left: 18px; margin-top: 8px; }
+  .instruction li { margin-bottom: 4px; }
+
+  /* MESSAGE EXAMPLE */
+  .msg-example-label {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px;
+    color: var(--text-dim);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    margin-bottom: 8px;
+  }
+  .msg-bubble-wrap { display: flex; flex-direction: column; gap: 8px; margin-bottom: 20px; }
+  .msg-bubble {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 3px 14px 14px 14px;
+    padding: 12px 16px;
+    font-size: 13px;
+    color: var(--text);
+    position: relative;
+    max-width: 80%;
+  }
+  .msg-bubble.bot {
+    border-radius: 14px 3px 14px 14px;
+    align-self: flex-end;
+    background: rgba(31,61,43,0.06);
+    border-color: var(--accent-border);
+    color: var(--accent);
+  }
+  .msg-copy {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px;
+    color: var(--text-dim);
+    cursor: pointer;
+    margin-top: 4px;
+    text-decoration: underline;
+    display: inline-block;
+    transition: color 0.15s;
+  }
+  .msg-copy:hover { color: var(--accent); }
+
+  /* IFRAME SECTION */
+  .iframe-section {
+    margin-bottom: 24px;
+    border: 1px solid var(--border);
+    border-radius: 3px;
+    overflow: hidden;
+  }
+  .iframe-label {
+    padding: 10px 16px;
+    background: var(--surface2);
+    border-bottom: 1px solid var(--border);
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .iframe-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--accent); }
+  .iframe-section iframe { display: block; width: 100%; border: none; }
+
+  /* ACTIONS */
+  .step-actions {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+  .btn-primary {
+    padding: 10px 24px;
+    background: var(--accent);
+    color: #fff;
+    border: none;
+    border-radius: 2px;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.05em;
+    cursor: pointer;
+    transition: opacity 0.15s;
+  }
+  .btn-primary:hover { opacity: 0.85; }
+  .btn-secondary {
+    padding: 10px 18px;
+    background: transparent;
+    color: var(--text-muted);
+    border: 1px solid var(--border);
+    border-radius: 2px;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+  .btn-secondary:hover { border-color: var(--warn); color: var(--warn); }
+  .btn-flag {
+    padding: 10px 18px;
+    background: transparent;
+    color: var(--warn);
+    border: 1px solid var(--warn-border);
+    border-radius: 2px;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    cursor: pointer;
+    transition: all 0.15s;
+    margin-left: auto;
+  }
+  .btn-flag:hover { background: var(--warn-light); }
+
+  /* FLAG FORM */
+  .flag-form {
+    display: none;
+    margin-top: 16px;
+    padding: 16px;
+    background: var(--warn-light);
+    border: 1px solid var(--warn-border);
+    border-radius: 3px;
+  }
+  .flag-form.visible { display: block; }
+  .flag-form textarea {
+    width: 100%;
+    padding: 10px 12px;
+    border: 1px solid var(--warn-border);
+    border-radius: 2px;
+    background: var(--surface);
+    font-family: 'IBM Plex Sans', sans-serif;
+    font-size: 13px;
+    color: var(--text);
+    resize: vertical;
+    min-height: 80px;
+    outline: none;
+    margin-bottom: 10px;
+  }
+  .flag-form textarea:focus { border-color: var(--warn); }
+  .flag-label { font-size: 12px; color: var(--warn); font-weight: 500; margin-bottom: 8px; display: block; }
+  .flag-sent { font-size: 12px; color: var(--accent); font-family: 'IBM Plex Mono', monospace; display: none; }
+
+  /* DIVIDER */
+  .divider { height: 1px; background: var(--border); margin: 24px 0; }
+
+  /* TELEGRAM CTA */
+  .tg-cta {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    padding: 12px 20px;
+    background: var(--accent);
+    color: #fff;
+    text-decoration: none;
+    border-radius: 2px;
+    font-weight: 600;
+    font-size: 13px;
+    transition: opacity 0.15s;
+    margin-bottom: 20px;
+  }
+  .tg-cta:hover { opacity: 0.85; }
+  .tg-cta svg { width: 18px; height: 18px; fill: #fff; }
+
+  /* CONGRATS */
+  .congrats-wrap {
+    text-align: center;
+    padding: 48px 28px;
+  }
+  .congrats-emoji { font-size: 56px; margin-bottom: 20px; display: block; }
+  .congrats-title {
+    font-size: 22px;
+    font-weight: 700;
+    margin-bottom: 12px;
+  }
+  .congrats-sub {
+    font-size: 14px;
+    color: var(--text-muted);
+    max-width: 480px;
+    margin: 0 auto 32px;
+    line-height: 1.7;
+  }
+  .congrats-checks {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    justify-content: center;
+    margin-bottom: 32px;
+  }
+  .check-pill {
+    padding: 6px 14px;
+    background: var(--accent-light);
+    border: 1px solid var(--accent-border);
+    border-radius: 20px;
+    font-size: 12px;
+    color: var(--accent);
+    font-family: 'IBM Plex Mono', monospace;
+  }
+  .contact-card {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 3px;
+    padding: 20px 24px;
+    display: inline-block;
+    text-align: left;
+    min-width: 280px;
+  }
+  .contact-name { font-weight: 600; font-size: 15px; margin-bottom: 4px; }
+  .contact-role { font-size: 12px; color: var(--text-muted); font-family: 'IBM Plex Mono', monospace; margin-bottom: 12px; }
+  .contact-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    color: var(--accent);
+    text-decoration: none;
+    font-size: 13px;
+    font-weight: 500;
+  }
+  .contact-link:hover { text-decoration: underline; }
+
+  /* MINI TAG */
+  .tag {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 2px;
+    font-size: 10px;
+    font-family: 'IBM Plex Mono', monospace;
+    background: var(--accent-light);
+    color: var(--accent);
+    border: 1px solid var(--accent-border);
+  }
+
+  /* CHECKLIST inside steps */
+  .check-list { list-style: none; margin-bottom: 20px; }
+  .check-list li {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    padding: 8px 0;
+    border-bottom: 1px solid var(--border);
+    font-size: 13px;
+    color: var(--text-muted);
+  }
+  .check-list li:last-child { border-bottom: none; }
+  .check-list li::before {
+    content: '→';
+    color: var(--accent);
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 12px;
+    flex-shrink: 0;
+    margin-top: 1px;
+  }
+
+  /* WHAT TO EXPECT */
+  .expect-box {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 3px;
+    padding: 14px 18px;
+    margin-bottom: 20px;
+    font-size: 12px;
+    color: var(--text-muted);
+    line-height: 1.7;
+  }
+  .expect-box strong { color: var(--text); font-size: 11px; font-family: 'IBM Plex Mono', monospace; text-transform: uppercase; letter-spacing: 0.06em; display: block; margin-bottom: 6px; }
+
+  @media (max-width: 700px) {
+    .header { padding: 16px 20px; }
+    .main { padding: 24px 20px; }
+    .progress-wrap { padding: 0 20px; }
+    .step-label { display: none; }
+    .msg-bubble { max-width: 95%; }
+  }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="logo">BEAM<span>.</span></div>
+  <div class="header-tag">Interactive Onboarding</div>
+</div>
+
+<!-- PROGRESS -->
+<div class="progress-wrap">
+  <div class="progress-steps">
+    <div class="progress-step active" id="prog-1">
+      <div class="step-num">1</div>
+      <span class="step-label">Connect</span>
+    </div>
+    <div class="progress-step" id="prog-2">
+      <div class="step-num">2</div>
+      <span class="step-label">Log Lead</span>
+    </div>
+    <div class="progress-step" id="prog-3">
+      <div class="step-num">3</div>
+      <span class="step-label">Update</span>
+    </div>
+    <div class="progress-step" id="prog-4">
+      <div class="step-num">4</div>
+      <span class="step-label">Calendar</span>
+    </div>
+    <div class="progress-step" id="prog-5">
+      <div class="step-num">5</div>
+      <span class="step-label">Query</span>
+    </div>
+    <div class="progress-step" id="prog-6">
+      <div class="step-num">✓</div>
+      <span class="step-label">Done</span>
+    </div>
+  </div>
+</div>
+
+<div class="main">
+
+  <!-- ═══════════════ STEP 1: CONNECT ═══════════════ -->
+  <div class="step-card visible" id="step-1">
+    <div class="step-header">
+      <div class="step-icon">💬</div>
+      <div>
+        <div class="step-title">Connect to Beam via Telegram</div>
+        <div class="step-subtitle">Request access and get approved — takes under a minute.</div>
+      </div>
+    </div>
+    <div class="step-body">
+      <div class="instruction">
+        <strong>How to get started:</strong>
+        <ol>
+          <li>Open Telegram and search for <strong>@beam_urstory_bot</strong></li>
+          <li>Tap <strong>Start</strong> or send <code>/start</code></li>
+          <li>Beam will ask for your name — type your full name (e.g. <em>Болор Дорж</em>)</li>
+          <li>Wait for an admin to approve your request — you'll get a notification when ready</li>
+        </ol>
+      </div>
+
+      <a href="https://t.me/beam_urstory_bot" target="_blank" class="tg-cta">
+        <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm5.562 8.248l-1.97 9.289c-.145.658-.537.818-1.084.508l-3-2.21-1.447 1.394c-.16.16-.295.295-.605.295l.213-3.053 5.56-5.023c.242-.213-.054-.333-.373-.12L7.43 14.015l-2.97-.924c-.645-.204-.657-.645.136-.953l11.57-4.461c.537-.194 1.006.131.833.571z"/></svg>
+        Open @beam_urstory_bot
+      </a>
+
+      <div class="msg-example-label">Example exchange in Telegram</div>
+      <div class="msg-bubble-wrap">
+        <div class="msg-bubble">👋 Beam-д тавтай морил! Хандалт авахын тулд өөрийн <strong>нэр овогоо</strong> оруулна уу.<br>(Жишээ: Болор Дорж)</div>
+        <div class="msg-bubble bot">Болор Дорж</div>
+        <div class="msg-bubble">✅ Хүсэлт илгээгдлээ! Admin батлах хүртэл хүлээнэ үү 🙏</div>
+      </div>
+
+      <div class="step-actions">
+        <button class="btn-primary" onclick="nextStep(1)">I'm connected & approved →</button>
+        <button class="btn-flag" onclick="toggleFlag(1)">⚑ Flag an issue</button>
+      </div>
+      <div class="flag-form" id="flag-1">
+        <span class="flag-label">Describe what went wrong on this step:</span>
+        <textarea placeholder="e.g. Bot didn't respond, couldn't find the bot, request not approved..."></textarea>
+        <button class="btn-primary" onclick="submitFlag(1)" style="font-size:11px; padding:8px 16px;">Send report</button>
+        <span class="flag-sent" id="flag-sent-1">✓ Reported — Khulan will follow up</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════ STEP 2: LOG NEW LEAD ═══════════════ -->
+  <div class="step-card" id="step-2">
+    <div class="step-header">
+      <div class="step-icon">📝</div>
+      <div>
+        <div class="step-title">Log a new client interaction</div>
+        <div class="step-subtitle">Send a voice or text message describing a meeting or call — Beam extracts everything automatically.</div>
+      </div>
+    </div>
+    <div class="step-body">
+      <div class="instruction">
+        <strong>What to do:</strong> Send a message to <strong>@beam_urstory_bot</strong> describing a real or fictional client meeting. Include the person's name, what happened, and what they're interested in. Beam will confirm with you before saving.
+      </div>
+
+      <div class="msg-example-label">Try copying this example →</div>
+      <div class="msg-bubble-wrap">
+        <div class="msg-bubble bot">
+          Өнөөдөр Болд Нарантуяатай уулзлаа. Шоуруум руу өөрөө орж ирсэн. BMW X5 сонирхож байна, санхүүжилтийн нөхцөл асуусан. Мягмар 10:00д дахин холбогдох болно.
+          <span class="msg-copy" onclick="copyMsg(this)">Copy message</span>
+        </div>
+        <div class="msg-bubble">🔍 Болд Н — хайж байна...</div>
+        <div class="msg-bubble">
+          👤 Болд Нарантуяа<br>
+          📊 Prospect | 📞 Visit | 📣 Walk-in<br>
+          🚗 BMW X5<br>
+          💬 Шоуруум руу өөрөө орж ирсэн, санхүүжилтийн нөхцөл асуусан.<br>
+          📌 Мягмар 10:00д дахин холбогдох<br>
+          ⏰ 2026-04-28T10:00<br>
+          ─<br>
+          Санууллга нэмэх үү? Тийм бол 'Тийм [цаг]', үгүй бол 'Засах'.
+        </div>
+        <div class="msg-bubble bot">Тийм 10:00</div>
+        <div class="msg-bubble">✅ Мэдээлэл CRM-д амжилттай хадгалагдлаа! 📌 Мягмар 10:00д санууллга 🔔</div>
+      </div>
+
+      <div class="expect-box">
+        <strong>What happens next</strong>
+        After confirming, the lead appears in the CRM below. Refresh to see the new entry — look for your name in the Registered Employee column.
+      </div>
+
+      <div class="iframe-section">
+        <div class="iframe-label">
+          <div class="iframe-dot"></div>
+          Live CRM — Beam Leads Database
+        </div>
+        <iframe src="https://urstory.notion.site/ebd//3265bc947e1980ff816af3b4a804018d?v=3265bc947e19800b8bf2000cc7f5cb8f" height="420" allowfullscreen></iframe>
+      </div>
+
+      <div class="step-actions">
+        <button class="btn-primary" onclick="nextStep(2)">Lead logged ✓ →</button>
+        <button class="btn-flag" onclick="toggleFlag(2)">⚑ Flag an issue</button>
+      </div>
+      <div class="flag-form" id="flag-2">
+        <span class="flag-label">Describe what went wrong on this step:</span>
+        <textarea placeholder="e.g. Bot didn't understand my message, lead didn't appear in CRM..."></textarea>
+        <button class="btn-primary" onclick="submitFlag(2)" style="font-size:11px; padding:8px 16px;">Send report</button>
+        <span class="flag-sent" id="flag-sent-2">✓ Reported — Khulan will follow up</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════ STEP 3: UPDATE LEAD ═══════════════ -->
+  <div class="step-card" id="step-3">
+    <div class="step-header">
+      <div class="step-icon">🔄</div>
+      <div>
+        <div class="step-title">Update an existing lead</div>
+        <div class="step-subtitle">Beam recognizes returning clients and appends notes to their existing record.</div>
+      </div>
+    </div>
+    <div class="step-body">
+      <div class="instruction">
+        <strong>What to do:</strong> Send a follow-up about the same person you just logged. Mention their name — Beam will find their record, show you what it found, and ask if you want to update it.
+      </div>
+
+      <div class="msg-example-label">Try this follow-up message →</div>
+      <div class="msg-bubble-wrap">
+        <div class="msg-bubble bot">
+          Болдтой утсаар ярилаа. BMW X5 биш X3 авах болж магадгүй гэж хэлсэн. Ирэх долоо хоногт test drive хийх болно.
+          <span class="msg-copy" onclick="copyMsg(this)">Copy message</span>
+        </div>
+        <div class="msg-bubble">🔍 Болд Н — Prospect (2026-04-25) олдлоо. Энэ хүн мөн үү?<br>1️⃣ Тийм — шинэчлэх &nbsp;&nbsp; 2️⃣ Үгүй — шинэ lead</div>
+        <div class="msg-bubble bot">Тийм</div>
+        <div class="msg-bubble">
+          👤 Болд Нарантуяа<br>
+          📊 Test Drive | 📞 Call<br>
+          🚗 BMW X3<br>
+          💬 2026-04-25 Утсаар ярилаа. X3 авах магадлалтай. Test drive ирэх долоо хоногт.<br>
+          ─<br>
+          Санууллга нэмэх үү?
+        </div>
+        <div class="msg-bubble bot">Засах</div>
+        <div class="msg-bubble">✅ Мэдээлэл CRM-д амжилттай шинэчлэгдлээ!</div>
+      </div>
+
+      <div class="expect-box">
+        <strong>What to look for in CRM</strong>
+        The same lead's record should now show updated Lead Status (Test Drive), updated product (BMW X3), and appended General Comment. No duplicate row created.
+      </div>
+
+      <div class="iframe-section">
+        <div class="iframe-label">
+          <div class="iframe-dot"></div>
+          Live CRM — verify the update appeared
+        </div>
+        <iframe src="https://urstory.notion.site/ebd//3265bc947e1980ff816af3b4a804018d?v=3265bc947e19800b8bf2000cc7f5cb8f" height="420" allowfullscreen></iframe>
+      </div>
+
+      <div class="step-actions">
+        <button class="btn-primary" onclick="nextStep(3)">Update confirmed ✓ →</button>
+        <button class="btn-flag" onclick="toggleFlag(3)">⚑ Flag an issue</button>
+      </div>
+      <div class="flag-form" id="flag-3">
+        <span class="flag-label">Describe what went wrong on this step:</span>
+        <textarea placeholder="e.g. Beam created a duplicate instead of updating, couldn't find the existing lead..."></textarea>
+        <button class="btn-primary" onclick="submitFlag(3)" style="font-size:11px; padding:8px 16px;">Send report</button>
+        <span class="flag-sent" id="flag-sent-3">✓ Reported — Khulan will follow up</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════ STEP 4: CALENDAR ═══════════════ -->
+  <div class="step-card" id="step-4">
+    <div class="step-header">
+      <div class="step-icon">📅</div>
+      <div>
+        <div class="step-title">Set a calendar reminder</div>
+        <div class="step-subtitle">When you confirm a next action with a time, Beam creates a Google Calendar event automatically.</div>
+      </div>
+    </div>
+    <div class="step-body">
+      <div class="instruction">
+        <strong>What to do:</strong> Log a new client with a specific next action date and time. When Beam asks for confirmation, include a time — it will create the calendar event for you.
+      </div>
+
+      <div class="msg-example-label">Log with a clear time →</div>
+      <div class="msg-bubble-wrap">
+        <div class="msg-bubble bot">
+          Сарантуяа гэж эмэгтэй ирлээ. Mercedes GLE сонирхож байна, онлайн зарааас олсон. Пүрэв гарагт 14:00д уулзах боллоо.
+          <span class="msg-copy" onclick="copyMsg(this)">Copy message</span>
+        </div>
+        <div class="msg-bubble">
+          👤 Сарантуяа<br>
+          📊 Lead | 🚶 Visit | 🌐 Online listing<br>
+          🚗 Mercedes GLE<br>
+          📌 Пүрэв 14:00д уулзах<br>
+          ⏰ 2026-04-30T14:00<br>
+          ─<br>
+          Санууллга нэмэх үү? Тийм бол 'Тийм 14:00'
+        </div>
+        <div class="msg-bubble bot">Тийм 14:00</div>
+        <div class="msg-bubble">✅ CRM-д хадгалагдлаа!<br>📌 Пүрэв 14:00д уулзах<br>⏰ 2026-04-30T14:00<br>Calendar-т нэмэгдлээ. Beam танд мессежээр санууллна 🔔</div>
+      </div>
+
+      <div class="expect-box">
+        <strong>What to look for in Calendar</strong>
+        A new event titled "[Name] | [next action]" should appear on the Beam Demo calendar below at the date and time you specified.
+      </div>
+
+      <div class="iframe-section">
+        <div class="iframe-label">
+          <div class="iframe-dot"></div>
+          Beam Demo Calendar — live events
+        </div>
+        <iframe src="https://calendar.google.com/calendar/embed?src=b7f60b9e512e8d953bc74f405822ae94ff9b7a8b60c6855787edc0062a14b456%40group.calendar.google.com&ctz=Asia%2FUlaanbaatar" height="420" scrolling="no"></iframe>
+      </div>
+
+      <div class="step-actions">
+        <button class="btn-primary" onclick="nextStep(4)">Calendar event created ✓ →</button>
+        <button class="btn-flag" onclick="toggleFlag(4)">⚑ Flag an issue</button>
+      </div>
+      <div class="flag-form" id="flag-4">
+        <span class="flag-label">Describe what went wrong on this step:</span>
+        <textarea placeholder="e.g. Event didn't appear in calendar, Beam didn't ask for a time..."></textarea>
+        <button class="btn-primary" onclick="submitFlag(4)" style="font-size:11px; padding:8px 16px;">Send report</button>
+        <span class="flag-sent" id="flag-sent-4">✓ Reported — Khulan will follow up</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════ STEP 5: QUERY ═══════════════ -->
+  <div class="step-card" id="step-5">
+    <div class="step-header">
+      <div class="step-icon">🔍</div>
+      <div>
+        <div class="step-title">Query an existing lead</div>
+        <div class="step-subtitle">Ask Beam about a client's next action or what they were interested in — no commands, just natural language.</div>
+      </div>
+    </div>
+    <div class="step-body">
+      <div class="instruction">
+        <strong>What to do:</strong> Ask Beam a question about one of the leads you just created. Use natural Mongolian — Beam will search the CRM and reply with the relevant info.
+      </div>
+
+      <div class="msg-example-label">Try either of these queries →</div>
+      <div class="msg-bubble-wrap">
+        <div class="msg-bubble bot">
+          Болдтой ямар next action байна вэ?
+          <span class="msg-copy" onclick="copyMsg(this)">Copy</span>
+        </div>
+        <div class="msg-bubble">📌 Болд Нарантуяа — Test Drive<br>🗓 Next action: Test drive зохион байгуулах<br>⏰ 2026-04-30</div>
+      </div>
+
+      <div class="msg-bubble-wrap" style="margin-top: 16px;">
+        <div class="msg-bubble bot">
+          Сарантуяа ямар машин сонирхсон вэ?
+          <span class="msg-copy" onclick="copyMsg(this)">Copy</span>
+        </div>
+        <div class="msg-bubble">🚗 Сарантуяа — Mercedes GLE<br>📊 Статус: Lead<br>💬 Онлайн зарааас олсон, Пүрэв уулзах болсон.</div>
+      </div>
+
+      <div class="expect-box">
+        <strong>Multiple matches?</strong>
+        If Beam finds more than one person with that name, it will list them with distinguishing details (status, product, date) and ask you to pick the right one.
+      </div>
+
+      <div class="divider"></div>
+
+      <div class="msg-example-label">Also try: /reminders for your upcoming actions</div>
+      <div class="msg-bubble-wrap">
+        <div class="msg-bubble bot">/reminders <span class="msg-copy" onclick="copyMsg(this)">Copy</span></div>
+        <div class="msg-bubble">📅 Энэ долоо хоногийн actions<br>Apr 25–May 1<br><br>1. Болд Нарантуяа — Test Drive<br>   📌 Test drive зохион байгуулах<br>   ⏰ 2026-04-30T10:00<br><br>2. Сарантуяа — Lead<br>   📌 Пүрэв 14:00д уулзах<br>   ⏰ 2026-04-30T14:00<br><br>Нийт: 2 action</div>
+      </div>
+
+      <div class="step-actions">
+        <button class="btn-primary" onclick="nextStep(5)">All done ✓ →</button>
+        <button class="btn-flag" onclick="toggleFlag(5)">⚑ Flag an issue</button>
+      </div>
+      <div class="flag-form" id="flag-5">
+        <span class="flag-label">Describe what went wrong on this step:</span>
+        <textarea placeholder="e.g. Beam didn't understand my query, returned wrong person..."></textarea>
+        <button class="btn-primary" onclick="submitFlag(5)" style="font-size:11px; padding:8px 16px;">Send report</button>
+        <span class="flag-sent" id="flag-sent-5">✓ Reported — Khulan will follow up</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════ STEP 6: CONGRATS ═══════════════ -->
+  <div class="step-card" id="step-6">
+    <div class="step-body">
+      <div class="congrats-wrap">
+        <span class="congrats-emoji">🎉</span>
+        <div class="congrats-title">You've tested the full Beam flow!</div>
+        <div class="congrats-sub">
+          You've experienced how Beam captures real sales conversations, keeps your CRM updated automatically, and sends timely reminders — all through Telegram, with no manual data entry.
+        </div>
+
+        <div class="congrats-checks">
+          <div class="check-pill">✓ Connected via Telegram</div>
+          <div class="check-pill">✓ Logged a new lead</div>
+          <div class="check-pill">✓ Updated existing record</div>
+          <div class="check-pill">✓ Calendar event created</div>
+          <div class="check-pill">✓ Queried CRM by name</div>
+        </div>
+
+        <div class="divider" style="max-width: 400px; margin: 0 auto 28px;"></div>
+
+        <div style="margin-bottom: 12px; font-size: 13px; color: var(--text-muted);">Questions? Ready to explore Beam for your team?</div>
+
+        <div class="contact-card">
+          <div class="contact-name">Khulan Bat</div>
+          <div class="contact-role">Founder · Beam / Urstory Studio</div>
+          <a href="https://t.me/khulanbak" target="_blank" class="contact-link">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm5.562 8.248l-1.97 9.289c-.145.658-.537.818-1.084.508l-3-2.21-1.447 1.394c-.16.16-.295.295-.605.295l.213-3.053 5.56-5.023c.242-.213-.054-.333-.373-.12L7.43 14.015l-2.97-.924c-.645-.204-.657-.645.136-.953l11.57-4.461c.537-.194 1.006.131.833.571z"/></svg>
+            @khulanbak on Telegram
+          </a>
+        </div>
+
+        <div style="margin-top: 32px;">
+          <a href="https://khulanbak-source.github.io/beam-calculator/" target="_blank" style="color: var(--text-muted); font-size: 12px; font-family: 'IBM Plex Mono', monospace; text-decoration: none; margin-right: 20px;">→ Pricing calculator</a>
+          <a href="https://khulanbak-source.github.io/beam-analytics/" target="_blank" style="color: var(--text-muted); font-size: 12px; font-family: 'IBM Plex Mono', monospace; text-decoration: none;">→ Analytics dashboard</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div><!-- /main -->
+
+<script>
+let currentStep = 1;
+const totalSteps = 6;
+
+function nextStep(from) {
+  const next = from + 1;
+  if (next > totalSteps) return;
+
+  // Hide current
+  document.getElementById('step-' + from).classList.remove('visible');
+  // Mark done
+  document.getElementById('prog-' + from).classList.remove('active');
+  document.getElementById('prog-' + from).classList.add('done');
+  document.getElementById('prog-' + from).querySelector('.step-num').textContent = '✓';
+
+  // Show next
+  document.getElementById('step-' + next).classList.add('visible');
+  if (document.getElementById('prog-' + next)) {
+    document.getElementById('prog-' + next).classList.add('active');
+  }
+
+  currentStep = next;
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function toggleFlag(step) {
+  const form = document.getElementById('flag-' + step);
+  form.classList.toggle('visible');
+}
+
+function submitFlag(step) {
+  const form = document.getElementById('flag-' + step);
+  const ta = form.querySelector('textarea');
+  const sent = document.getElementById('flag-sent-' + step);
+  const btn = form.querySelector('.btn-primary');
+
+  if (!ta.value.trim()) {
+    ta.style.borderColor = 'var(--warn)';
+    ta.placeholder = 'Please describe the issue first...';
+    return;
+  }
+
+  // In a real integration this would POST to a webhook
+  btn.style.display = 'none';
+  ta.disabled = true;
+  sent.style.display = 'inline';
+
+  // Log to console for demo
+  console.log('Flag reported - Step ' + step + ':', ta.value);
+}
+
+function copyMsg(el) {
+  const bubble = el.closest('.msg-bubble');
+  // Get text without the copy button text
+  const clone = bubble.cloneNode(true);
+  clone.querySelector('.msg-copy')?.remove();
+  const text = clone.innerText.trim();
+  navigator.clipboard.writeText(text).then(() => {
+    el.textContent = 'Copied!';
+    setTimeout(() => el.textContent = 'Copy message', 1500);
+  }).catch(() => {
+    el.textContent = 'Copy message';
+  });
+}
+</script>
+
+</body>
+</html>
