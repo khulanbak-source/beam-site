@@ -433,6 +433,12 @@
   .welcome-name { font-weight: 600; color: var(--green); font-size: 14px; margin-bottom: 2px; }
   .welcome-company { font-size: 12px; color: var(--text-muted); }
 
+    /* calendar */
+.days-pill { font-size:10px; font-weight:600; padding:2px 7px; border-radius:2px; font-family:'Plus Jakarta Sans',sans-serif; }
+.d-over { background:rgba(196,106,74,0.1); color:var(--warn); }
+.d-soon { background:rgba(180,163,74,0.1); color:#b4a34a; }
+.d-ok   { background:rgba(31,61,43,0.08); color:var(--accent); }
+
   /* ANALYTICS LINK BOX */
   .analytics-box {
     display: none;
@@ -817,7 +823,7 @@
           📊 Test Drive · Call<br>
           🚗 BMW X3<br>
           💬 X3 авах магадлалтай. Test drive ирэх долоо хоногт.<br><br>
-          Санулга нэмэх үү?
+          Сануулга нэмэх үү?
         </div>
         <div class="msg-bubble out">Засах</div>
         <div class="msg-bubble">✅ CRM-д амжилттай шинэчлэгдлээ.</div>
@@ -892,14 +898,17 @@
       </div>
 
       <div class="iframe-section">
-        <div class="iframe-label">
-          <div class="iframe-label-left">
-            <div class="iframe-dot"></div>
-            beam demo calendar — live events
-          </div>
-        </div>
-        <iframe src="https://calendar.google.com/calendar/embed?src=b7f60b9e512e8d953bc74f405822ae94ff9b7a8b60c6855787edc0062a14b456%40group.calendar.google.com&ctz=Asia%2FUlaanbaatar" height="420" scrolling="no"></iframe>
-      </div>
+  <div class="iframe-label">
+    <div class="iframe-label-left">
+      <div class="iframe-dot"></div>
+      Your calendar events — from beam
+    </div>
+    <button class="crm-refresh" onclick="loadCalendarData()" style="margin-right:8px">↻ Refresh</button>
+  </div>
+  <div id="calendarTable" style="padding:16px; min-height:120px;">
+    <div style="color:var(--text-dim);font-size:12px;padding:20px 0;text-align:center;">Sign in to see your calendar events</div>
+  </div>
+</div>
 
       <div class="step-actions">
         <button class="btn-main" onclick="nextStep(4)">Calendar event created</button>
@@ -1153,6 +1162,7 @@ https://github.com/khulanbak-source/beam-site/blob/main/onboarding/index.html
   // Proceed to step 2
   nextStep(1);
   loadCRMData();
+  loadCalendarData();
 }
 
  async function loadCRMData() {
@@ -1186,6 +1196,72 @@ https://github.com/khulanbak-source/beam-site/blob/main/onboarding/index.html
     document.getElementById('crmTable1').innerHTML = errHTML;
     document.getElementById('crmTable2').innerHTML = errHTML;
   }
+}
+
+  async function loadCalendarData() {
+  if (!session) return;
+  const { client_name, telegram_chat_id, user_name } = session;
+
+  document.getElementById('calendarTable').innerHTML =
+    '<div class="crm-empty">Loading your calendar events…</div>';
+
+  try {
+    const company = encodeURIComponent(client_name || '');
+    const url = `https://n8n.urstory.studio/webhook/beam-analytics${company ? '?company=' + company : ''}`;
+    const res = await fetch(url, { method: 'GET', headers: { 'Content-Type': 'application/json' } });
+    if (!res.ok) throw new Error('Failed to load');
+    const logs = await res.json();
+
+    // Filter to this user's calendar events only
+    const chatId = telegram_chat_id || '';
+    const myEvents = logs.filter(l => {
+      const isMe = chatId
+        ? (l.telegramChatId || '') === chatId
+        : (l.salesperson || '').toLowerCase() === (user_name || '').toLowerCase();
+      return isMe && l.calendarSet === 'Yes' && l.nextActionDate;
+    }).sort((a, b) => new Date(a.nextActionDate) - new Date(b.nextActionDate));
+
+    document.getElementById('calendarTable').innerHTML = buildCalendarTable(myEvents);
+
+  } catch(e) {
+    document.getElementById('calendarTable').innerHTML =
+      `<div class="crm-empty">Could not load events. <button class="crm-refresh" onclick="loadCalendarData()">Retry</button></div>`;
+  }
+}
+
+function buildCalendarTable(events) {
+  if (!events.length) {
+    return '<div class="crm-empty">No calendar events yet. Log a lead with a follow-up time above.</div>';
+  }
+
+  const now = new Date();
+  const rows = events.map(e => {
+    const date = new Date(e.nextActionDate);
+    const diff = Math.ceil((date - now) / 86400000);
+    const cls  = diff < 0 ? 'd-over' : diff <= 2 ? 'd-soon' : 'd-ok';
+    const lbl  = diff < 0 ? `${Math.abs(diff)}d overdue` : diff === 0 ? 'Today' : `in ${diff}d`;
+    const dateStr = date.toLocaleDateString('en-US', { weekday:'short', month:'short', day:'numeric' });
+    const timeStr = e.nextActionDate.includes('T')
+      ? date.toLocaleTimeString('en-US', { hour:'2-digit', minute:'2-digit' })
+      : '';
+
+    return `<tr>
+      <td><span class="crm-name">${e.leadName || '—'}</span></td>
+      <td><span class="crm-status">${e.leadStatus || '—'}</span></td>
+      <td style="max-width:180px;white-space:normal;font-size:11px">${e.nextActionLabel || '—'}</td>
+      <td>${dateStr}${timeStr ? ' · ' + timeStr : ''}</td>
+      <td><span class="days-pill ${cls}">${lbl}</span></td>
+    </tr>`;
+  }).join('');
+
+  return `
+    <div style="padding:0 0 10px;font-size:11px;color:var(--text-muted)">${events.length} upcoming event${events.length !== 1 ? 's' : ''}</div>
+    <table class="crm-table">
+      <thead><tr>
+        <th>Lead</th><th>Status</th><th>Action</th><th>When</th><th>Due</th>
+      </tr></thead>
+      <tbody>${rows}</tbody>
+    </table>`;
 }
 
 function buildCRMTable(logs, userName) {
