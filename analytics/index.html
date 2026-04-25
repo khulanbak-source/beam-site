@@ -701,7 +701,7 @@ function onAuthSuccess(data) {
 
   if (data.client_name) {
     document.getElementById('clientLabel').textContent = data.client_name + ' · Analytics';
-    document.title = `Beam Analytics — ${data.client_name}`;
+    document.title = `beam Analytics | ${data.client_name}`;
   }
 
   loadData();
