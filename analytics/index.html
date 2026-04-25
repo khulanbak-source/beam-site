@@ -679,6 +679,7 @@ async function signIn() {
       webhook_url: data.webhook_url,
       client_name: data.client_name || '',
       user_name:   data.user_name   || ''
+      telegram_chat_id: data.telegram_chat_id || ''
     }));
 
     onAuthSuccess(data);
