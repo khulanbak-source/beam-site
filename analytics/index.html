@@ -572,11 +572,17 @@ main { padding: 24px; max-width: 1400px; margin: 0 auto; }
 
     <div class="filters" id="filterBar">
       <select class="filter-select" id="filterRep" onchange="applyFilters()"><option value="">All Reps</option></select>
-      <select class="filter-select" id="filterPeriod" onchange="applyFilters()">
-        <option value="week">This Week</option>
-        <option value="month">This Month</option>
-        <option value="all">All Time</option>
-      </select>
+      <select class="filter-select" id="filterPeriod" onchange="onPeriodChange()">
+  <option value="week">This Week</option>
+  <option value="month">This Month</option>
+  <option value="all">All Time</option>
+</select>
+<div id="weekNav" style="display:flex;gap:6px;align-items:center">
+  <button class="filter-select" onclick="shiftAnalyticsWeek(-1)" style="cursor:pointer;padding:7px 10px">←</button>
+  <span id="weekRangeLabel" style="font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--text-muted);white-space:nowrap"></span>
+  <button class="filter-select" onclick="shiftAnalyticsWeek(1)" style="cursor:pointer;padding:7px 10px">→</button>
+  <button class="filter-select" onclick="goAnalyticsToday()" style="cursor:pointer;font-size:11px">Today</button>
+</div>
       <select class="filter-select" id="filterStatus" onchange="applyFilters()">
         <option value="">All Statuses</option>
         <option>Hot</option><option>Prospect</option><option>Lead</option>
@@ -705,6 +711,7 @@ function onAuthSuccess(data) {
   }
 
   loadData();
+  updateWeekLabel();
 }
 
 function logout() {
@@ -771,6 +778,43 @@ function getWeekNum(d) {
   return Math.ceil(((d-s)/86400000+s.getDay()+1)/7);
 }
 
+let analyticsWeekStart = getAnalyticsWeekStart(new Date());
+
+function getAnalyticsWeekStart(d) {
+  const day = new Date(d);
+  const dow = day.getDay();
+  day.setDate(day.getDate() + (dow === 0 ? -6 : 1 - dow));
+  day.setHours(0, 0, 0, 0);
+  return day;
+}
+
+function shiftAnalyticsWeek(n) {
+  analyticsWeekStart = new Date(analyticsWeekStart);
+  analyticsWeekStart.setDate(analyticsWeekStart.getDate() + n * 7);
+  updateWeekLabel();
+  applyFilters();
+}
+
+function goAnalyticsToday() {
+  analyticsWeekStart = getAnalyticsWeekStart(new Date());
+  updateWeekLabel();
+  applyFilters();
+}
+
+function updateWeekLabel() {
+  const we = new Date(analyticsWeekStart);
+  we.setDate(analyticsWeekStart.getDate() + 6);
+  const fmt = d => d.toLocaleDateString('en-US', { month:'short', day:'numeric' });
+  const el = document.getElementById('weekRangeLabel');
+  if (el) el.textContent = fmt(analyticsWeekStart) + ' – ' + fmt(we);
+}
+
+function onPeriodChange() {
+  const period = document.getElementById('filterPeriod').value;
+  document.getElementById('weekNav').style.display = period === 'week' ? 'flex' : 'none';
+  applyFilters();
+}
+  
 function applyFilters() {
   const rep    = document.getElementById('filterRep').value;
   const period = document.getElementById('filterPeriod').value;
@@ -783,8 +827,9 @@ function applyFilters() {
     if (period !== 'all' && l.logDate) {
       const d = new Date(l.logDate);
       if (period === 'week') {
-        const wkStart = new Date(now); wkStart.setDate(now.getDate()-now.getDay()); wkStart.setHours(0,0,0,0);
-        if (d < wkStart) return false;
+        const wkEnd = new Date(analyticsWeekStart);
+        wkEnd.setDate(analyticsWeekStart.getDate() + 7);
+        if (d < analyticsWeekStart || d >= wkEnd) return false;
       } else if (period === 'month') {
         if (d.getMonth()!==now.getMonth()||d.getFullYear()!==now.getFullYear()) return false;
       }
