@@ -89,6 +89,20 @@
   .btn-main:disabled { opacity: 0.5; pointer-events: none; }
   .btn-flag { padding: 11px 18px; background: transparent; color: var(--warn); border: 1px solid var(--warn-border); border-radius: 2px; font-family: 'Plus Jakarta Sans', sans-serif; font-size: 12px; cursor: pointer; transition: background 0.15s; margin-left: auto; }
   .btn-flag:hover { background: var(--warn-light); }
+  
+  /* GOBACK */
+  .btn-back {
+  padding: 11px 18px;
+  background: transparent;
+  color: var(--text-muted);
+  border: 1px solid var(--border);
+  border-radius: 2px;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: 12px;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+.btn-back:hover { border-color: var(--text-muted); color: var(--text); }
 
   /* EMAIL VERIFY */
   .email-verify-section { display: none; margin-top: 20px; padding: 20px; background: var(--surface2); border: 1px solid var(--border); border-radius: 3px; animation: fadeUp 0.2s ease; }
@@ -368,6 +382,7 @@
       </div>
       <div class="step-actions">
         <button class="btn-main" onclick="nextStep(2)">Lead logged</button>
+        <button class="btn-back" onclick="prevStep(2)">← Back</button>
         <button class="btn-flag" onclick="toggleFlag(2)">Flag an issue</button>
       </div>
       <div class="flag-form" id="flag-2">
@@ -409,6 +424,7 @@
       </div>
       <div class="step-actions">
         <button class="btn-main" onclick="nextStep(3)">Update confirmed</button>
+        <button class="btn-back" onclick="prevStep(2)">← Back</button>
         <button class="btn-flag" onclick="toggleFlag(3)">Flag an issue</button>
       </div>
       <div class="flag-form" id="flag-3">
@@ -450,6 +466,7 @@
       </div>
       <div class="step-actions">
         <button class="btn-main" onclick="nextStep(4)">Calendar event created</button>
+        <button class="btn-back" onclick="prevStep(2)">← Back</button>
         <button class="btn-flag" onclick="toggleFlag(4)">Flag an issue</button>
       </div>
       <div class="flag-form" id="flag-4">
@@ -491,6 +508,7 @@
       </div>
       <div class="step-actions">
         <button class="btn-main" onclick="nextStep(5)">All done</button>
+        <button class="btn-back" onclick="prevStep(2)">← Back</button>
         <button class="btn-flag" onclick="toggleFlag(5)">Flag an issue</button>
       </div>
       <div class="flag-form" id="flag-5">
@@ -877,6 +895,20 @@ function nextStep(from) {
   document.getElementById('step-' + next).classList.add('visible');
   const nextProg = document.getElementById('prog-' + next);
   if (nextProg) nextProg.classList.add('active');
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+  function prevStep(from) {
+  if (from <= 1) return;
+  const prev = from - 1;
+  document.getElementById('step-' + from).classList.remove('visible');
+  const prog = document.getElementById('prog-' + from);
+  prog.classList.remove('active');
+  const prevProg = document.getElementById('prog-' + prev);
+  prevProg.classList.remove('done');
+  prevProg.querySelector('.step-num').textContent = prev;
+  prevProg.classList.add('active');
+  document.getElementById('step-' + prev).classList.add('visible');
   window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
