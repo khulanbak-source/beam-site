@@ -657,17 +657,16 @@ async function loadCRMData() {
   const loading = '<div class="crm-empty">Loading your leads…</div>';
   document.getElementById('crmTable1').innerHTML = loading;
   document.getElementById('crmTable2').innerHTML = loading;
+
   try {
-    const company = encodeURIComponent(session.client_name || '');
-    const url = ANALYTICS_ENDPOINT + (company ? '?company=' + company : '');
+    const params = new URLSearchParams();
+    if (session.client_name) params.set('company', session.client_name);
+    if (session.user_name) params.set('employee', session.user_name);
+    const url = `https://n8n.urstory.studio/webhook/beam-crm-leads?${params.toString()}`;
     const res = await fetch(url, { method: 'GET', headers: { 'Content-Type': 'application/json' } });
     if (!res.ok) throw new Error('Failed to load');
-    const logs = await res.json();
-    const chatId = session.telegram_chat_id || '';
-    const myLogs = chatId
-      ? logs.filter(l => (l.telegramChatId || '') === chatId)
-      : logs.filter(l => (l.salesperson || '').toLowerCase() === (session.user_name || '').toLowerCase());
-    const html = buildCRMTable(myLogs, session.user_name);
+    const leads = await res.json();
+    const html = buildCRMTable(leads, session.user_name);
     document.getElementById('crmTable1').innerHTML = html;
     document.getElementById('crmTable2').innerHTML = html;
   } catch(e) {
@@ -677,37 +676,44 @@ async function loadCRMData() {
   }
 }
 
-function buildCRMTable(logs, userName) {
-  if (!logs.length) return '<div class="crm-empty">No leads logged yet by ' + (userName || 'you') + '.<br>Log your first lead above and hit refresh.</div>';
-  const sorted = [...logs].sort((a,b) => new Date(b.logDate||0) - new Date(a.logDate||0)).slice(0,30);
-  const statusColor = { Hot:'#c46a4a', Reserved:'#1f3d2b', 'Test Drive':'#7a7670', Prospect:'#1f3d2b', Lead:'#7a7670', Sold:'#16a34a', Lost:'#b8b4ac' };
+function buildCRMTable(leads, userName) {
+  if (!leads.length) return `<div class="crm-empty">No leads logged yet by ${userName || 'you'}.<br>Log your first lead above and hit refresh.</div>`;
+
+  const sorted = [...leads].slice(0, 30);
+  const statusColor = {
+    Hot: '#c46a4a', Reserved: '#1f3d2b', 'Test Drive': '#7a7670',
+    Prospect: '#1f3d2b', Lead: '#7a7670', Sold: '#16a34a', Lost: '#b8b4ac'
+  };
+
   const rows = sorted.map(l => {
     const sc = statusColor[l.leadStatus] || 'var(--text-dim)';
-    const nextDate = l.nextActionDate ? l.nextActionDate.slice(0,10) : '—';
-    const tot = l.autoExtracted + l.manuallyAsked;
-    const aiScore = tot > 0 ? Math.round(l.autoExtracted / tot * 100) + '%' : '—';
+    const name = [l.firstName, l.lastName].filter(Boolean).join(' ') || '—';
     return `<tr>
-      <td><span class="crm-name">${l.leadName||'—'}</span><br><span style="font-size:10px;color:var(--text-dim)">${l.actionType||''}</span></td>
-      <td><span class="crm-status" style="background:${sc}18;border-color:${sc}44;color:${sc}">${l.leadStatus||'—'}</span></td>
-      <td>${l.lastActivity||'—'}</td>
-      <td>${l.sourceChannel||'—'}</td>
-      <td>${l.interestedProduct||'—'}</td>
-      <td style="max-width:160px;white-space:normal;font-size:11px">${l.nextActionLabel||'—'}</td>
-      <td>${nextDate}</td>
-      <td style="text-align:center">${l.calendarSet==='Yes'?'✅':'—'}</td>
-      <td style="color:var(--text-dim)">${l.logDate||'—'}</td>
+      <td><span class="crm-name">${name}</span></td>
+      <td><span class="crm-status" style="background:${sc}18;border-color:${sc}44;color:${sc}">${l.leadStatus || '—'}</span></td>
+      <td>${l.lastActivity || '—'}</td>
+      <td>${l.sourceChannel || '—'}</td>
+      <td>${l.interestedProduct || '—'}</td>
+      <td style="max-width:160px;white-space:normal;font-size:11px">${l.nextAction || '—'}</td>
+      <td>${l.nextActionDate || '—'}</td>
+      <td style="color:var(--text-dim)">${l.lastModified || l.createDate || '—'}</td>
     </tr>`;
   }).join('');
-  return `<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;flex-wrap:wrap;gap:8px">
-    <span style="font-size:11px;color:var(--text-muted)">${logs.length} log${logs.length!==1?'s':''} by you</span>
-    <button class="crm-refresh" onclick="loadCRMData()">↻ Refresh</button>
-  </div>
-  <div style="overflow-x:auto">
-    <table class="crm-table">
-      <thead><tr><th>Lead</th><th>Status</th><th>Activity</th><th>Source</th><th>Product</th><th>Input</th><th>Next Action</th><th>Action Date</th><th>📅</th><th>AI%</th><th>Logged</th></tr></thead>
-      <tbody>${rows}</tbody>
-    </table>
-  </div>`;
+
+  return `
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;flex-wrap:wrap;gap:8px">
+      <span style="font-size:11px;color:var(--text-muted)">${leads.length} lead${leads.length !== 1 ? 's' : ''}</span>
+      <button class="crm-refresh" onclick="loadCRMData()">↻ Refresh</button>
+    </div>
+    <div style="overflow-x:auto">
+      <table class="crm-table">
+        <thead><tr>
+          <th>Lead</th><th>Status</th><th>Activity</th><th>Source</th>
+          <th>Product</th><th>Next Action</th><th>Action Date</th><th>Last Updated</th>
+        </tr></thead>
+        <tbody>${rows}</tbody>
+      </table>
+    </div>`;
 }
 
 // ── CALENDAR DATA ──
