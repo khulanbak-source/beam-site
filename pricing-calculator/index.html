@@ -335,7 +335,7 @@
 <body>
 
 <div class="header">
-  <a href="/" class="logo" style="text-decoration:none">beam</a>
+  <div class="logo">beam<span class="logo-bar">|</span></div>
   <div class="header-tag">Pricing & ROI Calculator — v1.1</div>
 </div>
 
@@ -551,7 +551,8 @@
         <div class="section-label">Ongoing support model</div>
         <div class="pill-group">
           <div class="pill active" data-group="supportModel" data-val="retainer" onclick="pickOption(this,'supportModel')">Retainer<span class="pill-note">Fixed monthly · all small changes included</span></div>
-            <div class="pill" data-group="supportModel" data-val="ticket" onclick="pickOption(this,'supportModel')">Ticket-based<span class="pill-note">From ₮80k per scoped request</span></div>
+          <div class="pill" data-group="supportModel" data-val="ticket" onclick="pickOption(this,'supportModel')">Ticket-based<span class="pill-note">From ₮80k · scoped per request</span></div>
+
         </div>
         <div id="supportNote" class="note-box" style="margin-top:14px"></div>
       </div>
@@ -1078,7 +1079,10 @@ function generatePDF() {
   const sttMonthly = s.voice ? sttData[s.stt].costPerCall * s.voicePerDay * s.reps * workDays : 0;
   const crmMonthly = s.crmEnterprise ? 0 : (crm.free ? 0 : crm.perSeat * totalUsers);
   const n8nMonthly = s.supportModel === 'retainer' ? 0 : 20;
-  const totalMonthly = aiMonthly + sttMonthly + crmMonthly + n8nMonthly + inp.monthlyCost;
+  const aiOveragePDF  = s.supportModel === 'retainer' ? Math.max(0, aiMonthly - 15) : aiMonthly;
+  const totalMonthly  = s.supportModel === 'retainer'
+    ? aiOveragePDF + sttMonthly + crmMonthly + inp.monthlyCost
+    : aiMonthly + sttMonthly + crmMonthly + n8nMonthly + inp.monthlyCost;
 
   const isLocalPDF = s.region === 'local';
   // Recalculate diffScore for PDF
@@ -1107,11 +1111,17 @@ function generatePDF() {
   const sizeLabel = {small:'Small (1–20)',mid:'Mid-Market (20–200)',large:'Enterprise (200+)'}[s.size];
   const aiLabel   = s.ai==='claude' ? 'Claude ' + claudeModels[s.claudeModel].name : {gpt4o:'GPT-4o',copilot:'Copilot',gemini:'Gemini'}[s.ai];
 
+  const isRetainer = s.supportModel === 'retainer';
+  const aiStackCost = isRetainer
+    ? (aiMonthly <= 15 ? '✓ incl. in retainer' : `${fmt(aiOveragePDF)}/mo overage`)
+    : fmt(aiMonthly)+'/mo (invoiced)';
+  const n8nStackCost = isRetainer ? '✓ incl. in retainer' : '$20/mo (invoiced)';
+
   const stackRows = [
     ['Input Channel', s.input.charAt(0).toUpperCase()+s.input.slice(1), inp.monthlyCost===0?'Free':fmt(inp.monthlyCost)+'/mo'],
-    ['AI Model', aiLabel, fmt(aiMonthly)+'/mo'],
+    ['AI Model', aiLabel, aiStackCost],
     ['CRM', s.crm.charAt(0).toUpperCase()+s.crm.slice(1), s.crmEnterprise?'Included':(crmMonthly===0?'Free':fmt(crmMonthly)+'/mo')],
-    ['Automation', 'n8n', n8nMonthly===0?'Free':fmt(n8nMonthly)+'/mo'],
+    ['Automation', 'n8n', n8nStackCost],
     ...(s.voice ? [['Voice STT', {chimege:'Chimege',whisper:'Whisper',google:'Google STT'}[s.stt], fmt(sttMonthly)+'/mo']] : [])
   ];
 
@@ -1149,9 +1159,29 @@ function generatePDF() {
           <div style="font-size:11px;color:#7a7670;margin-top:4px">/ month · ${totalUsers} total users</div>
         </div>
         <div style="font-size:12px">
-          ${[['AI Model',fmt(aiMonthly)],s.voice?['Voice STT',fmt(sttMonthly)]:null,['CRM',crmMonthly===0?'Included':fmt(crmMonthly)],['Automation (n8n)',n8nMonthly===0?'Free':fmt(n8nMonthly)],['Input Channel',inp.monthlyCost===0?'Free':fmt(inp.monthlyCost)]].filter(Boolean).map(r=>`<div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid #f0ede7"><span style="color:#7a7670">${r[0]}</span><span style="font-family:'IBM Plex Mono',monospace;font-weight:500">${r[1]}</span></div>`).join('')}
-          <div style="display:flex;justify-content:space-between;padding:10px 0;margin-top:4px"><span style="color:#7a7670;font-size:11px">One-time setup fee <span style="opacity:0.6">(excl. tax)</span></span><span style="font-family:'IBM Plex Mono',monospace;font-weight:600">${fmt(setupFee)}</span></div>
-          <div style="display:flex;justify-content:space-between;padding:6px 0"><span style="color:#7a7670;font-size:11px">Monthly retainer <span style="opacity:0.6">(excl. tax)</span></span><span style="font-family:'IBM Plex Mono',monospace;font-weight:600;color:#1f3d2b">${fmt(retainerFee)}/mo</span></div>
+          ${(isRetainer
+            ? [
+                ['AI Model', aiMonthly <= 15 ? '✓ incl. in retainer' : `${fmt(aiOveragePDF)}/mo overage`],
+                s.voice ? ['Voice STT', fmt(sttMonthly)+'/mo'] : null,
+                ['CRM', crmMonthly===0?'Included':fmt(crmMonthly)],
+                ['Automation (n8n)', '✓ incl. in retainer'],
+                ['Input Channel', inp.monthlyCost===0?'Free':fmt(inp.monthlyCost)],
+              ]
+            : [
+                ['AI Model', fmt(aiMonthly)+'/mo (invoiced)'],
+                s.voice ? ['Voice STT', fmt(sttMonthly)+'/mo'] : null,
+                ['CRM', crmMonthly===0?'Included':fmt(crmMonthly)],
+                ['Automation (n8n)', '$20/mo (invoiced)'],
+                ['Input Channel', inp.monthlyCost===0?'Free':fmt(inp.monthlyCost)],
+              ]
+          ).filter(Boolean).map(r=>`<div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid #f0ede7"><span style="color:#7a7670">${r[0]}</span><span style="font-family:'IBM Plex Mono',monospace;font-weight:500">${r[1]}</span></div>`).join('')}
+          <div style="display:flex;justify-content:space-between;padding:10px 0;margin-top:4px;border-top:1px solid #dedad2"><span style="color:#7a7670;font-size:11px">One-time setup fee <span style="opacity:0.6">(excl. tax)</span></span><span style="font-family:'IBM Plex Mono',monospace;font-weight:600">${fmt(setupFee)}</span></div>
+          ${isRetainer
+            ? `<div style="display:flex;justify-content:space-between;padding:6px 0"><span style="color:#7a7670;font-size:11px">Monthly retainer <span style="opacity:0.6">(excl. tax)</span></span><span style="font-family:'IBM Plex Mono',monospace;font-weight:600;color:#1f3d2b">${fmt(retainerFee)}/mo</span></div>
+               <div style="font-size:10px;color:#7a7670;background:#f6f5f1;padding:8px 10px;border-radius:3px;margin-top:6px;line-height:1.5">Includes: n8n hosting · Claude AI up to $15/mo · monthly usage report · bug fixes</div>`
+            : `<div style="display:flex;justify-content:space-between;padding:6px 0"><span style="color:#7a7670;font-size:11px">Support model</span><span style="font-family:'IBM Plex Mono',monospace;font-weight:600;color:#2b2b2b">Ticket-based</span></div>
+               <div style="font-size:10px;color:#7a7670;background:#f6f5f1;padding:8px 10px;border-radius:3px;margin-top:6px;line-height:1.5">Per change request: from ${isLocalPDF ? '₮80,000' : '$25'} (scoped by complexity) · AI usage + n8n invoiced monthly · bug fixes always free</div>`
+          }
         </div>
         <div style="margin-top:20px">
           <div style="font-size:10px;font-weight:700;color:#1f3d2b;text-transform:uppercase;letter-spacing:0.12em;margin-bottom:12px">ROI Analysis</div>
