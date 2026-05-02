@@ -551,8 +551,7 @@
         <div class="section-label">Ongoing support model</div>
         <div class="pill-group">
           <div class="pill active" data-group="supportModel" data-val="retainer" onclick="pickOption(this,'supportModel')">Retainer<span class="pill-note">Fixed monthly · all small changes included</span></div>
-          <div class="pill" data-group="supportModel" data-val="ticket" onclick="pickOption(this,'supportModel')">Ticket-based<span class="pill-note">₮50k / $15 per change request</span></div>
-
+            <div class="pill" data-group="supportModel" data-val="ticket" onclick="pickOption(this,'supportModel')">Ticket-based<span class="pill-note">From ₮80k per scoped request</span></div>
         </div>
         <div id="supportNote" class="note-box" style="margin-top:14px"></div>
       </div>
@@ -726,7 +725,7 @@ const supportData = {
     cons: ['Minimum 3-month engagement', 'Major new modules quoted separately']
   },
   ticket: {
-    note: '🎫 Per-ticket pricing: ₮50,000 / $15 per scoped change request. Bug fixes always free. Monthly invoice includes: tickets + full Claude AI usage + n8n hosting ($20/mo).',
+    note: '🎫 Per-ticket pricing: scoped before any work begins — minor changes from ₮80,000 / moderate from ₮150,000 / major from ₮300,000. Bug fixes always free. Monthly invoice includes: tickets + Claude AI usage + n8n hosting ($20/mo).',
     pros: ['Pay only when you request a change', 'No monthly commitment', 'Bug fixes always free', 'Full cost transparency — AI usage invoiced at cost'],
     cons: ['n8n hosting ($20/mo) billed separately', 'AI usage invoiced in full (not absorbed)', 'Response time slower than retainer']
   }
@@ -965,7 +964,7 @@ function recalc() {
   document.getElementById('totalSub').textContent = monthlySubLabel;
   document.getElementById('setupFee').textContent = fmt(setupFee);
 
-  const retainerDisplay = state.supportModel === 'retainer' ? fmt(retainerFee)+'/mo' : '₮50k / $15 per ticket';
+  const retainerDisplay = state.supportModel === 'retainer' ? fmt(retainerFee)+'/mo' : 'From ₮80,000 per ticket';
   document.getElementById('retainerFee').textContent = retainerDisplay;
   document.getElementById('retainerLabel').textContent = state.supportModel === 'retainer' ? 'Monthly retainer (incl. AI + n8n)' : 'Support (ticket-based)';
 
@@ -1042,7 +1041,7 @@ function recalc() {
         ${aiOverage > 0 ? `<div class="breakdown-row" style="padding-left:12px"><span style="font-size:11px;color:var(--accent3)">↳ AI overage (>${'$'}${AI_RETAINER_INCLUDE})</span><span class="bv" style="font-size:11px;color:var(--accent3)">${'$'}${aiOverage.toFixed(2)} invoiced</span></div>` : ''}
       `:''}
       ${state.supportModel==='ticket'?`
-        <div class="breakdown-row"><span>Per change request</span><span class="bv">₮50,000 / $15</span></div>
+        <div class="breakdown-row"><span>Per change request</span><span class="bv">From ₮80,000 (scoped)</span></div>
         <div class="breakdown-row"><span>n8n hosting</span><span class="bv" style="color:var(--accent3)">$20/mo invoiced</span></div>
         <div class="breakdown-row"><span>Claude AI usage</span><span class="bv" style="color:var(--accent3)">${fmt(aiMonthly)}/mo invoiced</span></div>
         <div class="breakdown-row"><span>Bug fixes</span><span class="bv">Always free</span></div>
