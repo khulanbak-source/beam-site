@@ -2,496 +2,581 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>beam | from conversation to action</title>
-<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<meta name="description" content="An AI sales assistant built with your team in about two weeks. Reps send voice notes or messages, Beam keeps the CRM up to date. One-off fee, your own accounts.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
 <style>
   :root {
     --bg: #f6f5f1;
     --surface: #ffffff;
-    --surface2: #f0ede7;
-    --border: #dedad2;
-    --text: #2b2b2b;
-    --text-muted: #7a7670;
-    --text-dim: #b8b4ac;
+    --surface2: #efede6;
+    --border: #dfdcd3;
+    --text: #1d221e;
+    --muted: #666a63;
+    --dim: #9a9c94;
     --accent: #1f3d2b;
-    --accent-light: rgba(31,61,43,0.07);
-    --accent-border: rgba(31,61,43,0.18);
+    --accent-2: #2f6a45;
+    --accent-soft: rgba(31,61,43,0.07);
+    --accent-line: rgba(31,61,43,0.2);
+    --on-accent: #f6f5f1;
+    --sans: 'Plus Jakarta Sans', system-ui, -apple-system, 'Segoe UI', sans-serif;
+    --mono: 'IBM Plex Mono', ui-monospace, Menlo, monospace;
+    --wrap: 1120px;
   }
-
   * { box-sizing: border-box; margin: 0; padding: 0; }
-  body {
-    background: var(--bg);
-    color: var(--text);
-    font-family: 'Plus Jakarta Sans', sans-serif;
-    font-size: 15px;
-    line-height: 1.6;
-  }
+  html { scroll-behavior: smooth; }
+  body { background: var(--bg); color: var(--text); font-family: var(--sans); font-size: 16px; line-height: 1.6; -webkit-font-smoothing: antialiased; }
+  a { color: inherit; }
+  .wrap { max-width: var(--wrap); margin: 0 auto; padding-inline: 24px; }
+  :focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; border-radius: 4px; }
 
   /* HEADER */
-  header {
-    padding: 24px 40px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    border-bottom: 1px solid var(--border);
-    position: sticky;
-    top: 0;
-    background: rgba(246,245,241,0.95);
-    backdrop-filter: blur(8px);
-    z-index: 100;
-  }
-  .logo { font-size: 17px; font-weight: 500; color: var(--accent); }
-  nav { display: flex; align-items: center; gap: 24px; }
-  nav a { font-size: 13px; color: var(--text-muted); text-decoration: none; transition: color 0.15s; }
+  header { position: sticky; top: 0; z-index: 50; background: rgba(246,245,241,0.92); backdrop-filter: blur(10px); border-bottom: 1px solid var(--border); }
+  .bar { display: flex; align-items: center; justify-content: space-between; gap: 16px; height: 64px; }
+  .logo { font-size: 20px; font-weight: 800; letter-spacing: -0.02em; text-decoration: none; color: var(--accent); }
+  nav { display: flex; align-items: center; gap: 26px; }
+  nav a { font-size: 14px; color: var(--muted); text-decoration: none; }
   nav a:hover { color: var(--text); }
-  .nav-cta { padding: 8px 20px; background: var(--accent); color: #fff !important; border-radius: 2px; font-size: 13px; font-weight: 500; }
-  .nav-cta:hover { opacity: 0.85; }
-  .hamburger { display: none; flex-direction: column; gap: 5px; cursor: pointer; padding: 4px; }
-  .hamburger span { display: block; width: 22px; height: 2px; background: var(--text); border-radius: 2px; }
-  .mobile-menu { display: none; flex-direction: column; background: var(--surface); border-bottom: 1px solid var(--border); }
-  .mobile-menu.open { display: flex; }
-  .mobile-menu a { padding: 16px 24px; font-size: 14px; color: var(--text); text-decoration: none; border-bottom: 1px solid var(--border); }
-  .mobile-menu a:last-child { border-bottom: none; }
+  .right { display: flex; align-items: center; gap: 12px; }
+  .lang { display: inline-flex; border: 1px solid var(--border); border-radius: 999px; padding: 2px; background: var(--surface); }
+  .lang button { font: 600 12px var(--mono); letter-spacing: 0.04em; border: 0; background: transparent; color: var(--muted); padding: 5px 10px; border-radius: 999px; cursor: pointer; }
+  .lang button[aria-pressed="true"] { background: var(--accent); color: var(--on-accent); }
+  .btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; font-weight: 700; font-size: 15px; text-decoration: none; border-radius: 10px; padding: 13px 22px; transition: transform .15s, background .15s, border-color .15s; }
+  .btn.primary { background: var(--accent); color: var(--on-accent); }
+  .btn.primary:hover { background: var(--accent-2); }
+  .btn.ghost { border: 1px solid var(--border); background: var(--surface); color: var(--text); }
+  .btn.ghost:hover { border-color: var(--accent-line); }
+  .btn.small { font-size: 13.5px; padding: 9px 16px; border-radius: 8px; }
+  .menu-btn { display: none; border: 1px solid var(--border); background: var(--surface); border-radius: 8px; width: 40px; height: 40px; cursor: pointer; align-items: center; justify-content: center; }
+  .menu-btn span, .menu-btn span::before, .menu-btn span::after { display: block; width: 18px; height: 2px; background: var(--text); position: relative; content: ''; }
+  .menu-btn span::before { position: absolute; top: -6px; } .menu-btn span::after { position: absolute; top: 6px; }
+  .mobile-menu { display: none; border-top: 1px solid var(--border); background: var(--surface); }
+  .mobile-menu.open { display: block; }
+  .mobile-menu a { display: block; padding: 14px 24px; border-bottom: 1px solid var(--border); text-decoration: none; font-size: 15px; }
 
   /* HERO */
-  .hero { max-width: 700px; margin: 0 auto; padding: 88px 24px 72px; text-align: center; }
-  .hero-label {
-    font-size: 11px; color: var(--text-dim); letter-spacing: 0.12em; text-transform: uppercase;
-    margin-bottom: 28px; display: flex; align-items: center; justify-content: center; gap: 12px;
-  }
-  .hero-label::before, .hero-label::after { content: ''; height: 1px; width: 36px; background: var(--border); }
-  h1 { font-size: clamp(34px, 6vw, 54px); font-weight: 300; line-height: 1.15; letter-spacing: -0.02em; margin-bottom: 20px; }
-  h1 strong { font-weight: 600; color: var(--accent); }
-  .hero-sub { font-size: 16px; color: var(--text-muted); max-width: 420px; margin: 0 auto 44px; font-weight: 300; line-height: 1.75; }
-  .hero-actions { display: flex; align-items: center; justify-content: center; gap: 12px; flex-wrap: wrap; }
-  .btn-main { display: inline-block; padding: 13px 32px; background: var(--accent); color: #fff; font-size: 14px; font-weight: 500; border-radius: 2px; text-decoration: none; transition: opacity 0.15s; }
-  .btn-main:hover { opacity: 0.85; }
-  .btn-soft { display: inline-block; padding: 13px 24px; background: transparent; color: var(--text-muted); font-size: 13px; border: 1px solid var(--border); border-radius: 2px; text-decoration: none; transition: all 0.15s; }
-  .btn-soft:hover { border-color: var(--accent-border); color: var(--text); }
+  .hero { display: grid; grid-template-columns: 1.1fr 0.9fr; gap: 56px; align-items: center; padding-block: 80px 72px; }
+  .eyebrow { font: 500 12px var(--mono); letter-spacing: 0.1em; text-transform: uppercase; color: var(--accent-2); margin-bottom: 18px; }
+  h1 { font-size: clamp(40px, 6vw, 68px); line-height: 1.02; letter-spacing: -0.035em; font-weight: 800; margin-bottom: 22px; text-wrap: balance; }
+  h1 strong { color: var(--accent-2); font-weight: 800; }
+  .lede { font-size: 18px; color: var(--muted); max-width: 54ch; margin-bottom: 30px; }
+  .actions { display: flex; gap: 12px; flex-wrap: wrap; }
+  .facts { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 28px; }
+  .facts span { font: 500 12px var(--mono); color: var(--accent); background: var(--accent-soft); border: 1px solid var(--accent-line); border-radius: 999px; padding: 5px 12px; }
 
-  /* UTILS */
-  .divider { border: none; border-top: 1px solid var(--border); }
-  .section { max-width: 900px; margin: 0 auto; padding: 72px 24px; }
-  .section-label { font-size: 10px; color: var(--text-dim); letter-spacing: 0.14em; text-transform: uppercase; margin-bottom: 36px; font-weight: 500; }
+  /* CHAT */
+  .chat { background: var(--surface); border: 1px solid var(--border); border-radius: 18px; padding: 18px; box-shadow: 0 30px 60px -30px rgba(31,61,43,0.35); display: flex; flex-direction: column; gap: 10px; }
+  .chat-head { display: flex; align-items: center; gap: 10px; padding-bottom: 12px; border-bottom: 1px solid var(--border); margin-bottom: 4px; }
+  .avatar { width: 34px; height: 34px; border-radius: 50%; background: var(--accent); color: var(--on-accent); display: grid; place-items: center; font-weight: 800; }
+  .chat-name { font-weight: 700; font-size: 14px; line-height: 1.2; }
+  .chat-sub { font-size: 12px; color: var(--muted); }
+  .bubble { max-width: 88%; padding: 10px 13px; border-radius: 4px 14px 14px 14px; font-size: 13.5px; line-height: 1.55; background: var(--surface2); }
+  .bubble.out { align-self: flex-end; border-radius: 14px 4px 14px 14px; background: var(--accent); color: var(--on-accent); }
+  .bubble .rec { display: grid; gap: 2px; }
+  .chat-time { font: 11px var(--mono); color: var(--dim); align-self: flex-end; }
 
-  /* PAIN POINTS */
-  .pain-wrap { background: var(--surface); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); }
-  .pain-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 48px; }
-  .pain-col h3 { font-size: 14px; font-weight: 600; color: var(--text); margin-bottom: 20px; padding-bottom: 12px; border-bottom: 1px solid var(--border); }
-  .pain-list { list-style: none; display: flex; flex-direction: column; gap: 14px; }
-  .pain-list li { display: flex; align-items: flex-start; gap: 12px; font-size: 13px; color: var(--text-muted); line-height: 1.6; }
-  .pain-emoji { font-size: 15px; flex-shrink: 0; margin-top: 1px; }
+  /* SECTIONS */
+  section.block { padding-block: 88px; border-top: 1px solid var(--border); }
+  section.alt { background: var(--surface); }
+  .label { font: 500 12px var(--mono); letter-spacing: 0.1em; text-transform: uppercase; color: var(--accent-2); margin-bottom: 14px; }
+  h2 { font-size: clamp(28px, 3.6vw, 40px); line-height: 1.12; letter-spacing: -0.025em; font-weight: 800; margin-bottom: 16px; text-wrap: balance; max-width: 22ch; }
+  h2 strong { color: var(--accent-2); }
+  .intro { color: var(--muted); font-size: 17px; max-width: 60ch; margin-bottom: 40px; }
 
-  /* HOW IT WORKS */
-  .steps { display: grid; grid-template-columns: repeat(4, 1fr); border: 1px solid var(--border); border-radius: 3px; overflow: hidden; }
-  .step { padding: 28px 22px; background: var(--surface); border-right: 1px solid var(--border); }
-  .step:last-child { border-right: none; }
-  .step-n { font-size: 10px; color: var(--text-dim); margin-bottom: 14px; letter-spacing: 0.06em; }
-  .step-icon { font-size: 20px; margin-bottom: 12px; display: block; }
-  .step-title { font-size: 13px; font-weight: 600; color: var(--text); margin-bottom: 6px; }
-  .step-desc { font-size: 12px; color: var(--text-muted); line-height: 1.65; }
+  /* PAINS */
+  .pains { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+  .pain-col { background: var(--surface); border: 1px solid var(--border); border-radius: 14px; padding: 26px; }
+  .pain-col h3 { font-size: 16px; margin-bottom: 14px; }
+  .pain-col ul { list-style: none; display: grid; gap: 12px; }
+  .pain-col li { font-size: 15px; color: var(--muted); padding-left: 18px; position: relative; }
+  .pain-col li::before { content: ''; position: absolute; left: 0; top: 10px; width: 8px; height: 2px; background: var(--accent-2); }
+  .pain-col li b { color: var(--text); font-weight: 600; }
 
-  /* WHAT YOU GET */
-  .what-wrap { background: var(--surface); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); }
-  .what-inner { display: grid; grid-template-columns: 1fr 1fr; gap: 60px; align-items: center; }
-  .what-text h2 { font-size: 26px; font-weight: 400; line-height: 1.35; margin-bottom: 14px; letter-spacing: -0.01em; }
-  .what-text h2 strong { font-weight: 600; color: var(--accent); }
-  .what-text p { font-size: 13px; color: var(--text-muted); line-height: 1.75; margin-bottom: 22px; }
-  .what-list { list-style: none; display: flex; flex-direction: column; gap: 10px; }
-  .what-list li { display: flex; align-items: flex-start; gap: 10px; font-size: 13px; color: var(--text-muted); line-height: 1.55; }
-  .what-list li .check { color: var(--accent); font-size: 14px; flex-shrink: 0; margin-top: 1px; font-weight: 600; }
-  .what-list li .opt { font-size: 10px; color: var(--text-dim); background: var(--surface2); border: 1px solid var(--border); border-radius: 2px; padding: 1px 6px; margin-left: 6px; font-weight: 500; letter-spacing: 0.04em; white-space: nowrap; vertical-align: middle; }
+  /* STEPS */
+  .steps { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; counter-reset: s; }
+  .step { border-top: 2px solid var(--accent); padding-top: 18px; }
+  .step-n { font: 600 12px var(--mono); color: var(--accent-2); margin-bottom: 10px; }
+  .step h3 { font-size: 16px; margin-bottom: 6px; }
+  .step p { font-size: 14.5px; color: var(--muted); }
 
-  /* CHAT MOCK */
-  .chat-mock { background: var(--surface2); border: 1px solid var(--border); border-radius: 6px; padding: 18px; display: flex; flex-direction: column; gap: 10px; }
-  .chat-header { display: flex; align-items: center; gap: 10px; padding-bottom: 12px; border-bottom: 1px solid var(--border); margin-bottom: 4px; }
-  .chat-avatar { width: 30px; height: 30px; border-radius: 50%; background: var(--accent); display: flex; align-items: center; justify-content: center; font-size: 13px; color: #fff; font-weight: 600; flex-shrink: 0; }
-  .chat-name { font-size: 13px; font-weight: 600; }
-  .chat-sub { font-size: 11px; color: var(--text-muted); }
-  .bubble { max-width: 88%; padding: 10px 13px; border-radius: 3px 12px 12px 12px; font-size: 12px; line-height: 1.55; background: var(--surface); border: 1px solid var(--border); color: var(--text); }
-  .bubble.out { align-self: flex-end; border-radius: 12px 3px 12px 12px; background: var(--accent-light); border-color: var(--accent-border); color: var(--accent); }
-  .bubble-time { font-size: 10px; color: var(--text-dim); padding: 0 2px; align-self: flex-end; }
+  /* FEATURES */
+  .features { display: grid; grid-template-columns: 1fr 1fr; gap: 56px; align-items: center; }
+  .checks { list-style: none; display: grid; gap: 10px; margin-top: 22px; }
+  .checks li { display: flex; gap: 12px; font-size: 15px; color: var(--muted); }
+  .checks li::before { content: ''; flex: 0 0 18px; height: 18px; margin-top: 3px; border-radius: 50%; background: var(--accent-soft) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath d='M4 8.5l2.5 2.5L12 5.5' fill='none' stroke='%232f6a45' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") center/12px no-repeat; border: 1px solid var(--accent-line); }
+  .tag { font: 500 11px var(--mono); color: var(--dim); border: 1px solid var(--border); border-radius: 4px; padding: 0 6px; margin-left: 6px; white-space: nowrap; }
 
-  /* IMPLEMENTATION */
-  .impl-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 32px; }
-  .impl-card { padding: 22px; background: var(--surface); border: 1px solid var(--border); border-radius: 3px; }
-  .impl-card-top { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }
-  .impl-icon { font-size: 18px; }
-  .impl-title { font-size: 13px; font-weight: 600; color: var(--text); }
-  .impl-desc { font-size: 12px; color: var(--text-muted); line-height: 1.65; }
-  .impl-note { font-size: 11px; color: var(--text-dim); margin-top: 8px; font-style: italic; }
+  .record { background: var(--surface); border: 1px solid var(--border); border-radius: 16px; overflow: hidden; box-shadow: 0 30px 60px -34px rgba(31,61,43,0.3); }
+  .record-head { display: flex; justify-content: space-between; gap: 12px; padding: 14px 20px; border-bottom: 1px solid var(--border); font-weight: 700; font-size: 14px; }
+  .live { font: 500 12px var(--mono); color: var(--accent-2); }
+  .record dl { display: grid; grid-template-columns: 120px 1fr; }
+  .record dt, .record dd { padding: 10px 20px; border-bottom: 1px solid var(--border); font-size: 14px; }
+  .record dt { font: 500 12px var(--mono); color: var(--muted); text-transform: uppercase; letter-spacing: 0.05em; padding-top: 12px; }
+  .pill { font: 600 12px var(--mono); background: var(--accent-soft); color: var(--accent); border: 1px solid var(--accent-line); border-radius: 999px; padding: 2px 10px; }
+  .record-foot { padding: 14px 20px; font-size: 13.5px; color: var(--muted); background: var(--bg); }
 
-  .custom-note {
-    padding: 16px 20px;
-    background: var(--accent-light);
-    border: 1px solid var(--accent-border);
-    border-radius: 3px;
-    font-size: 13px;
-    color: var(--text-muted);
-    line-height: 1.7;
-  }
-  .custom-note strong { color: var(--accent); }
+  /* STACK */
+  .stack { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+  .card { background: var(--bg); border: 1px solid var(--border); border-radius: 14px; padding: 22px; }
+  section.alt .card { background: var(--bg); }
+  .card .k { font: 500 11px var(--mono); letter-spacing: 0.08em; text-transform: uppercase; color: var(--accent-2); margin-bottom: 8px; }
+  .card h3 { font-size: 16px; margin-bottom: 6px; }
+  .card p { font-size: 14.5px; color: var(--muted); }
 
   /* TIMELINE */
-  .timeline { display: flex; flex-direction: column; gap: 0; border: 1px solid var(--border); border-radius: 3px; overflow: hidden; margin-bottom: 24px; }
-  .tl-row { display: grid; grid-template-columns: 120px 1fr; background: var(--surface); border-bottom: 1px solid var(--border); }
-  .tl-row:last-child { border-bottom: none; }
-  .tl-week { padding: 18px 20px; background: var(--surface2); border-right: 1px solid var(--border); display: flex; flex-direction: column; justify-content: center; }
-  .tl-week-label { font-size: 10px; color: var(--text-dim); letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 2px; }
-  .tl-week-val { font-size: 13px; font-weight: 600; color: var(--accent); }
-  .tl-week-val:empty { display: none; }
-  .tl-week { justify-content: center; }
-  .tl-content { padding: 18px 24px; }
-  .tl-title { font-size: 13px; font-weight: 600; color: var(--text); margin-bottom: 4px; }
-  .tl-desc { font-size: 12px; color: var(--text-muted); line-height: 1.6; }
+  .timeline { list-style: none; display: grid; gap: 0; border: 1px solid var(--border); border-radius: 14px; overflow: hidden; background: var(--surface); }
+  .timeline li { display: grid; grid-template-columns: 140px 1fr auto; gap: 20px; align-items: baseline; padding: 20px 24px; border-bottom: 1px solid var(--border); }
+  .timeline li:last-child { border-bottom: 0; }
+  .tl-w { font: 600 12px var(--mono); color: var(--accent-2); text-transform: uppercase; letter-spacing: 0.06em; }
+  .timeline h3 { font-size: 16px; margin-bottom: 2px; }
+  .timeline p { font-size: 14.5px; color: var(--muted); }
+  .tl-who { font: 500 11px var(--mono); color: var(--muted); background: var(--surface2); border-radius: 999px; padding: 3px 10px; white-space: nowrap; }
+  .note { margin-top: 16px; font-size: 14px; color: var(--muted); max-width: 72ch; }
 
-  .timeline-caveat {
-    font-size: 12px;
-    color: var(--text-dim);
-    line-height: 1.7;
-    padding: 14px 18px;
-    border: 1px solid var(--border);
-    border-radius: 3px;
-    background: var(--surface);
-  }
+  /* PRICING */
+  .prices { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  .price { background: var(--bg); border: 1px solid var(--border); border-radius: 16px; padding: 28px; display: flex; flex-direction: column; gap: 10px; }
+  .price.featured { background: var(--accent); color: var(--on-accent); border-color: var(--accent); }
+  .price .name { font-weight: 700; font-size: 16px; }
+  .price .amt { font: 600 40px/1 var(--mono); letter-spacing: -0.02em; }
+  .price .amt small { font: 500 14px var(--sans); opacity: 0.7; margin-left: 6px; letter-spacing: 0; }
+  .price p { font-size: 14.5px; opacity: 0.85; }
+  .price .to { font: 500 16px var(--sans); opacity: 0.7; margin: 0 10px; letter-spacing: 0; }
+  .drivers { list-style: none; display: grid; gap: 8px; }
+  .drivers li { font-size: 14.5px; color: var(--muted); padding-left: 16px; position: relative; }
+  .drivers li::before { content: ''; position: absolute; left: 0; top: 10px; width: 7px; height: 2px; background: var(--accent-2); }
+  .includes { margin-top: 22px; display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  .includes .card h3 { font-size: 15px; }
+  .inline-link { color: var(--accent-2); font-weight: 700; text-decoration: none; border-bottom: 1px solid var(--accent-line); }
+  .inline-link:hover { border-color: var(--accent-2); }
 
-  /* EXPLORE */
-  .links-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
-  .link-card { display: block; padding: 26px 22px; background: var(--surface); border: 1px solid var(--border); border-radius: 3px; text-decoration: none; transition: border-color 0.15s, box-shadow 0.15s; }
-  .link-card:hover { border-color: var(--accent-border); box-shadow: 0 2px 12px rgba(0,0,0,0.05); }
-  .link-card-icon { font-size: 18px; margin-bottom: 12px; display: block; }
-  .link-card-title { font-size: 14px; font-weight: 600; color: var(--text); margin-bottom: 6px; }
-  .link-card-desc { font-size: 12px; color: var(--text-muted); line-height: 1.65; margin-bottom: 14px; }
-  .link-card-arrow { font-size: 12px; color: var(--accent); font-weight: 500; }
+  /* FAQ */
+  .faq { display: grid; grid-template-columns: 1fr 1fr; gap: 16px 40px; }
+  .faq h3 { font-size: 16px; margin-bottom: 4px; }
+  .faq p { font-size: 15px; color: var(--muted); }
+  .faq .diy { grid-column: 1 / -1; background: var(--surface); border: 1px solid var(--accent-line); border-radius: 14px; padding: 22px 24px; }
 
-  /* FOOTER */
-  footer { border-top: 1px solid var(--border); padding: 24px 40px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px; }
-  .footer-left { font-size: 12px; color: var(--text-dim); }
-  .footer-right { display: flex; gap: 20px; flex-wrap: wrap; }
-  .footer-right a { font-size: 12px; color: var(--text-dim); text-decoration: none; transition: color 0.15s; }
-  .footer-right a:hover { color: var(--text); }
+  /* CTA */
+  .cta { background: var(--accent); color: var(--on-accent); border-radius: 22px; padding: 56px; display: grid; grid-template-columns: 1.4fr auto; gap: 32px; align-items: center; }
+  .cta h2 { color: var(--on-accent); margin-bottom: 10px; }
+  .cta p { opacity: 0.85; max-width: 52ch; }
+  .cta .btn.primary { background: var(--on-accent); color: var(--accent); }
+  .cta .btn.primary:hover { background: #fff; }
+  .cta .btn.ghost { background: transparent; color: var(--on-accent); border-color: rgba(246,245,241,0.35); }
+  .cta .actions { flex-direction: column; }
+  .cta .demo-note { font-size: 12.5px; opacity: 0.7; text-align: center; }
 
-  /* MOBILE */
-  @media (max-width: 720px) {
-    header { padding: 18px 20px; }
+  footer { padding-block: 32px; }
+  .foot { display: flex; justify-content: space-between; flex-wrap: wrap; gap: 12px; font-size: 13px; color: var(--dim); }
+  .foot a { text-decoration: none; margin-left: 18px; }
+  .foot a:hover { color: var(--text); }
+
+  @media (max-width: 900px) {
     nav { display: none; }
-    .hamburger { display: flex; }
-    .hero { padding: 56px 20px 52px; }
-    .section { padding: 52px 20px; }
-    .pain-grid { grid-template-columns: 1fr; gap: 32px; }
-    .steps { grid-template-columns: 1fr 1fr; }
-    .step { border-bottom: 1px solid var(--border); }
-    .step:nth-child(2) { border-right: none; }
-    .step:nth-child(3) { border-bottom: none; }
-    .step:nth-child(4) { border-right: none; border-bottom: none; }
-    .what-inner { grid-template-columns: 1fr; gap: 32px; }
-    .impl-grid { grid-template-columns: 1fr; }
-    .tl-row { grid-template-columns: 90px 1fr; }
-    .links-grid { grid-template-columns: 1fr; }
-    footer { padding: 20px; flex-direction: column; align-items: flex-start; gap: 16px; }
+    .menu-btn { display: inline-flex; }
+    .right .btn { display: none; }
+    .hero, .features { grid-template-columns: 1fr; gap: 40px; }
+    .hero { padding-block: 48px 56px; }
+    .steps { grid-template-columns: 1fr 1fr; gap: 28px 16px; }
+    .stack { grid-template-columns: 1fr 1fr; }
+    .cta { grid-template-columns: 1fr; padding: 36px 28px; }
   }
+  @media (max-width: 620px) {
+    .wrap { padding-inline: 16px; }
+    section.block { padding-block: 60px; }
+    .pains, .steps, .stack, .prices, .includes, .faq { grid-template-columns: 1fr; }
+    .timeline li { grid-template-columns: 1fr; gap: 4px; padding: 18px; }
+    .tl-who { justify-self: start; margin-top: 6px; }
+    .foot a { margin: 0 16px 0 0; }
+  }
+  @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } * { transition: none !important; } }
 </style>
 </head>
 <body>
 
 <header>
-  <div class="logo">beam</div>
-  <nav>
-    <a href="/onboarding">Try demo</a>
-    <a href="/pricing-calculator">Pricing</a>
-    <a href="/analytics">Analytics</a>
-    <a href="/onboarding" class="nav-cta">Get started</a>
-  </nav>
-  <div class="hamburger" onclick="toggleMenu()">
-    <span></span><span></span><span></span>
+  <div class="wrap bar">
+    <a href="/" class="logo">beam</a>
+    <nav aria-label="Main">
+      <a href="#how" data-i="nav_how">How it works</a>
+      <a href="#build" data-i="nav_build">The build</a>
+      <a href="#pricing" data-i="nav_pricing">Pricing</a>
+      <a href="/pricing-calculator" data-i="nav_calc">Savings calculator</a>
+    </nav>
+    <div class="right">
+      <div class="lang" role="group" aria-label="Language">
+        <button type="button" data-lang="en" aria-pressed="true">EN</button>
+        <button type="button" data-lang="mn" aria-pressed="false">MN</button>
+      </div>
+      <a class="btn primary small" data-book href="#" data-i="cta_book">Book a build session</a>
+      <button class="menu-btn" type="button" aria-label="Menu" aria-expanded="false" id="menuBtn"><span></span></button>
+    </div>
+  </div>
+  <div class="mobile-menu" id="mobileMenu">
+    <a href="#how" data-i="nav_how">How it works</a>
+    <a href="#build" data-i="nav_build">The build</a>
+    <a href="#pricing" data-i="nav_pricing">Pricing</a>
+    <a href="/pricing-calculator" data-i="nav_calc">Savings calculator</a>
+    <a href="#" data-book data-i="cta_book" style="color:var(--accent);font-weight:700">Book a build session</a>
   </div>
 </header>
 
-<div class="mobile-menu" id="mobileMenu">
-  <a href="/onboarding">Try the demo</a>
-  <a href="/pricing-calculator">Pricing calculator</a>
-  <a href="/analytics">Analytics dashboard</a>
-  <a href="/onboarding" style="color: var(--accent); font-weight: 500;">Get started</a>
-</div>
+<main>
+  <div class="wrap hero">
+    <div>
+      <div class="eyebrow" data-i="hero_eyebrow">AI sales assistant, built with your team</div>
+      <h1 data-i="hero_h1">From conversation <strong>to action.</strong></h1>
+      <p class="lede" data-i="hero_lede">Your reps send a voice note or a chat message after each meeting. Beam turns it into a clean CRM record and reminds them of the next step. We build it together with your team in about two weeks, on your own chat app, AI account and CRM. You pay once and own all of it.</p>
+      <div class="actions">
+        <a class="btn primary" data-book href="#" data-i="cta_book">Book a build session</a>
+        <a class="btn ghost" href="/pricing-calculator" data-i="cta_calc">Estimate your savings</a>
+      </div>
+      <div class="facts">
+        <span data-i="fact1">About 2 weeks</span>
+        <span data-i="fact2">One-off fee</span>
+        <span data-i="fact3">Runs on your accounts</span>
+      </div>
+    </div>
 
-<!-- HERO -->
-<section class="hero">
-  <div class="hero-label">AI sales automation</div>
-  <h1>From <strong>conversation</strong><br>to action.</h1>
-  <p class="hero-sub">
-    Sales reps send a voice note or message after a meeting. Beam extracts the key details and logs them into the CRM automatically.
-  </p>
-  <div class="hero-actions">
-    <a href="/onboarding" class="btn-main">Try the demo</a>
-    <a href="/pricing-calculator" class="btn-soft">See pricing</a>
+    <div class="chat" aria-label="Example conversation">
+      <div class="chat-head">
+        <div class="avatar">b</div>
+        <div><div class="chat-name">beam</div><div class="chat-sub" data-i="chat_sub">Sales assistant</div></div>
+      </div>
+      <div data-i="chat_body">
+        <div class="bubble out" style="margin-left:auto">Call with Sarah Chen at Northwind Logistics. Interested in the annual plan for 40 users, asked about payment terms. Follow up Tuesday 10:00.</div>
+        <div class="bubble" style="margin-top:10px"><div class="rec"><span>👤 Sarah Chen · Northwind Logistics</span><span>📊 Prospect · Call</span><span>💬 Annual plan, 40 users. Asked about payment terms.</span><span>📌 Follow up Tuesday 10:00</span></div><br>Add a reminder?</div>
+        <div class="bubble out" style="margin:10px 0 0 auto;width:fit-content">Yes</div>
+        <div class="bubble" style="margin-top:10px;width:fit-content">✅ Saved to CRM. Added to calendar.</div>
+      </div>
+      <div class="chat-time" data-i="chat_time">Today, 2:14 PM</div>
+    </div>
   </div>
-</section>
 
-<hr class="divider">
+  <section class="block" aria-labelledby="who-h">
+    <div class="wrap">
+      <div class="label" data-i="who_label">Who it's for</div>
+      <h2 id="who-h" data-i="who_h2">Sales teams that meet clients all day and log it at night.</h2>
+      <div class="pains" style="margin-top:32px">
+        <div class="pain-col">
+          <h3 data-i="reps_h">Sales reps</h3>
+          <ul>
+            <li data-i="r1"><b>Logging feels like a second job.</b> After a day of meetings, CRM fields are the last thing anyone wants to fill in.</li>
+            <li data-i="r2"><b>Details fade.</b> By the time a rep sits down to log, half the conversation is gone.</li>
+            <li data-i="r3"><b>The CRM lives on a laptop.</b> Reps live on their phones and in chat apps.</li>
+          </ul>
+        </div>
+        <div class="pain-col">
+          <h3 data-i="mgr_h">Sales managers</h3>
+          <ul>
+            <li data-i="m1"><b>Chasing updates.</b> "Did you log this?" comes up every single day.</li>
+            <li data-i="m2"><b>A pipeline you can't trust.</b> Patchy records hide which channels and approaches convert.</li>
+            <li data-i="m3"><b>Hot leads go cold</b> when a follow-up has no date and no owner.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
 
-<!-- PAIN POINTS -->
-<div class="pain-wrap">
-  <div class="section">
-    <div class="section-label">Who this is for</div>
-    <div class="pain-grid">
-      <div class="pain-col">
-        <h3>Sales reps</h3>
-        <ul class="pain-list">
-          <li>
-            <span class="pain-emoji">😩</span>
-            Logging feels like a second job. After a full day of meetings, filling in CRM fields is the last thing anyone wants to do.
-          </li>
-          <li>
-            <span class="pain-emoji">🕐</span>
-            Details go missing. By the time a rep sits down to log, half the conversation is already forgotten.
-          </li>
-          <li>
-            <span class="pain-emoji">📋</span>
-            Too many fields. Name, status, source, product, notes, next step — each entry takes 5 to 10 minutes to do properly.
-          </li>
-          <li>
-            <span class="pain-emoji">📱</span>
-            The tool does not match the workflow. Reps live on their phones and in messaging apps, not inside a CRM dashboard.
-          </li>
+  <section class="block alt" id="how" aria-labelledby="how-h">
+    <div class="wrap">
+      <div class="label" data-i="how_label">How it works</div>
+      <h2 id="how-h" data-i="how_h2">Four steps your reps already know how to do.</h2>
+      <div class="steps" style="margin-top:36px">
+        <div class="step"><div class="step-n">01</div><h3 data-i="s1_h">Rep sends a message</h3><p data-i="s1_p">A voice note or text in Telegram, WhatsApp, Slack or Teams, right after the meeting.</p></div>
+        <div class="step"><div class="step-n">02</div><h3 data-i="s2_h">Beam pulls out the details</h3><p data-i="s2_p">Name, company, stage, interest and next step. If something is missing, Beam asks once.</p></div>
+        <div class="step"><div class="step-n">03</div><h3 data-i="s3_h">The CRM updates itself</h3><p data-i="s3_p">New leads are created and returning ones updated. The rep confirms before anything is saved.</p></div>
+        <div class="step"><div class="step-n">04</div><h3 data-i="s4_h">Follow-ups stay on track</h3><p data-i="s4_p">Beam puts the follow-up in the calendar and sends each rep a daily list.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="block" aria-labelledby="feat-h">
+    <div class="wrap features">
+      <div>
+        <div class="label" data-i="feat_label">What your team gets</div>
+        <h2 id="feat-h" data-i="feat_h2">Every meeting logged <strong>in the time it takes to talk.</strong></h2>
+        <p class="intro" style="margin-bottom:0" data-i="feat_p">Reps message Beam the way they'd text a colleague. Beam handles the structure, the CRM entry and the follow-up.</p>
+        <ul class="checks">
+          <li data-i="f1">Understands the language your team speaks, including mixed Mongolian and English</li>
+          <li data-i="f2">Voice notes turned into text automatically <span class="tag">optional</span></li>
+          <li data-i="f3">Recognises returning leads and keeps one record per person</li>
+          <li data-i="f4">Calendar event created when a follow-up time is confirmed</li>
+          <li data-i="f5">A daily follow-up list for every rep</li>
+          <li data-i="f6">Ask Beam about any lead by name</li>
+          <li data-i="f7">A weekly summary for managers</li>
         </ul>
       </div>
-      <div class="pain-col">
-        <h3>Sales managers</h3>
-        <ul class="pain-list">
-          <li>
-            <span class="pain-emoji">🔁</span>
-            Constantly chasing updates. "Did you log this?" is a daily conversation that should not need to happen.
-          </li>
-          <li>
-            <span class="pain-emoji">📉</span>
-            No visibility into what is working. Without consistent logs, there is no way to see which channels or approaches are converting.
-          </li>
-          <li>
-            <span class="pain-emoji">🤷</span>
-            Hard to coach. If there is no record of what was said or what the next step is, there is nothing to review or improve.
-          </li>
-          <li>
-            <span class="pain-emoji">🔥</span>
-            Hot leads go cold. Without a next action logged somewhere visible, follow-ups slip through the cracks.
-          </li>
-        </ul>
+      <div class="record" aria-label="Example CRM record">
+        <div class="record-head"><span data-i="rec_title">What lands in your CRM</span><span class="live">● <span data-i="rec_live">saved 14:14</span></span></div>
+        <dl data-i="rec_rows">
+          <dt>Name</dt><dd>Sarah Chen</dd>
+          <dt>Company</dt><dd>Northwind Logistics</dd>
+          <dt>Stage</dt><dd><span class="pill">Prospect</span></dd>
+          <dt>Channel</dt><dd>Call</dd>
+          <dt>Interest</dt><dd>Annual plan, 40 users</dd>
+          <dt>Notes</dt><dd>Asked about payment terms</dd>
+          <dt>Next step</dt><dd>Follow up, Tue 10:00</dd>
+          <dt>Owner</dt><dd>Your rep</dd>
+        </dl>
+        <p class="record-foot" data-i="own_p">Every account is opened in your company's name. Your data stays in your systems, and you can swap any part later.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="block alt" aria-labelledby="stack-h">
+    <div class="wrap">
+      <div class="label" data-i="stack_label">Works with your tools</div>
+      <h2 id="stack-h" data-i="stack_h2">Built on the tools your team already pays for.</h2>
+      <p class="intro" data-i="stack_p">We pick each piece with you in the first call, based on what you use today.</p>
+      <div class="stack">
+        <div class="card"><div class="k" data-i="c1_k">Chat app</div><h3>Telegram · WhatsApp · Slack · Teams</h3><p data-i="c1_p">Wherever your reps already message each other.</p></div>
+        <div class="card"><div class="k" data-i="c2_k">AI model</div><h3>Claude · OpenAI · Gemini</h3><p data-i="c2_p">On your own API key, or your company's existing AI plan.</p></div>
+        <div class="card"><div class="k">CRM</div><h3>HubSpot · Salesforce · Notion · Airtable · Sheets</h3><p data-i="c3_p">Mapped to the fields you already use.</p></div>
+        <div class="card"><div class="k" data-i="c4_k">Automation</div><h3>n8n</h3><p data-i="c4_p">On your own small server or n8n Cloud. Your admin can open it and change it.</p></div>
+        <div class="card"><div class="k" data-i="c5_k">Voice to text</div><h3>OpenAI · Google · Chimege</h3><p data-i="c5_p">Chimege for Mongolian voice notes, OpenAI or Google for other languages.</p></div>
+        <div class="card"><div class="k" data-i="c6_k">Calendar</div><h3>Google Calendar · Outlook</h3><p data-i="c6_p">Follow-ups land where your reps plan their day.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="block" id="build" aria-labelledby="build-h">
+    <div class="wrap">
+      <div class="label" data-i="build_label">How we build it together</div>
+      <h2 id="build-h" data-i="build_h2">About two weeks from first call to handover.</h2>
+      <p class="intro" data-i="build_p">Your team spends 6 to 8 hours in total. We do the rest between sessions.</p>
+      <ol class="timeline">
+        <li><div class="tl-w" data-i="w1">Week 1</div><div><h3 data-i="t1_h">Discovery call</h3><p data-i="t1_p">We map your sales process, your CRM fields and how reps report today.</p></div><span class="tl-who" data-i="t1_w">1 hour together</span></li>
+        <li><div class="tl-w" data-i="w1">Week 1</div><div><h3 data-i="t2_h">Accounts ready</h3><p data-i="t2_p">You open or share the chat app, AI key, CRM and n8n access using our checklist.</p></div><span class="tl-who" data-i="t2_w">30 min, your admin</span></li>
+        <li><div class="tl-w" data-i="w1">Week 1</div><div><h3 data-i="t3_h">Build session</h3><p data-i="t3_p">We connect everything live with your team and log your first real update.</p></div><span class="tl-who" data-i="t3_w">3 to 4 hours together</span></li>
+        <li><div class="tl-w" data-i="w2">Week 2</div><div><h3 data-i="t4_h">Pilot</h3><p data-i="t4_p">2 or 3 reps use it for real for a week. We tune the questions and fields.</p></div><span class="tl-who" data-i="t4_w">Normal work</span></li>
+        <li><div class="tl-w" data-i="w2">Week 2</div><div><h3 data-i="t5_h">Handover</h3><p data-i="t5_p">Your admin learns to change fields and questions. You get a written guide and a recorded walkthrough.</p></div><span class="tl-who" data-i="t5_w">1 hour together</span></li>
+      </ol>
+      <p class="note" data-i="build_note">WhatsApp, Microsoft Teams, Salesforce, or separate views for several teams take 3 to 5 weeks. Meta, Microsoft or Salesforce admins need to approve access, and there are more fields and roles to set up.</p>
+    </div>
+  </section>
+
+  <section class="block alt" id="pricing" aria-labelledby="price-h">
+    <div class="wrap">
+      <div class="label" data-i="price_label">Pricing</div>
+      <h2 id="price-h" data-i="price_h2">One build fee, quoted after discovery.</h2>
+      <p class="intro" data-i="price_p">You pay Beam once for the build. Each tool is billed by its vendor to your company, usually $15 to $100 a month for a team of 10.</p>
+      <div class="prices">
+        <div class="price featured">
+          <div class="name" data-i="range_n">One-off build fee</div>
+          <div class="amt">$1,500<span class="to" data-i="to">to</span>$3,000</div>
+          <p data-i="range_p">Your exact quote comes after the discovery call, once we know your current tools and the ones you want to use.</p>
+        </div>
+        <div class="price">
+          <div class="name" data-i="drv_n">What moves the price</div>
+          <ul class="drivers">
+            <li data-i="d1">Chat app: Telegram and Slack are quickest. WhatsApp and Microsoft Teams need Meta or Microsoft approval.</li>
+            <li data-i="d2">CRM: HubSpot, Notion, Airtable and Sheets are simplest. Salesforce takes more setup.</li>
+            <li data-i="d3">Several teams or regions that should each see only their own leads.</li>
+            <li data-i="d4">Team size, for the number of training sessions.</li>
+          </ul>
+        </div>
+      </div>
+      <div class="includes">
+        <div class="card"><div class="k" data-i="inc_k">Every build includes</div><p data-i="inc_p">Discovery call, build session, one-week pilot, written guide, recorded walkthrough, and 14 days of fixes after handover.</p></div>
+        <div class="card"><div class="k" data-i="calc_k">Run your numbers</div><p data-i="calc_p">See the hours and deals your team gets back, and the monthly tool bill. <a class="inline-link" href="/pricing-calculator">Open the calculator</a></p></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="block" aria-labelledby="faq-h">
+    <div class="wrap">
+      <div class="label" data-i="faq_label">Questions</div>
+      <h2 id="faq-h" data-i="faq_h2">What teams ask before they book.</h2>
+      <div class="faq" style="margin-top:32px">
+        <div><h3 data-i="q1">What if we need changes later?</h3><p data-i="a1">Your admin can change fields and questions in n8n. For bigger additions, book another session.</p></div>
+        <div><h3 data-i="q2">Who owns the data?</h3><p data-i="a2">You do. Records live in your CRM and your accounts, and access for our build is removed at handover.</p></div>
+        <div><h3 data-i="q3">Which languages does it understand?</h3><p data-i="a3">Any language your AI model handles, including mixed Mongolian and English. For voice, we pick a speech model trained on your language.</p></div>
+        <div><h3 data-i="q4">Do we need a developer?</h3><p data-i="a4">An admin comfortable with software settings is enough. We train them at handover.</p></div>
+        <div class="diy"><h3 data-i="q5">Can we build it ourselves?</h3><p data-i="a5">Yes. Our <a class="inline-link" data-tutorial href="#">video tutorial</a> walks your team through the main steps. Expect one team member to spend about 60 hours learning n8n, connecting the APIs and tuning the questions, spread over 6 to 8 weeks alongside their job. With Beam, your team spends 6 to 8 hours and reps start using it within two weeks. <a class="inline-link" href="/pricing-calculator#diy">Compare the cost for your team</a></p></div>
+      </div>
+    </div>
+  </section>
+
+  <div class="wrap" style="padding-bottom:72px">
+    <div class="cta">
+      <div>
+        <h2 data-i="cta_h2">Build your team's sales assistant in two weeks.</h2>
+        <p data-i="cta_p">Book a 30-minute intro call. We'll look at your tools and tell you which build fits.</p>
+      </div>
+      <div class="actions">
+        <a class="btn primary" data-book href="#" data-i="cta_book">Book a build session</a>
+        <a class="btn ghost" href="/onboarding" data-i="cta_demo">Try the live demo</a>
+        <div class="demo-note" data-i="demo_note">The demo bot replies in Mongolian.</div>
       </div>
     </div>
   </div>
-</div>
-
-<hr class="divider">
-
-<!-- HOW IT WORKS -->
-<section class="section">
-  <div class="section-label">How it works</div>
-  <div class="steps">
-    <div class="step">
-      <div class="step-n">01</div>
-      <span class="step-icon">💬</span>
-      <div class="step-title">Rep sends a message</div>
-      <div class="step-desc">Voice note or text in Telegram, right after a meeting. No app to open, no form to fill.</div>
-    </div>
-    <div class="step">
-      <div class="step-n">02</div>
-      <span class="step-icon">🧠</span>
-      <div class="step-title">Beam extracts the details</div>
-      <div class="step-desc">Name, status, product interest, and next action pulled out automatically. If something is missing, Beam asks once.</div>
-    </div>
-    <div class="step">
-      <div class="step-n">03</div>
-      <span class="step-icon">📋</span>
-      <div class="step-title">CRM is updated</div>
-      <div class="step-desc">New leads are created. Existing ones are updated. No duplicate entries, no manual data entry.</div>
-    </div>
-    <div class="step">
-      <div class="step-n">04</div>
-      <span class="step-icon">📅</span>
-      <div class="step-title">Next action is tracked</div>
-      <div class="step-desc">When a rep confirms a follow-up time, a Google Calendar event is created. A daily Telegram digest shows upcoming actions.</div>
-    </div>
-  </div>
-</section>
-
-<hr class="divider">
-
-<!-- WHAT YOU GET -->
-<div class="what-wrap">
-  <div class="section">
-    <div class="what-inner">
-      <div class="what-text">
-        <h2>Everything captured.<br><strong>Nothing to fill in.</strong></h2>
-        <p>
-          Reps send a message the same way they would text a colleague. Beam handles the structure, the CRM entry, and the follow-up tracking.
-        </p>
-        <ul class="what-list">
-          <li><span class="check">✓</span><span>Text input via Telegram in Mongolian or English</span></li>
-          <li><span class="check">✓</span><span>Voice notes transcribed via Chimege STT <span class="opt">optional</span></span></li>
-          <li><span class="check">✓</span><span>Recognizes returning leads and prevents duplicate records</span></li>
-          <li><span class="check">✓</span><span>Google Calendar event created when a next action time is confirmed</span></li>
-          <li><span class="check">✓</span><span>Daily Telegram digest of upcoming follow-ups for each rep</span></li>
-          <li><span class="check">✓</span><span>Ask Beam about any lead by name and get an instant answer</span></li>
-          <li><span class="check">✓</span><span>Weekly summary report sent to management automatically</span></li>
-        </ul>
-      </div>
-
-      <div class="chat-mock">
-        <div class="chat-header">
-          <div class="chat-avatar">b</div>
-          <div>
-            <div class="chat-name">beam</div>
-            <div class="chat-sub">Sales assistant</div>
-          </div>
-        </div>
-        <div class="bubble out">Болдтой уулзлаа. BMW X5 сонирхож байна. Мягмар 10:00д дахин холбогдох болно.</div>
-        <div class="bubble">
-          👤 Болд Нарантуяа<br>
-          📊 Prospect · Visit<br>
-          🚗 BMW X5<br>
-          📌 Мягмар 10:00д холбогдох<br><br>
-          Сануулга нэмэх үү?
-        </div>
-        <div class="bubble out">Тийм</div>
-        <div class="bubble">✅ CRM-д хадгалагдлаа. Calendar-т нэмэгдлээ.</div>
-        <div class="bubble-time">Today, 2:14 PM</div>
-      </div>
-    </div>
-  </div>
-</div>
-
-<hr class="divider">
-
-<!-- IMPLEMENTATION -->
-<section class="section">
-  <div class="section-label">Works with your existing tools</div>
-  <div class="impl-grid">
-    <div class="impl-card">
-      <div class="impl-card-top">
-        <span class="impl-icon">☁️</span>
-        <div class="impl-title">Salesforce</div>
-      </div>
-      <div class="impl-desc">Beam writes directly into your Salesforce org via API. Leads, contacts, activities, and next steps all map to your existing fields.</div>
-      <div class="impl-note">Recommended for teams already on Salesforce. Filtered by Lead Owner so group org data stays separate.</div>
-    </div>
-    <div class="impl-card">
-      <div class="impl-card-top">
-        <span class="impl-icon">🟠</span>
-        <div class="impl-title">HubSpot</div>
-      </div>
-      <div class="impl-desc">Connects to HubSpot CRM via API. Works with the free tier for contact and deal logging, no paid seat required to get started.</div>
-      <div class="impl-note">Good entry point for teams without an existing CRM investment.</div>
-    </div>
-    <div class="impl-card">
-      <div class="impl-card-top">
-        <span class="impl-icon">◻️</span>
-        <div class="impl-title">Notion</div>
-      </div>
-      <div class="impl-desc">Beam currently runs on Notion as a CRM. Fastest to set up and ideal for piloting before committing to a full CRM migration.</div>
-      <div class="impl-note">Used in this demo. Easy to switch to Salesforce or HubSpot as the next step.</div>
-    </div>
-    <div class="impl-card">
-      <div class="impl-card-top">
-        <span class="impl-icon">🔧</span>
-        <div class="impl-title">Other systems</div>
-      </div>
-      <div class="impl-desc">If your team uses a different CRM or internal database, Beam can be adapted as long as an API or data export exists.</div>
-      <div class="impl-note">Discussed during setup. Most systems with a REST API are connectable.</div>
-    </div>
-  </div>
-
-  <div class="custom-note">
-    <strong>Every implementation is different.</strong> Beam is built around your team's existing tools and workflows, not the other way around. Field mapping, user roles, language, and integrations are all configured to fit your setup from the start.
-  </div>
-</section>
-
-<hr class="divider">
-
-<!-- TIMELINE -->
-<div class="what-wrap">
-  <div class="section">
-    <div class="section-label">Typical build timeline</div>
-    <div class="timeline">
-      <div class="tl-row">
-        <div class="tl-week">
-          <div class="tl-week-label">Weeks</div>
-          <div class="tl-week-val">1 – 2</div>
-        </div>
-        <div class="tl-content">
-          <div class="tl-title">Setup and build</div>
-          <div class="tl-desc">Discovery, CRM field mapping, Telegram bot connected, user access configured. Core logging built and tested with your team.</div>
-        </div>
-      </div>
-      <div class="tl-row">
-        <div class="tl-week">
-          <div class="tl-week-label">Weeks</div>
-          <div class="tl-week-val">3 – 4</div>
-        </div>
-        <div class="tl-content">
-          <div class="tl-title">Handover and quality control</div>
-          <div class="tl-desc">Reps using the system in real conditions. Edge cases handled, prompts refined, reporting configured. System signed off and handed over.</div>
-        </div>
-      </div>
-      <div class="tl-row">
-        <div class="tl-week">
-          <div class="tl-week-label">Week 5+</div>
-          <div class="tl-week-val"></div>
-        </div>
-        <div class="tl-content">
-          <div class="tl-title">Ongoing support</div>
-          <div class="tl-desc">Depending on your preference, continued support is available as a monthly retainer covering iterations and improvements, or on a per-ticket basis for specific requests as they come up.</div>
-        </div>
-      </div>
-    </div>
-
-    <div class="timeline-caveat">
-      Timeline is an estimate based on a standard setup. Complexity varies depending on your CRM, number of users, voice input requirements, and any custom workflows your team needs. This is figured out together during discovery.
-    </div>
-  </div>
-</div>
-
-<hr class="divider">
-
-<!-- EXPLORE -->
-<section class="section">
-  <div class="section-label">Explore beam</div>
-  <div class="links-grid">
-    <a href="/onboarding" class="link-card">
-      <span class="link-card-icon">🚀</span>
-      <div class="link-card-title">Interactive demo</div>
-      <div class="link-card-desc">Walk through every feature step by step and see live data appear in a real CRM.</div>
-      <div class="link-card-arrow">Try it</div>
-    </a>
-    <a href="/pricing-calculator" class="link-card">
-      <span class="link-card-icon">🧮</span>
-      <div class="link-card-title">Pricing calculator</div>
-      <div class="link-card-desc">Estimate monthly cost and time saved based on your team size and tool stack.</div>
-      <div class="link-card-arrow">Calculate</div>
-    </a>
-    <a href="/analytics" class="link-card">
-      <span class="link-card-icon">📊</span>
-      <div class="link-card-title">Analytics dashboard</div>
-      <div class="link-card-desc">Live logs from the demo showing rep activity, lead statuses, and next actions.</div>
-      <div class="link-card-arrow">View dashboard</div>
-    </a>
-  </div>
-</section>
+</main>
 
 <footer>
-  <div class="footer-left">beam by urstory studio, ulaanbaatar</div>
-  <div class="footer-right">
-    <a href="mailto:khulan@urstory.studio">khulan@urstory.studio</a>
-    <a href="/onboarding">Demo</a>
-    <a href="/pricing-calculator">Pricing</a>
-    <a href="/analytics">Analytics</a>
+  <div class="wrap foot">
+    <div data-i="foot">beam by urstory studio, Ulaanbaatar</div>
+    <div><a href="mailto:khulan@urstory.studio">khulan@urstory.studio</a><a href="/onboarding" data-i="foot_demo">Demo</a><a href="/pricing-calculator" data-i="nav_calc">Savings calculator</a><a href="/analytics" data-i="foot_analytics">Analytics</a></div>
   </div>
 </footer>
 
 <script>
-function toggleMenu() {
-  document.getElementById('mobileMenu').classList.toggle('open');
-}
-</script>
+/* ── Edit this: your Google Calendar appointment page ── */
+const BOOKING_URL = "https://calendar.google.com/appointments/schedules/AcZssZ3SayCc4DLLRRL4B_bEvX8uaCOI9KyrMNotbwKY7BiKnt0xhAa1GPQHlxx3ykfBFBkmPm-VJyrU";
+/* ── Edit this: your build-it-yourself video tutorial ── */
+const TUTORIAL_URL = "#";
 
+const MN = {
+  nav_how: "Хэрхэн ажилладаг",
+  nav_build: "Хэрэгжүүлэлт",
+  nav_pricing: "Үнэ",
+  nav_calc: "Хэмнэлтийн тооцоолуур",
+  cta_book: "Уулзалт товлох",
+  cta_calc: "Хэмнэлтээ тооцоолох",
+  hero_eyebrow: "Танай багтай хамт бүтээх борлуулалтын туслах",
+  hero_h1: "Яриаг <strong>үйлдэл болгоно.</strong>",
+  hero_lede: "Борлуулагч уулзалт бүрийнхээ дараа дуут эсвэл бичгийн мессеж илгээнэ. Beam үүнийг CRM-д цэгцтэй бүртгэж, дараагийн алхмыг нь сануулна. Бид танай багтай хамтран ойролцоогоор хоёр долоо хоногт бүтээж, танай өөрийн чат апп, хиймэл оюуны эрх, CRM-тэй холбоно. Та нэг удаа төлж, бүгдийг нь өөрөө эзэмшинэ.",
+  fact1: "Ойролцоогоор 2 долоо хоног",
+  fact2: "Нэг удаагийн төлбөр",
+  fact3: "Танай бүртгэл дээр ажиллана",
+  chat_sub: "Борлуулалтын туслах",
+  chat_body: '<div class="bubble out" style="margin-left:auto">Өнөөдөр Болд Нарантуяатай уулзлаа. Шоуруум руу өөрөө орж ирсэн. Санхүүжилтийн нөхцөл асуусан. Мягмар 10:00д дахин холбогдох болно.</div><div class="bubble" style="margin-top:10px"><div class="rec"><span>👤 Болд Нарантуяа</span><span>📊 Prospect · Visit · Walk-in</span><span>💬 Санхүүжилтийн нөхцөл асуусан.</span><span>📌 Мягмар 10:00д дахин холбогдох</span></div><br>Сануулга нэмэх үү?</div><div class="bubble out" style="margin:10px 0 0 auto;width:fit-content">Тийм</div><div class="bubble" style="margin-top:10px;width:fit-content">✅ CRM-д хадгалагдлаа. Calendar-т нэмэгдлээ.</div>',
+  chat_time: "Өнөөдөр, 14:14",
+  who_label: "Хэнд зориулсан бэ",
+  who_h2: "Өдөржин харилцагчтай уулзаж, оройдоо бүртгэл хөтөлдөг борлуулалтын багт.",
+  reps_h: "Борлуулагчид",
+  r1: "<b>Бүртгэл хөтлөх нь хоёр дахь ажил болчихсон.</b> Өдөржин уулзалт хийсний дараа CRM бөглөх сонирхол хэнд ч байдаггүй.",
+  r2: "<b>Мэдээлэл бүдгэрнэ.</b> Бүртгэх гэж суухад ярианы тал нь аль хэдийн мартагдчихсан байдаг.",
+  r3: "<b>CRM зөөврийн компьютер дээр байдаг.</b> Борлуулагчид харин утас, чат аппаараа ажилладаг.",
+  mgr_h: "Борлуулалтын менежерүүд",
+  m1: "<b>Мэдээлэл нэхэх.</b> «Бүртгэсэн үү?» гэдэг асуулт өдөр бүр давтагдана.",
+  m2: "<b>Итгэж болохооргүй тайлан.</b> Бүртгэл тасархай бол аль суваг, аль арга үр дүнтэйг харах аргагүй.",
+  m3: "<b>Халуун харилцагч хөрнө.</b> Дараагийн алхмын огноо, хариуцагч тодорхойгүй үлдэхэд.",
+  how_label: "Хэрхэн ажилладаг",
+  how_h2: "Борлуулагчдын аль хэдийн мэддэг дөрвөн алхам.",
+  s1_h: "Борлуулагч мессеж илгээнэ",
+  s1_p: "Уулзалтын дараа шууд Telegram, WhatsApp, Slack эсвэл Teams-ээр дуут болон бичгийн мессеж илгээнэ.",
+  s2_h: "Beam гол мэдээллийг ялгана",
+  s2_p: "Нэр, байгууллага, үе шат, сонирхол, дараагийн алхам. Дутуу зүйл байвал Beam нэг удаа асууна.",
+  s3_h: "CRM өөрөө шинэчлэгдэнэ",
+  s3_p: "Шинэ харилцагч нэмэгдэж, давтан харилцагчийн бүртгэл шинэчлэгдэнэ. Хадгалахын өмнө борлуулагч баталгаажуулна.",
+  s4_h: "Дараагийн алхам мартагдахгүй",
+  s4_p: "Beam дараагийн алхмыг календарьт нэмж, борлуулагч бүрт өдөр бүр жагсаалт илгээнэ.",
+  feat_label: "Танай багт юу өгөх вэ",
+  feat_h2: "Уулзалт бүр <strong>ярьсан даруйд бүртгэгдэнэ.</strong>",
+  feat_p: "Борлуулагч хамт ажиллагсаддаа бичдэг шигээ Beam-д бичнэ. Бүтэц, CRM бүртгэл, дараагийн алхмыг Beam хариуцна.",
+  f1: "Танай багийн ярьдаг хэлийг, монгол англи холимгийг ч ойлгоно",
+  f2: 'Дуут мессежийг автоматаар бичвэр болгоно <span class="tag">сонголтоор</span>',
+  f3: "Давтан харилцагчийг таньж, нэг хүнд нэг бүртгэл хөтөлнө",
+  f4: "Дараагийн уулзалтын цагийг баталгаажуулмагц календарьт нэмнэ",
+  f5: "Борлуулагч бүрт өдөр тутмын хийх ажлын жагсаалт",
+  f6: "Ямар ч харилцагчийн талаар Beam-ээс нэрээр нь асууна",
+  f7: "Менежерт долоо хоног бүрийн товч тайлан",
+  rec_title: "CRM-д юу бүртгэгдэх вэ",
+  rec_live: "14:14-т хадгалсан",
+  rec_rows: '<dt>Нэр</dt><dd>Болд Нарантуяа</dd><dt>Төрөл</dt><dd>Walk-in</dd><dt>Үе шат</dt><dd><span class="pill">Prospect</span></dd><dt>Суваг</dt><dd>Visit</dd><dt>Тэмдэглэл</dt><dd>Санхүүжилтийн нөхцөл асуусан.</dd><dt>Дараагийн алхам</dt><dd>Мягмар 10:00д дахин холбогдох</dd><dt>Хариуцагч</dt><dd>Танай борлуулагч</dd>',
+  own_p: "Бүх бүртгэл танай байгууллагын нэр дээр нээгдэнэ. Мэдээлэл танай системд үлдэж, аль ч хэсгийг дараа нь солих боломжтой.",
+  stack_label: "Танай хэрэгслүүдтэй ажиллана",
+  stack_h2: "Танай багийн аль хэдийн ашигладаг хэрэгслүүд дээр бүтээнэ.",
+  stack_p: "Анхны уулзалтаар танай одоо ашиглаж буй зүйлд тулгуурлан хэсэг бүрийг хамт сонгоно.",
+  c1_k: "Чат апп",
+  c1_p: "Борлуулагчид хоорондоо аль хэдийн бичдэг апп дээр.",
+  c2_k: "Хиймэл оюуны загвар",
+  c2_p: "Танай өөрийн API түлхүүрээр, эсвэл байгууллагын одоогийн эрхээр.",
+  c3_p: "Одоо ашиглаж буй талбаруудтай тань тааруулна.",
+  c4_k: "Автоматжуулалт",
+  c4_p: "Танай өөрийн жижиг сервер эсвэл n8n Cloud дээр. Танай админ нээж, өөрчилж чадна.",
+  c5_k: "Дууг бичвэр болгох",
+  c5_p: "Монгол дуут мессежид Chimege, бусад хэлэнд OpenAI эсвэл Google.",
+  c6_k: "Календарь",
+  c6_p: "Дараагийн алхам борлуулагчийн өдрөө төлөвлөдөг газар орно.",
+  build_label: "Хэрхэн хамтдаа бүтээх вэ",
+  build_h2: "Анхны уулзалтаас хүлээлгэн өгөх хүртэл ойролцоогоор хоёр долоо хоног.",
+  build_p: "Танай багаас нийт 6-8 цаг зарцуулна. Уулзалтын хооронд үлдсэнийг нь бид хийнэ.",
+  w1: "1-р долоо хоног",
+  w2: "2-р долоо хоног",
+  t1_h: "Танилцах уулзалт",
+  t1_p: "Борлуулалтын процесс, CRM талбарууд, борлуулагчид одоо хэрхэн тайлагнадгийг хамт тодорхойлно.",
+  t1_w: "Хамтдаа 1 цаг",
+  t2_h: "Бүртгэлүүд бэлэн",
+  t2_p: "Бидний жагсаалтын дагуу чат апп, хиймэл оюуны түлхүүр, CRM, n8n-ийн эрхийг нээж, хуваалцана.",
+  t2_w: "Танай админ, 30 минут",
+  t3_h: "Хамтын бүтээх уулзалт",
+  t3_p: "Танай багтай хамт бүгдийг шууд холбож, анхны бодит бүртгэлээ хийнэ.",
+  t3_w: "Хамтдаа 3-4 цаг",
+  t4_h: "Туршилт",
+  t4_p: "2-3 борлуулагч долоо хоног бодитоор ашиглана. Асуулт, талбаруудыг тааруулна.",
+  t4_w: "Ердийн ажлын явцад",
+  t5_h: "Хүлээлгэн өгөх",
+  t5_p: "Танай админ талбар, асуултаа өөрөө өөрчилж сурна. Бичгэн заавар, бичлэгтэй тайлбар хүлээлгэн өгнө.",
+  t5_w: "Хамтдаа 1 цаг",
+  build_note: "WhatsApp, Microsoft Teams, Salesforce ашиглах эсвэл хэд хэдэн баг тус тусдаа харагдах шаардлагатай бол 3-5 долоо хоног болно. Meta, Microsoft, Salesforce-ийн админы зөвшөөрөл авч, илүү олон талбар, эрх тохируулах шаардлагатай.",
+  price_label: "Үнэ",
+  price_h2: "Бүтээх төлбөр нэг удаа, танилцах уулзалтын дараа тодорхойлно.",
+  price_p: "Beam-д бүтээлтийн төлбөрийг нэг удаа төлнө. Хэрэгсэл бүрийн төлбөрийг нийлүүлэгч нь танай байгууллагаас шууд авна. 10 хүний багт ихэвчлэн сард $15-100.",
+  range_n: "Нэг удаагийн бүтээх төлбөр",
+  to: "-",
+  range_p: "Танай одоо ашиглаж буй болон ашиглахыг хүсэж буй хэрэгслийг танилцах уулзалтаар тодруулсны дараа яг үнийн санал өгнө.",
+  drv_n: "Үнэд юу нөлөөлөх вэ",
+  d1: "Чат апп: Telegram, Slack хамгийн хурдан. WhatsApp, Microsoft Teams нь Meta, Microsoft-ийн зөвшөөрөл шаардана.",
+  d2: "CRM: HubSpot, Notion, Airtable, Sheets хамгийн энгийн. Salesforce илүү их тохиргоо шаардана.",
+  d3: "Хэд хэдэн баг, бүс тус бүр зөвхөн өөрийн харилцагчаа харах шаардлага.",
+  d4: "Сургалтын тоонд нөлөөлөх багийн хэмжээ.",
+  inc_k: "Бүтээлт бүрт багтана",
+  inc_p: "Танилцах уулзалт, хамтын бүтээх уулзалт, долоо хоногийн туршилт, бичгэн заавар, бичлэгтэй тайлбар, хүлээлгэн өгснөөс хойш 14 хоногийн засвар.",
+  calc_k: "Тоогоо тооцоол",
+  calc_p: 'Танай багт буцаж ирэх цаг, хэлцэл, сарын хэрэгслийн зардлаа хараарай. <a class="inline-link" href="/pricing-calculator">Тооцоолуур нээх</a>',
+  faq_label: "Түгээмэл асуулт",
+  faq_h2: "Уулзалт товлохоос өмнө багууд юу асуудаг вэ.",
+  q1: "Дараа нь өөрчлөх шаардлага гарвал яах вэ?",
+  a1: "Талбар, асуултыг танай админ n8n дээр өөрөө өөрчилнө. Том нэмэлт хэрэгтэй бол дахин уулзалт товлоорой.",
+  q2: "Мэдээлэл хэний мэдэлд байх вэ?",
+  a2: "Танай. Бүртгэл танай CRM, танай бүртгэлд хадгалагдах бөгөөд бүтээлтэд ашигласан манай хандалтыг хүлээлгэн өгөхдөө хасна.",
+  q3: "Ямар хэл ойлгох вэ?",
+  a3: "Хиймэл оюуны загвар тань ойлгодог бүх хэлийг, монгол англи холимгийг ч ойлгоно. Дуут мессежид тухайн хэлэнд сургагдсан загварыг сонгоно.",
+  q4: "Хөгжүүлэгч хэрэгтэй юу?",
+  a4: "Программын тохиргоонд дадлагатай нэг админ хангалттай. Хүлээлгэн өгөхдөө бид түүнийг сургана.",
+  q5: "Өөрсдөө бүтээж болох уу?",
+  a5: 'Болно. Манай <a class="inline-link" data-tutorial href="#">видео заавар</a> гол алхмуудыг дагуулж харуулна. Танай нэг ажилтан n8n сурч, API-уудаа холбож, асуултаа тааруулахад ойролцоогоор 60 цаг зарцуулах бөгөөд үндсэн ажлынхаа хажуугаар 6-8 долоо хоног үргэлжилнэ. Beam-тэй бол танай баг 6-8 цаг зарцуулж, борлуулагчид хоёр долоо хоногийн дотор ашиглаж эхэлнэ. <a class="inline-link" href="/pricing-calculator#diy">Танай багийн зардлыг харьцуулах</a>',
+  cta_h2: "Багийнхаа борлуулалтын туслахыг хоёр долоо хоногт бүтээгээрэй.",
+  cta_p: "30 минутын танилцах уулзалт товлоорой. Танай хэрэгслүүдийг харж, аль багц тохирохыг хэлье.",
+  cta_demo: "Шууд туршиж үзэх",
+  demo_note: "Туршилтын бот монголоор хариулна.",
+  foot: "beam · urstory studio, Улаанбаатар",
+  foot_demo: "Туршилт",
+  foot_analytics: "Аналитик"
+};
+
+const EN = {};
+document.querySelectorAll("[data-i]").forEach(el => { if (!(el.dataset.i in EN)) EN[el.dataset.i] = el.innerHTML; });
+
+function setLang(lang) {
+  const dict = lang === "mn" ? MN : EN;
+  document.querySelectorAll("[data-i]").forEach(el => { const v = dict[el.dataset.i]; if (v !== undefined) el.innerHTML = v; });
+  document.documentElement.lang = lang;
+  document.querySelectorAll(".lang button").forEach(b => b.setAttribute("aria-pressed", b.dataset.lang === lang));
+  document.querySelectorAll("a[href^='/pricing-calculator'],a[href^='/onboarding']").forEach(a => {
+    const base = a.getAttribute("href").split("?")[0];
+    a.setAttribute("href", lang === "mn" ? base + "?lang=mn" : base);
+  });
+  document.querySelectorAll("[data-tutorial]").forEach(a => { if (TUTORIAL_URL === "#") { a.replaceWith(document.createTextNode(a.textContent)); return; } a.href = TUTORIAL_URL; a.target = "_blank"; a.rel = "noopener"; });
+  document.querySelectorAll("a[href*='/pricing-calculator#diy']").forEach(a => { a.setAttribute("href", "/pricing-calculator" + (lang === "mn" ? "?lang=mn" : "") + "#diy"); });
+  document.querySelectorAll("[data-book]").forEach(a => { a.href = BOOKING_URL; if (BOOKING_URL !== "#") { a.target = "_blank"; a.rel = "noopener"; } });
+  try { localStorage.setItem("beam_lang", lang); } catch (e) {}
+}
+
+document.querySelectorAll(".lang button").forEach(b => b.addEventListener("click", () => setLang(b.dataset.lang)));
+const btn = document.getElementById("menuBtn"), menu = document.getElementById("mobileMenu");
+btn.addEventListener("click", () => { const open = menu.classList.toggle("open"); btn.setAttribute("aria-expanded", open); });
+menu.querySelectorAll("a").forEach(a => a.addEventListener("click", () => { menu.classList.remove("open"); btn.setAttribute("aria-expanded", false); }));
+
+let start = "en";
+const q = new URLSearchParams(location.search).get("lang");
+if (q === "mn" || q === "en") start = q;
+else { try { start = localStorage.getItem("beam_lang") || "en"; } catch (e) {} }
+setLang(start);
+</script>
 </body>
 </html>
