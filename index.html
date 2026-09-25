@@ -575,7 +575,12 @@ menu.querySelectorAll("a").forEach(a => a.addEventListener("click", () => { menu
 let start = "en";
 const q = new URLSearchParams(location.search).get("lang");
 if (q === "mn" || q === "en") start = q;
-else { try { start = localStorage.getItem("beam_lang") || "en"; } catch (e) {} }
+else {
+  let saved = null;
+  try { saved = localStorage.getItem("beam_lang"); } catch (e) {}
+  if (saved === "mn" || saved === "en") start = saved;
+  else start = (navigator.languages || [navigator.language || "en"]).some(l => /^mn/i.test(l)) ? "mn" : "en";
+}
 setLang(start);
 </script>
 </body>
