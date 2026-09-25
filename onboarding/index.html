@@ -220,6 +220,20 @@
   .explore-links a { font-size: 12px; color: var(--text-dim); text-decoration: none; transition: color 0.15s; }
   .explore-links a:hover { color: var(--accent); }
 
+  /* LANG */
+  .lang { display: inline-flex; border: 1px solid var(--border); border-radius: 999px; padding: 2px; background: var(--surface); margin-left: auto; margin-right: 14px; }
+  .lang button { font: 600 11px 'Plus Jakarta Sans', sans-serif; letter-spacing: 0.04em; border: 0; background: transparent; color: var(--text-muted); padding: 4px 10px; border-radius: 999px; cursor: pointer; }
+  .lang button[aria-pressed="true"] { background: var(--accent); color: #fff; }
+  .gloss { font-size: 11.5px; color: var(--text-muted); font-style: italic; margin-bottom: 8px; }
+  [hidden] { display: none !important; }
+
+  /* LANG NOTE + BOOK */
+  .lang-note { font-size: 12.5px; color: var(--text-muted); background: var(--surface); border: 1px solid var(--border); border-radius: 3px; padding: 10px 14px; margin-bottom: 18px; }
+  .book-btn { display: inline-block; padding: 13px 28px; background: var(--accent); color: #fff; text-decoration: none; border-radius: 4px; font-weight: 600; font-size: 14px; transition: opacity 0.15s; }
+  .book-btn:hover { opacity: 0.85; }
+  .book-sub { font-size: 12px; color: var(--text-muted); margin-top: 10px; }
+  .book-sub a { color: var(--accent); }
+
   /* FOOTER */
   footer { border-top: 1px solid var(--border); padding: 22px 40px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px; }
   .footer-left { font-size: 12px; color: var(--text-dim); }
@@ -247,53 +261,56 @@
 
 <header>
   <a href="/" class="logo">beam</a>
+  <div class="lang" role="group" aria-label="Language"><button type="button" data-lang="en" aria-pressed="true">EN</button><button type="button" data-lang="mn" aria-pressed="false">MN</button></div>
   <div class="header-user" id="headerUser">
     <span id="headerName" class="header-user-name"></span>
     <span id="headerCompany" class="header-company"></span>
   </div>
-  <span class="header-tag" id="headerTag">Interactive demo</span>
+  <span class="header-tag" id="headerTag"><span data-i="tag">Interactive demo</span></span>
 </header>
 
 <div class="progress-wrap">
   <div class="progress-steps">
-    <div class="progress-step active" id="prog-1"><div class="step-num">1</div><span class="step-label">Connect</span></div>
-    <div class="progress-step" id="prog-2"><div class="step-num">2</div><span class="step-label">Log lead</span></div>
-    <div class="progress-step" id="prog-3"><div class="step-num">3</div><span class="step-label">Update</span></div>
-    <div class="progress-step" id="prog-4"><div class="step-num">4</div><span class="step-label">Calendar</span></div>
-    <div class="progress-step" id="prog-5"><div class="step-num">5</div><span class="step-label">Query</span></div>
-    <div class="progress-step" id="prog-6"><div class="step-num">✓</div><span class="step-label">Done</span></div>
+    <div class="progress-step active" id="prog-1"><div class="step-num">1</div><span class="step-label"><span data-i="p1">Connect</span></span></div>
+    <div class="progress-step" id="prog-2"><div class="step-num">2</div><span class="step-label"><span data-i="p2">Log lead</span></span></div>
+    <div class="progress-step" id="prog-3"><div class="step-num">3</div><span class="step-label"><span data-i="p3">Update</span></span></div>
+    <div class="progress-step" id="prog-4"><div class="step-num">4</div><span class="step-label"><span data-i="p4">Calendar</span></span></div>
+    <div class="progress-step" id="prog-5"><div class="step-num">5</div><span class="step-label"><span data-i="p5">Query</span></span></div>
+    <div class="progress-step" id="prog-6"><div class="step-num">✓</div><span class="step-label"><span data-i="p6">Done</span></span></div>
   </div>
 </div>
 
 <div class="main">
+  <div class="lang-note" data-i="note">Sign-up messages from the demo bot are in Mongolian. After that, write to it in English and Beam replies in English.</div>
 
   <!-- STEP 1: CONNECT -->
   <div class="step-card visible" id="step-1">
     <div class="step-header">
       <div class="step-icon">💬</div>
       <div>
-        <div class="step-title">Connect to beam via Telegram</div>
-        <div class="step-subtitle">Request access and get approved. Takes under a minute.</div>
+        <div class="step-title"><span data-i="s1t">Connect to beam via Telegram</span></div>
+        <div class="step-subtitle"><span data-i="s1s">Request access and get approved. Takes under a minute.</span></div>
       </div>
     </div>
     <div class="step-body">
       <div class="instruction">
-        <strong>How to get started:</strong>
+        <div data-i="s1i"><strong>How to get started:</strong>
         <ol>
           <li>Open Telegram and search for <strong>@beam_urstory_bot</strong></li>
           <li>Tap Start or send <strong>/start</strong></li>
           <li>Enter your full name, then your email, then your company when asked</li>
-          <li>Wait for admin approval — you will get a notification when you are in</li>
-        </ol>
+          <li>Wait for admin approval. You get a notification when you are in</li>
+        </ol></div>
       </div>
       <a href="https://t.me/beam_urstory_bot" target="_blank" class="tg-btn">
         <svg viewBox="0 0 24 24"><path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm5.562 8.248l-1.97 9.289c-.145.658-.537.818-1.084.508l-3-2.21-1.447 1.394c-.16.16-.295.295-.605.295l.213-3.053 5.56-5.023c.242-.213-.054-.333-.373-.12L7.43 14.015l-2.97-.924c-.645-.204-.657-.645.136-.953l11.57-4.461c.537-.194 1.006.131.833.571z"/></svg>
-        Open @beam_urstory_bot
+        <span data-i="tgb">Open @beam_urstory_bot</span>
       </a>
 
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-bottom:24px;">
         <div>
-          <div class="example-label">New user</div>
+          <div class="example-label"><span data-i="nu">New user</span></div>
+          <div class="gloss" data-lb="en">Sign-up is in Mongolian: the bot asks for your name, then email, then company, then you wait for approval.</div>
           <div class="msg-bubble-wrap">
             <div class="msg-bubble">👋 Beam-д тавтай морил!<br>Хандалт авахын тулд өөрийн нэр овогоо оруулна уу.<br><span style="color:var(--text-dim);font-size:11px">(Жишээ: Болор Дорж)</span></div>
             <div class="msg-bubble out">Болор Дорж</div>
@@ -306,36 +323,36 @@
           </div>
         </div>
         <div>
-          <div class="example-label">Admin</div>
+          <div class="example-label"><span data-i="adm">Admin</span></div>
           <div class="msg-bubble-wrap">
             <div class="msg-bubble">🔔 <strong>Болор Дорж</strong> (@bolordorj) хандалт хүслээ.<br>📧 bolordorj@email.com<br><br>Зөвшөөрөх: /ok<br>Татгалзах: /no<br><br><span style="color:var(--text-dim);font-size:11px">⚠️ Нэг зэрэг нэг хүсэлт шийдвэрлэхийг зөвлөж байна.</span></div>
             <div class="msg-bubble out">/ok</div>
             <div class="msg-bubble">✅ Болор Дорж-д хандалт олгогдлоо.</div>
-            <div class="msg-bubble" style="opacity:0.45;font-size:11px;color:var(--text-muted);background:transparent;border-style:dashed">If /no: ❌ Болор Дорж-н хүсэлтийг татгалзлаа.</div>
-            <div class="msg-bubble" style="opacity:0.45;font-size:11px;color:var(--text-muted);background:transparent;border-style:dashed">Nothing pending: ❌ Хүсэлт олдсонгүй.</div>
+            <div class="msg-bubble" style="opacity:0.45;font-size:11px;color:var(--text-muted);background:transparent;border-style:dashed"><span data-i="ifno">If /no:</span> ❌ Болор Дорж-н хүсэлтийг татгалзлаа.</div>
+            <div class="msg-bubble" style="opacity:0.45;font-size:11px;color:var(--text-muted);background:transparent;border-style:dashed"><span data-i="nop">Nothing pending:</span> ❌ Хүсэлт олдсонгүй.</div>
           </div>
         </div>
       </div>
 
       <div class="step-actions">
-        <button class="btn-main" id="approvedBtn" onclick="showEmailVerify()">I am connected and approved</button>
-        <button class="btn-flag" onclick="toggleFlag(1)">Flag an issue</button>
+        <button class="btn-main" id="approvedBtn" onclick="showEmailVerify()"><span data-i="appr">I am connected and approved</span></button>
+        <button class="btn-flag" onclick="toggleFlag(1)"><span data-i="flag">Flag an issue</span></button>
       </div>
       <div class="email-verify-section" id="emailVerifySection">
-        <div class="ev-label">Confirm your registration</div>
-        <div class="ev-sub">Enter the email you registered with to verify your access and personalise the demo.</div>
+        <div class="ev-label"><span data-i="evl">Confirm your registration</span></div>
+        <div class="ev-sub"><span data-i="evs">Enter the email you registered with to verify your access and personalise the demo.</span></div>
         <div class="ev-row">
           <input class="ev-input" id="emailVerifyInput" type="email" placeholder="you@company.com" onkeydown="if(event.key==='Enter') verifyEmail()"/>
           <div class="ev-spinner" id="evSpinner"></div>
-          <button class="ev-btn" id="evBtn" onclick="verifyEmail()">Verify & continue</button>
+          <button class="ev-btn" id="evBtn" onclick="verifyEmail()"><span data-i="evb">Verify & continue</span></button>
         </div>
         <div class="ev-error" id="evError"></div>
       </div>
       <div class="flag-form" id="flag-1">
-        <span class="flag-label">What went wrong on this step?</span>
+        <span class="flag-label"><span data-i="fl">What went wrong on this step?</span></span>
         <textarea placeholder="e.g. Bot did not respond, could not find the bot, request not approved..."></textarea>
-        <button class="btn-main" onclick="submitFlag(1)" style="font-size:12px;padding:8px 18px">Send report</button>
-        <span class="flag-sent" id="flag-sent-1">Reported. Khulan will follow up.</span>
+        <button class="btn-main" onclick="submitFlag(1)" style="font-size:12px;padding:8px 18px"><span data-i="sr">Send report</span></button>
+        <span class="flag-sent" id="flag-sent-1"><span data-i="rep">Reported. Khulan will follow up.</span></span>
       </div>
     </div>
   </div>
@@ -345,8 +362,8 @@
     <div class="step-header">
       <div class="step-icon">📝</div>
       <div>
-        <div class="step-title">Log a new client interaction</div>
-        <div class="step-subtitle">Send a voice note or text message describing a meeting or call. Beam extracts everything and asks you to confirm before saving.</div>
+        <div class="step-title"><span data-i="s2t">Log a new client interaction</span></div>
+        <div class="step-subtitle"><span data-i="s2s">Send a voice note or text message describing a meeting or call. Beam extracts everything and asks you to confirm before saving.</span></div>
       </div>
     </div>
     <div class="step-body">
@@ -358,38 +375,45 @@
         </div>
       </div>
       <div class="analytics-box" id="analyticsBox">
-        <div class="analytics-box-text">Your analytics dashboard is filtered to <strong id="analyticsCompany"></strong></div>
-        <a class="analytics-link" id="analyticsLink" href="https://beam.urstory.studio/analytics" target="_blank">Open dashboard →</a>
+        <div class="analytics-box-text"><span data-i="abx">Your analytics dashboard is filtered to</span> <strong id="analyticsCompany"></strong></div>
+        <a class="analytics-link" id="analyticsLink" href="https://beam.urstory.studio/analytics" target="_blank"><span data-i="od">Open dashboard →</span></a>
       </div>
       <div class="instruction">
-        <strong>What to do:</strong> Send a message to @beam_urstory_bot describing a real or fictional client meeting. Include the person's name, what happened, and what they are interested in.
+        <div data-i="s2i"><strong>What to do:</strong> Send a message to @beam_urstory_bot describing a real or fictional client meeting. Include the person's name, what happened, and what they are interested in.</div>
       </div>
-      <div class="example-label">Try copying this example</div>
-      <div class="msg-bubble-wrap">
+      <div class="example-label"><span data-i="ex1">Try copying this example</span></div>
+      <div class="msg-bubble-wrap" data-lb="mn">
         <div class="msg-bubble out">Өнөөдөр Болд Нарантуяатай уулзлаа. Шоуруум руу өөрөө орж ирсэн. Санхүүжилтийн нөхцөл асуусан. Мягмар 10:00д дахин холбогдох болно.<span class="msg-copy" onclick="copyMsg(this)">Copy message</span></div>
         <div class="msg-bubble">🔍 Болд Н — хайж байна...</div>
         <div class="msg-bubble">👤 Болд Нарантуяа<br>📊 Prospect · Visit · Walk-in<br>💬 Санхүүжилтийн нөхцөл асуусан.<br>📌 Мягмар 10:00д дахин холбогдох<br>⏰ 2026-04-28T10:00<br><br>Сануулга нэмэх үү?</div>
         <div class="msg-bubble out">Тийм</div>
         <div class="msg-bubble">✅ CRM-д хадгалагдлаа. Calendar-т нэмэгдлээ.</div>
       </div>
-      <div class="expect-box"><strong>What to look for</strong>After confirming, the lead appears in the CRM below. Look for your name in the Salesperson column.</div>
+      <div class="msg-bubble-wrap" data-lb="en">
+        <div class="msg-bubble out">Met John Carter today. He walked into the showroom and asked about financing terms. I'll call him back Tuesday at 10:00.<span class="msg-copy" onclick="copyMsg(this)">Copy message</span></div>
+        <div class="msg-bubble">👤 John Carter<br>📊 Prospect · Visit · Walk-in<br>💬 Asked about financing terms.<br>📌 Call back Tuesday 10:00<br>⏰ 2026-04-28T10:00<br><br>Add a reminder?</div>
+        <div class="msg-bubble out">Yes</div>
+        <div class="msg-bubble">✅ Saved to CRM. Added to calendar.</div>
+        <div class="gloss">Replies are written by the AI, so the wording can differ slightly.</div>
+      </div>
+      <div class="expect-box"><strong data-i="wtl">What to look for</strong><span data-i="e2">After confirming, the lead appears in the CRM below. Look for your name in the Salesperson column.</span></div>
       <div class="iframe-section">
         <div class="iframe-label">
-          <div class="iframe-label-left"><div class="iframe-dot"></div>Live CRM — your leads</div>
+          <div class="iframe-label-left"><div class="iframe-dot"></div><span data-i="lc1">Live CRM: your leads</span></div>
           <span class="iframe-company-badge" id="crmBadge"></span>
         </div>
-        <div id="crmTable1" style="padding:16px;min-height:120px"><div class="crm-empty">Sign in to see your leads</div></div>
+        <div id="crmTable1" style="padding:16px;min-height:120px"><div class="crm-empty"><span data-i="sil">Sign in to see your leads</span></div></div>
       </div>
       <div class="step-actions">
-        <button class="btn-main" onclick="nextStep(2)">Lead logged</button>
-        <button class="btn-back" onclick="prevStep(2)">← Back</button>
-        <button class="btn-flag" onclick="toggleFlag(2)">Flag an issue</button>
+        <button class="btn-main" onclick="nextStep(2)"><span data-i="ll">Lead logged</span></button>
+        <button class="btn-back" onclick="prevStep(2)"><span data-i="back">← Back</span></button>
+        <button class="btn-flag" onclick="toggleFlag(2)"><span data-i="flag">Flag an issue</span></button>
       </div>
       <div class="flag-form" id="flag-2">
-        <span class="flag-label">What went wrong on this step?</span>
+        <span class="flag-label"><span data-i="fl">What went wrong on this step?</span></span>
         <textarea placeholder="e.g. Bot did not understand my message, lead did not appear in CRM..."></textarea>
-        <button class="btn-main" onclick="submitFlag(2)" style="font-size:12px;padding:8px 18px">Send report</button>
-        <span class="flag-sent" id="flag-sent-2">Reported. Khulan will follow up.</span>
+        <button class="btn-main" onclick="submitFlag(2)" style="font-size:12px;padding:8px 18px"><span data-i="sr">Send report</span></button>
+        <span class="flag-sent" id="flag-sent-2"><span data-i="rep">Reported. Khulan will follow up.</span></span>
       </div>
     </div>
   </div>
@@ -399,14 +423,14 @@
     <div class="step-header">
       <div class="step-icon">🔄</div>
       <div>
-        <div class="step-title">Update an existing lead</div>
-        <div class="step-subtitle">Beam recognizes returning clients and updates their record instead of creating a duplicate.</div>
+        <div class="step-title"><span data-i="s3t">Update an existing lead</span></div>
+        <div class="step-subtitle"><span data-i="s3s">Beam recognizes returning clients and updates their record instead of creating a duplicate.</span></div>
       </div>
     </div>
     <div class="step-body">
-      <div class="instruction"><strong>What to do:</strong> Send a follow-up about the same person you just logged. Beam will find their existing record, confirm it is the right person, and update the entry.</div>
-      <div class="example-label">Try this follow-up message</div>
-      <div class="msg-bubble-wrap">
+      <div class="instruction"><div data-i="s3i"><strong>What to do:</strong> Send a follow-up about the same person you just logged. Beam finds their existing record, checks it is the right person, and updates the entry.</div></div>
+      <div class="example-label"><span data-i="ex2">Try this follow-up message</span></div>
+      <div class="msg-bubble-wrap" data-lb="mn">
         <div class="msg-bubble out">Болдтой утсаар ярилаа. Бусад бүтээгдэхүүн сонирхоё гэж хэлсэн. Ирэх долоо хоногт уулзалт хийх болно.<span class="msg-copy" onclick="copyMsg(this)">Copy message</span></div>
         <div class="msg-bubble">🔍 Болд Нарантуяа — Prospect (2026-04-25) олдлоо. Энэ хүн мөн үү?<br><br>1 — Тийм, шинэчлэх<br>2 — Үгүй, шинэ lead</div>
         <div class="msg-bubble out">Тийм</div>
@@ -414,24 +438,32 @@
         <div class="msg-bubble out">Засах</div>
         <div class="msg-bubble">✅ CRM-д амжилттай шинэчлэгдлээ.</div>
       </div>
-      <div class="expect-box"><strong>What to look for</strong>The same lead's record should now show updated status (Test Drive), updated product (BMW X3), and appended notes. No new row should appear.</div>
+      <div class="msg-bubble-wrap" data-lb="en">
+        <div class="msg-bubble out">Spoke with John on the phone. He's interested in other models too. We'll meet next week.<span class="msg-copy" onclick="copyMsg(this)">Copy message</span></div>
+        <div class="msg-bubble">🔍 Found John Carter, Prospect (2026-04-25). Is this the same person?<br><br>1 · Yes, update<br>2 · No, new lead</div>
+        <div class="msg-bubble out">Yes</div>
+        <div class="msg-bubble">👤 John Carter<br>Call<br>Meeting next week.<br><br>Add a reminder?</div>
+        <div class="msg-bubble out">No</div>
+        <div class="msg-bubble">✅ CRM updated.</div>
+      </div>
+      <div class="expect-box"><strong data-i="wtl">What to look for</strong><span data-i="e3">The same lead's record now shows the new activity and next step, with the notes added. No new row appears.</span></div>
       <div class="iframe-section">
         <div class="iframe-label">
-          <div class="iframe-label-left"><div class="iframe-dot"></div>Live CRM — verify the update appeared</div>
+          <div class="iframe-label-left"><div class="iframe-dot"></div><span data-i="lc2">Live CRM: check the update</span></div>
           <span class="iframe-company-badge" id="crmBadge2"></span>
         </div>
-        <div id="crmTable2" style="padding:16px;min-height:120px"><div class="crm-empty">Sign in to see your leads</div></div>
+        <div id="crmTable2" style="padding:16px;min-height:120px"><div class="crm-empty"><span data-i="sil">Sign in to see your leads</span></div></div>
       </div>
       <div class="step-actions">
-        <button class="btn-main" onclick="nextStep(3)">Update confirmed</button>
-        <button class="btn-back" onclick="prevStep(2)">← Back</button>
-        <button class="btn-flag" onclick="toggleFlag(3)">Flag an issue</button>
+        <button class="btn-main" onclick="nextStep(3)"><span data-i="uc">Update confirmed</span></button>
+        <button class="btn-back" onclick="prevStep(2)"><span data-i="back">← Back</span></button>
+        <button class="btn-flag" onclick="toggleFlag(3)"><span data-i="flag">Flag an issue</span></button>
       </div>
       <div class="flag-form" id="flag-3">
-        <span class="flag-label">What went wrong on this step?</span>
+        <span class="flag-label"><span data-i="fl">What went wrong on this step?</span></span>
         <textarea placeholder="e.g. Beam created a duplicate instead of updating..."></textarea>
-        <button class="btn-main" onclick="submitFlag(3)" style="font-size:12px;padding:8px 18px">Send report</button>
-        <span class="flag-sent" id="flag-sent-3">Reported. Khulan will follow up.</span>
+        <button class="btn-main" onclick="submitFlag(3)" style="font-size:12px;padding:8px 18px"><span data-i="sr">Send report</span></button>
+        <span class="flag-sent" id="flag-sent-3"><span data-i="rep">Reported. Khulan will follow up.</span></span>
       </div>
     </div>
   </div>
@@ -441,39 +473,45 @@
     <div class="step-header">
       <div class="step-icon">📅</div>
       <div>
-        <div class="step-title">Set a next action with a calendar event</div>
-        <div class="step-subtitle">When you confirm a follow-up time, Beam creates a Google Calendar event automatically.</div>
+        <div class="step-title"><span data-i="s4t">Set a next action with a calendar event</span></div>
+        <div class="step-subtitle"><span data-i="s4s">When you confirm a follow-up time, Beam creates a Google Calendar event automatically.</span></div>
       </div>
     </div>
     <div class="step-body">
-      <div class="instruction"><strong>What to do:</strong> Log a new client with a specific date and time for the next action. When Beam asks to confirm, include the time and it will create the calendar event.</div>
-      <div class="example-label">Log with a clear follow-up time</div>
-      <div class="msg-bubble-wrap">
+      <div class="instruction"><div data-i="s4i"><strong>What to do:</strong> Log a new client with a specific date and time for the next action. When Beam asks to confirm, include the time and it creates the calendar event.</div></div>
+      <div class="example-label"><span data-i="ex3">Log with a clear follow-up time</span></div>
+      <div class="msg-bubble-wrap" data-lb="mn">
         <div class="msg-bubble out">Сарантуяа гэж эмэгтэй ирлээ. Mercedes GLE сонирхож байна, онлайн зарааас олсон. Пүрэв гарагт 14:00д уулзах боллоо.<span class="msg-copy" onclick="copyMsg(this)">Copy message</span></div>
         <div class="msg-bubble">👤 Сарантуяа<br>📊 Lead · Visit · Online listing<br>🚗 Mercedes GLE<br>📌 Пүрэв 14:00д уулзах<br>⏰ 2026-04-30T14:00<br><br>Сануулга нэмэх үү?</div>
         <div class="msg-bubble out">Тийм 14:00</div>
         <div class="msg-bubble">✅ CRM-д хадгалагдлаа. Calendar-т нэмэгдлээ.</div>
       </div>
-      <div class="expect-box"><strong>What to look for</strong>A new event should appear in your calendar below at the date and time you specified.</div>
+      <div class="msg-bubble-wrap" data-lb="en">
+        <div class="msg-bubble out">A woman named Sarah came in. She's interested in the Mercedes GLE and found us through an online listing. We're meeting Thursday at 14:00.<span class="msg-copy" onclick="copyMsg(this)">Copy message</span></div>
+        <div class="msg-bubble">👤 Sarah<br>📊 Lead · Visit · Online listing<br>🚗 Mercedes GLE<br>📌 Meet Thursday 14:00<br>⏰ 2026-04-30T14:00<br><br>Add a reminder?</div>
+        <div class="msg-bubble out">Yes, 14:00</div>
+        <div class="msg-bubble">✅ Saved to CRM. Added to calendar.</div>
+      </div>
+      <div class="expect-box"><strong data-i="wtl">What to look for</strong><span data-i="e4">A new event appears in your calendar below at the date and time you gave.</span></div>
       <div class="iframe-section">
         <div class="iframe-label">
-          <div class="iframe-label-left"><div class="iframe-dot"></div>Your beam calendar events</div>
-          <button class="crm-refresh" onclick="loadCalendarData()" style="margin-right:8px">↻ Refresh</button>
+          <div class="iframe-label-left"><div class="iframe-dot"></div><span data-i="cal">Your beam calendar events</span></div>
+          <button class="crm-refresh" onclick="loadCalendarData()" style="margin-right:8px"><span data-i="rf">↻ Refresh</span></button>
         </div>
         <div id="beamCalendarContainer" style="padding:12px 16px 16px">
-          <div class="crm-empty">Sign in to see your calendar events</div>
+          <div class="crm-empty"><span data-i="sic">Sign in to see your calendar events</span></div>
         </div>
       </div>
       <div class="step-actions">
-        <button class="btn-main" onclick="nextStep(4)">Calendar event created</button>
-        <button class="btn-back" onclick="prevStep(2)">← Back</button>
-        <button class="btn-flag" onclick="toggleFlag(4)">Flag an issue</button>
+        <button class="btn-main" onclick="nextStep(4)"><span data-i="cec">Calendar event created</span></button>
+        <button class="btn-back" onclick="prevStep(2)"><span data-i="back">← Back</span></button>
+        <button class="btn-flag" onclick="toggleFlag(4)"><span data-i="flag">Flag an issue</span></button>
       </div>
       <div class="flag-form" id="flag-4">
-        <span class="flag-label">What went wrong on this step?</span>
+        <span class="flag-label"><span data-i="fl">What went wrong on this step?</span></span>
         <textarea placeholder="e.g. Event did not appear in calendar, Beam did not ask for a time..."></textarea>
-        <button class="btn-main" onclick="submitFlag(4)" style="font-size:12px;padding:8px 18px">Send report</button>
-        <span class="flag-sent" id="flag-sent-4">Reported. Khulan will follow up.</span>
+        <button class="btn-main" onclick="submitFlag(4)" style="font-size:12px;padding:8px 18px"><span data-i="sr">Send report</span></button>
+        <span class="flag-sent" id="flag-sent-4"><span data-i="rep">Reported. Khulan will follow up.</span></span>
       </div>
     </div>
   </div>
@@ -483,39 +521,48 @@
     <div class="step-header">
       <div class="step-icon">🔍</div>
       <div>
-        <div class="step-title">Ask beam about a lead</div>
-        <div class="step-subtitle">No commands needed. Ask in natural Mongolian and beam searches the CRM and replies instantly.</div>
+        <div class="step-title"><span data-i="s5t">Ask beam about a lead</span></div>
+        <div class="step-subtitle"><span data-i="s5s">No commands needed. Ask in plain language and beam searches the CRM and replies right away.</span></div>
       </div>
     </div>
     <div class="step-body">
-      <div class="instruction"><strong>What to do:</strong> Ask beam a question about one of the leads you just created. Try asking about their next action or what they were interested in.</div>
-      <div class="example-label">Ask about a next action</div>
-      <div class="msg-bubble-wrap">
+      <div class="instruction"><div data-i="s5i"><strong>What to do:</strong> Ask beam a question about one of the leads you just created. Try asking about their next action or what they were interested in.</div></div>
+      <div class="example-label"><span data-i="ex4">Ask about a next action</span></div>
+      <div class="msg-bubble-wrap" data-lb="mn">
         <div class="msg-bubble out">Болдтой ямар next action байна вэ?<span class="msg-copy" onclick="copyMsg(this)">Copy</span></div>
         <div class="msg-bubble">📌 Болд Нарантуяа — Test Drive<br>🗓 Next action: Test drive зохион байгуулах<br>⏰ 2026-04-30</div>
       </div>
-      <div class="example-label" style="margin-top:16px">Ask about a product interest</div>
-      <div class="msg-bubble-wrap">
+      <div class="msg-bubble-wrap" data-lb="en">
+        <div class="msg-bubble out">What's the next action with John?<span class="msg-copy" onclick="copyMsg(this)">Copy</span></div>
+        <div class="msg-bubble">📌 John Carter, Test Drive<br>🗓 Next action: arrange a test drive<br>⏰ 2026-04-30</div>
+      </div>
+      <div class="example-label" style="margin-top:16px"><span data-i="ex5">Ask about a product interest</span></div>
+      <div class="msg-bubble-wrap" data-lb="mn">
         <div class="msg-bubble out">Сарантуяа ямар машин сонирхсон вэ?<span class="msg-copy" onclick="copyMsg(this)">Copy</span></div>
         <div class="msg-bubble">🚗 Сарантуяа — Mercedes GLE<br>📊 Статус: Lead<br>💬 Онлайн зарааас олсон. Пүрэв уулзах болсон.</div>
       </div>
-      <div class="expect-box"><strong>Multiple matches</strong>If beam finds more than one person with that name, it lists them with status, product, and date so you can pick the right one.</div>
+      <div class="msg-bubble-wrap" data-lb="en">
+        <div class="msg-bubble out">Which car was Sarah interested in?<span class="msg-copy" onclick="copyMsg(this)">Copy</span></div>
+        <div class="msg-bubble">🚗 Sarah, Mercedes GLE<br>📊 Status: Lead<br>💬 Found us through an online listing. Meeting on Thursday.</div>
+      </div>
+      <div class="expect-box"><strong data-i="mm">Multiple matches</strong><span data-i="mmt">If beam finds more than one person with that name, it lists them with status, product and date so you can pick the right one.</span></div>
       <div class="inner-divider"></div>
-      <div class="example-label">Your upcoming actions for the week</div>
+      <div class="example-label"><span data-i="ex6">Your upcoming actions for the week</span></div>
+      <div class="gloss" data-lb="en">The weekly list is in Mongolian for now.</div>
       <div class="msg-bubble-wrap">
         <div class="msg-bubble out">/reminders <span class="msg-copy" onclick="copyMsg(this)">Copy</span></div>
         <div class="msg-bubble">📅 Энэ долоо хоногийн actions<br>Apr 25 – May 1<br><br>1. Болд Нарантуяа — Test Drive<br>&nbsp;&nbsp;&nbsp;📌 Test drive зохион байгуулах<br>&nbsp;&nbsp;&nbsp;⏰ 2026-04-30T10:00<br><br>2. Сарантуяа — Lead<br>&nbsp;&nbsp;&nbsp;📌 Пүрэв 14:00д уулзах<br>&nbsp;&nbsp;&nbsp;⏰ 2026-04-30T14:00<br><br>Нийт: 2 action</div>
       </div>
       <div class="step-actions">
-        <button class="btn-main" onclick="nextStep(5)">All done</button>
-        <button class="btn-back" onclick="prevStep(2)">← Back</button>
-        <button class="btn-flag" onclick="toggleFlag(5)">Flag an issue</button>
+        <button class="btn-main" onclick="nextStep(5)"><span data-i="ad">All done</span></button>
+        <button class="btn-back" onclick="prevStep(2)"><span data-i="back">← Back</span></button>
+        <button class="btn-flag" onclick="toggleFlag(5)"><span data-i="flag">Flag an issue</span></button>
       </div>
       <div class="flag-form" id="flag-5">
-        <span class="flag-label">What went wrong on this step?</span>
+        <span class="flag-label"><span data-i="fl">What went wrong on this step?</span></span>
         <textarea placeholder="e.g. Beam did not understand my query, returned wrong person..."></textarea>
-        <button class="btn-main" onclick="submitFlag(5)" style="font-size:12px;padding:8px 18px">Send report</button>
-        <span class="flag-sent" id="flag-sent-5">Reported. Khulan will follow up.</span>
+        <button class="btn-main" onclick="submitFlag(5)" style="font-size:12px;padding:8px 18px"><span data-i="sr">Send report</span></button>
+        <span class="flag-sent" id="flag-sent-5"><span data-i="rep">Reported. Khulan will follow up.</span></span>
       </div>
     </div>
   </div>
@@ -525,26 +572,23 @@
     <div class="step-body">
       <div class="congrats-wrap">
         <span class="congrats-emoji">🎉</span>
-        <div class="congrats-title" id="congratsTitle">You have tested the full beam flow.</div>
-        <div class="congrats-sub">You have seen how beam captures sales conversations, keeps the CRM updated automatically, and tracks next actions without any manual data entry.</div>
+        <div class="congrats-title" id="congratsTitle"><span data-i="ct">You have tested the full beam flow.</span></div>
+        <div class="congrats-sub"><span data-i="cs">You have seen how beam captures sales conversations, keeps the CRM updated automatically, and tracks next actions without any manual data entry.</span></div>
         <div class="congrats-pills">
-          <div class="c-pill">✓ Connected via Telegram</div>
-          <div class="c-pill">✓ Logged a new lead</div>
-          <div class="c-pill">✓ Updated an existing record</div>
-          <div class="c-pill">✓ Calendar event created</div>
-          <div class="c-pill">✓ Queried CRM by name</div>
+          <div class="c-pill"><span data-i="c1">✓ Connected via Telegram</span></div>
+          <div class="c-pill"><span data-i="c2">✓ Logged a new lead</span></div>
+          <div class="c-pill"><span data-i="c3">✓ Updated an existing record</span></div>
+          <div class="c-pill"><span data-i="c4">✓ Calendar event created</span></div>
+          <div class="c-pill"><span data-i="c5">✓ Queried CRM by name</span></div>
         </div>
         <div class="inner-divider" style="max-width:360px;margin:0 auto 28px"></div>
-        <div style="font-size:13px;color:var(--text-muted);margin-bottom:16px">Ready to explore beam for your team?</div>
-        <div class="contact-card">
-          <div class="contact-name">Reach out to Khulan</div>
-          <div class="contact-role">beam builder at ur|story studio</div>
-          <a href="mailto:khulan@urstory.studio" class="contact-link">khulan@urstory.studio</a>
-        </div>
+        <div style="font-size:13px;color:var(--text-muted);margin-bottom:16px"><span data-i="rdy">Ready to build beam for your team?</span></div>
+        <a class="book-btn" href="https://calendar.google.com/appointments/schedules/AcZssZ3SayCc4DLLRRL4B_bEvX8uaCOI9KyrMNotbwKY7BiKnt0xhAa1GPQHlxx3ykfBFBkmPm-VJyrU" target="_blank" rel="noopener"><span data-i="bk">Book a build session</span></a>
+        <div class="book-sub" data-i="bks">30-minute intro call. Or email <a href="mailto:khulan@urstory.studio">khulan@urstory.studio</a></div>
         <div class="explore-links">
-          <a href="/">Back to home</a>
-          <a href="/pricing-calculator">Pricing calculator</a>
-          <a id="dashboardLink" href="https://beam.urstory.studio/analytics" target="_blank">Analytics dashboard</a>
+          <a href="/"><span data-i="bh">Back to home</span></a>
+          <a href="/pricing-calculator"><span data-i="sc">Savings calculator</span></a>
+          <a id="dashboardLink" href="https://beam.urstory.studio/analytics" target="_blank"><span data-i="adb">Analytics dashboard</span></a>
         </div>
       </div>
     </div>
@@ -553,12 +597,12 @@
 </div>
 
 <footer>
-  <div class="footer-left">beam by ur|story studio, Ulaanbaatar</div>
+  <div class="footer-left"><span data-i="ft">beam by ur|story studio, Ulaanbaatar</span></div>
   <div class="footer-right">
     <a href="mailto:khulan@urstory.studio">khulan@urstory.studio</a>
-    <a href="/">Home</a>
-    <a href="/pricing-calculator">Pricing</a>
-    <a href="/analytics">Analytics</a>
+    <a href="/"><span data-i="hm">Home</span></a>
+    <a href="/pricing-calculator"><span data-i="sc">Savings calculator</span></a>
+    <a href="/analytics"><span data-i="an">Analytics</span></a>
   </div>
 </footer>
 
@@ -586,12 +630,12 @@ async function verifyEmail() {
   input.classList.remove('error');
   if (!email || !email.includes('@')) {
     input.classList.add('error');
-    errEl.textContent = 'Please enter a valid email address.';
+    errEl.textContent = T('badEmail');
     errEl.classList.add('visible');
     return;
   }
   btn.disabled = true;
-  btn.textContent = 'Checking…';
+  btn.textContent = T('checking');
   spinner.classList.add('visible');
   try {
     const res = await fetch(AUTH_ENDPOINT, {
@@ -616,7 +660,7 @@ async function verifyEmail() {
     input.classList.add('error');
   }
   btn.disabled = false;
-  btn.textContent = 'Verify & continue';
+  btn.textContent = T('verify');
   spinner.classList.remove('visible');
 }
 
@@ -629,8 +673,8 @@ function onVerified() {
   if (client_name) document.getElementById('headerCompany').textContent = client_name;
   if (user_name || client_name) document.getElementById('headerUser').classList.add('visible');
 
-  document.getElementById('welcomeName').textContent = user_name ? 'Welcome back, ' + user_name + '!' : 'Welcome!';
-  document.getElementById('welcomeCompany').textContent = client_name ? 'Logged in as ' + client_name + ' · CRM data shown below' : 'Access verified';
+  document.getElementById('welcomeName').textContent = user_name ? T('welcomeBack').replace('{n}', user_name) : T('welcome');
+  document.getElementById('welcomeCompany').textContent = client_name ? T('loggedAs').replace('{c}', client_name) : T('verified');
   document.getElementById('welcomeBox').classList.add('visible');
 
   if (client_name) {
@@ -643,7 +687,7 @@ function onVerified() {
     });
   }
   if (user_name) {
-    document.getElementById('congratsTitle').textContent = user_name + ', you have tested the full beam flow.';
+    document.getElementById('congratsTitle').textContent = T('congrats').replace('{n}', user_name);
   }
 
   nextStep(1);
@@ -654,7 +698,7 @@ function onVerified() {
 // ── CRM DATA ──
 async function loadCRMData() {
   if (!session) return;
-  const loading = '<div class="crm-empty">Loading your leads…</div>';
+  const loading = '<div class="crm-empty">' + T('loadingLeads') + '</div>';
   document.getElementById('crmTable1').innerHTML = loading;
   document.getElementById('crmTable2').innerHTML = loading;
 
@@ -670,7 +714,7 @@ async function loadCRMData() {
     document.getElementById('crmTable1').innerHTML = html;
     document.getElementById('crmTable2').innerHTML = html;
   } catch(e) {
-    const err = '<div class="crm-empty">Could not load CRM data. <button class="crm-refresh" onclick="loadCRMData()">Retry</button></div>';
+    const err = '<div class="crm-empty">' + T('crmErr') + ' <button class="crm-refresh" onclick="loadCRMData()">' + T('retry') + '</button></div>';
     document.getElementById('crmTable1').innerHTML = err;
     document.getElementById('crmTable2').innerHTML = err;
   }
@@ -703,7 +747,7 @@ function buildCRMTable(leads, userName) {
   return `
     <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;flex-wrap:wrap;gap:8px">
       <span style="font-size:11px;color:var(--text-muted)">${leads.length} lead${leads.length !== 1 ? 's' : ''}</span>
-      <button class="crm-refresh" onclick="loadCRMData()">↻ Refresh</button>
+      <button class="crm-refresh" onclick="loadCRMData()"><span data-i="rf">↻ Refresh</span></button>
     </div>
     <div style="overflow-x:auto">
       <table class="crm-table">
@@ -720,7 +764,7 @@ function buildCRMTable(leads, userName) {
 async function loadCalendarData() {
   if (!session) return;
   const container = document.getElementById('beamCalendarContainer');
-  container.innerHTML = '<div class="crm-empty">Loading your calendar events…</div>';
+  container.innerHTML = '<div class="crm-empty">' + T('loadingCal') + '</div>';
   try {
     const company = encodeURIComponent(session.client_name || '');
     const url = ANALYTICS_ENDPOINT + (company ? '?company=' + company : '');
@@ -736,7 +780,7 @@ async function loadCalendarData() {
     });
     initCalendar();
   } catch(e) {
-    container.innerHTML = '<div class="crm-empty">Could not load events. <button class="crm-refresh" onclick="loadCalendarData()">Retry</button></div>';
+    container.innerHTML = '<div class="crm-empty">' + T('calErr') + ' <button class="crm-refresh" onclick="loadCalendarData()">' + T('retry') + '</button></div>';
   }
 }
 
@@ -946,10 +990,120 @@ function copyMsg(el) {
   const bubble = el.closest('.msg-bubble').cloneNode(true);
   bubble.querySelector('.msg-copy')?.remove();
   navigator.clipboard.writeText(bubble.innerText.trim()).then(() => {
-    el.textContent = 'Copied!';
-    setTimeout(() => el.textContent = 'Copy message', 1500);
+    el.textContent = T('copied');
+    setTimeout(() => el.textContent = el.dataset.orig, 1500);
   });
 }
+
+// ── LANGUAGE ──
+const STR = {
+  en: { badEmail:'Please enter a valid email address.', checking:'Checking…', verify:'Verify & continue', welcomeBack:'Welcome back, {n}!', welcome:'Welcome!', loggedAs:'Logged in as {c} · CRM data shown below', verified:'Access verified', congrats:'{n}, you have tested the full beam flow.', loadingLeads:'Loading your leads…', crmErr:'Could not load CRM data.', retry:'Retry', loadingCal:'Loading your calendar events…', calErr:'Could not load events.', copied:'Copied!' },
+  mn: { badEmail:'Зөв и-мэйл хаяг оруулна уу.', checking:'Шалгаж байна…', verify:'Шалгаад үргэлжлүүлэх', welcomeBack:'Тавтай морил, {n}!', welcome:'Тавтай морил!', loggedAs:'{c} нэрээр нэвтэрлээ · CRM мэдээлэл доор', verified:'Хандалт баталгаажлаа', congrats:'{n}, та beam-ийн бүх алхмыг туршлаа.', loadingLeads:'Харилцагчдыг ачаалж байна…', crmErr:'CRM мэдээллийг ачаалж чадсангүй.', retry:'Дахин оролдох', loadingCal:'Календарийг ачаалж байна…', calErr:'Үйл явдлуудыг ачаалж чадсангүй.', copied:'Хуулагдлаа!' }
+};
+const MN_UI = {
+"tag": "Туршилт",
+"p1": "Холбогдох",
+"p2": "Бүртгэх",
+"p3": "Шинэчлэх",
+"p4": "Календарь",
+"p5": "Асуух",
+"p6": "Дууслаа",
+"note": "Туршилтын бот таны бичсэн хэлээр хариулна. Англиар бичвэл англиар хариулна.",
+"s1t": "Telegram-аар beam-д холбогдох",
+"s1s": "Хандалт хүсээд зөвшөөрөл аваарай. Нэг минут ч болохгүй.",
+"s1i": "<strong>Эхлэх заавар:</strong><ol><li>Telegram нээгээд <strong>@beam_urstory_bot</strong> гэж хайна</li><li>Start дарах эсвэл <strong>/start</strong> илгээнэ</li><li>Асуухад нэр овог, и-мэйл, байгууллагынхаа нэрийг ээлжлэн оруулна</li><li>Админ зөвшөөрөхийг хүлээнэ. Зөвшөөрөгдмөгц мэдэгдэл ирнэ</li></ol>",
+"tgb": "@beam_urstory_bot нээх",
+"nu": "Шинэ хэрэглэгч",
+"adm": "Админ",
+"ifno": "/no бол:",
+"nop": "Хүсэлт байхгүй бол:",
+"appr": "Холбогдож, зөвшөөрөл авсан",
+"flag": "Асуудал мэдэгдэх",
+"evl": "Бүртгэлээ баталгаажуулах",
+"evs": "Бүртгүүлсэн и-мэйлээ оруулж хандалтаа шалгуулаад туршилтаа өөрт тохируулаарай.",
+"evb": "Шалгаад үргэлжлүүлэх",
+"fl": "Энэ алхамд юу буруу болов?",
+"sr": "Илгээх",
+"rep": "Хүлээн авлаа. Хулан тантай холбогдоно.",
+"s2t": "Шинэ уулзалтаа бүртгэх",
+"s2s": "Уулзалт, дуудлагынхаа талаар дуут эсвэл бичгийн мессеж илгээнэ. Beam бүх мэдээллийг ялгаж, хадгалахаас өмнө баталгаажуулахыг хүснэ.",
+"s2i": "<strong>Юу хийх вэ:</strong> @beam_urstory_bot-д бодит эсвэл зохиомол уулзалтын талаар бичээрэй. Харилцагчийн нэр, юу болсон, юу сонирхож буйг дурдаарай.",
+"ex1": "Энэ жишээг хуулж үзээрэй",
+"wtl": "Юуг анхаарах вэ",
+"e2": "Баталгаажуулсны дараа харилцагч доорх CRM-д гарч ирнэ. Salesperson баганаас өөрийн нэрээ хайгаарай.",
+"lc1": "Шууд CRM: таны харилцагчид",
+"sil": "Харилцагчаа харахын тулд нэвтэрнэ үү",
+"ll": "Бүртгэсэн",
+"back": "← Буцах",
+"s3t": "Бүртгэлтэй харилцагчийг шинэчлэх",
+"s3s": "Beam давтан харилцагчийг таньж, одоо байгаа бүртгэлийг нь шинэчилнэ.",
+"s3i": "<strong>Юу хийх вэ:</strong> Саяны бүртгэсэн хүнийхээ талаар дараагийн мэдээллээ илгээнэ. Beam бүртгэлийг нь олж, зөв хүн эсэхийг лавлаад шинэчилнэ.",
+"ex2": "Энэ мессежийг илгээж үзээрэй",
+"e3": "Тухайн харилцагчийн бүртгэлд шинэ үйл явдал, дараагийн алхам нэмэгдэж, тэмдэглэл нь хадгалагдана. Шинэ мөр үүсэхгүй.",
+"lc2": "Шууд CRM: шинэчлэлтийг шалгах",
+"uc": "Шинэчлэгдсэн",
+"s4t": "Дараагийн алхмаа календарьт тэмдэглэх",
+"s4s": "Дараагийн уулзалтын цагийг баталгаажуулахад Beam Google Calendar-т автоматаар үйл явдал үүсгэнэ.",
+"s4i": "<strong>Юу хийх вэ:</strong> Дараагийн алхмын тодорхой өдөр, цагтай шинэ харилцагч бүртгэнэ. Beam баталгаажуулахыг хүсэхэд цагаа хэлбэл календарьт нэмнэ.",
+"ex3": "Тодорхой цагтайгаар бүртгэх",
+"e4": "Таны заасан өдөр, цагт доорх календарьт шинэ үйл явдал гарч ирнэ.",
+"cal": "Таны beam календарь",
+"rf": "↻ Шинэчлэх",
+"sic": "Календариа харахын тулд нэвтэрнэ үү",
+"cec": "Календарьт нэмэгдсэн",
+"s5t": "Харилцагчийн талаар beam-ээс асуух",
+"s5s": "Команд хэрэггүй. Энгийнээр асуухад beam CRM-ээс хайж, шууд хариулна.",
+"s5i": "<strong>Юу хийх вэ:</strong> Саяны бүртгэсэн харилцагчдынхаа нэгний талаар асуугаарай. Дараагийн алхам эсвэл юу сонирхсоныг нь асууж үзээрэй.",
+"ex4": "Дараагийн алхмыг асуух",
+"ex5": "Сонирхсон бүтээгдэхүүнийг асуух",
+"mm": "Олон илэрц",
+"mmt": "Ижил нэртэй хэд хэдэн хүн олдвол beam тэднийг үе шат, бүтээгдэхүүн, огноотой нь жагсааж, зөвийг нь сонгуулна.",
+"ex6": "Энэ долоо хоногийн хийх ажлууд",
+"ad": "Дууслаа",
+"ct": "Та beam-ийн бүх алхмыг туршлаа.",
+"cs": "Beam борлуулалтын яриаг хэрхэн бүртгэж, CRM-ийг автоматаар шинэчилж, дараагийн алхмуудыг хэрхэн хөтөлдгийг харлаа.",
+"c1": "✓ Telegram-аар холбогдсон",
+"c2": "✓ Шинэ харилцагч бүртгэсэн",
+"c3": "✓ Бүртгэл шинэчилсэн",
+"c4": "✓ Календарьт нэмсэн",
+"c5": "✓ CRM-ээс нэрээр нь асуусан",
+"rdy": "Багтаа beam бүтээх үү?",
+"bk": "Уулзалт товлох",
+"bks": "30 минутын танилцах уулзалт. Эсвэл <a href=\"mailto:khulan@urstory.studio\">khulan@urstory.studio</a> хаягаар бичээрэй.",
+"bh": "Нүүр хуудас",
+"sc": "Хэмнэлтийн тооцоолуур",
+"adb": "Аналитик",
+"ft": "beam · ur|story studio, Улаанбаатар",
+"hm": "Нүүр",
+"an": "Аналитик",
+"abx": "Таны аналитик самбар шүүгдсэн байгууллага:",
+"od": "Самбар нээх →"
+};
+const EN_UI = {};
+let LANG = 'en';
+function T(k) { return (STR[LANG] && STR[LANG][k]) || STR.en[k] || k; }
+document.querySelectorAll('[data-i]').forEach(el => { if (!(el.dataset.i in EN_UI)) EN_UI[el.dataset.i] = el.innerHTML; });
+function setLang(lang) {
+  LANG = lang === 'mn' ? 'mn' : 'en';
+  const dict = LANG === 'mn' ? MN_UI : EN_UI;
+  document.querySelectorAll('[data-i]').forEach(el => { const v = dict[el.dataset.i]; if (v !== undefined) el.innerHTML = v; });
+  document.querySelectorAll('[data-lb]').forEach(el => { el.hidden = el.dataset.lb !== LANG; });
+  document.querySelectorAll('.msg-copy').forEach(el => { if (!el.dataset.en) el.dataset.en = el.textContent; el.textContent = LANG === 'mn' ? 'Хуулах' : el.dataset.en; el.dataset.orig = el.textContent; });
+  document.documentElement.lang = LANG;
+  document.querySelectorAll('.lang button').forEach(b => b.setAttribute('aria-pressed', b.dataset.lang === LANG));
+  const v = document.getElementById('evBtn'); if (v && !v.disabled) v.textContent = T('verify');
+  document.querySelectorAll('a[href^="/pricing-calculator"], a[href="/"]').forEach(a => { const base = a.getAttribute('href').split('?')[0]; a.setAttribute('href', LANG === 'mn' ? base + '?lang=mn' : base); });
+  try { localStorage.setItem('beam_lang', LANG); } catch (e) {}
+}
+function detectLang() {
+  const q = new URLSearchParams(location.search).get('lang');
+  if (q === 'mn' || q === 'en') return q;
+  try { const s = localStorage.getItem('beam_lang'); if (s === 'mn' || s === 'en') return s; } catch (e) {}
+  const langs = navigator.languages || [navigator.language || 'en'];
+  return langs.some(l => /^mn/i.test(l)) ? 'mn' : 'en';
+}
+document.querySelectorAll('.lang button').forEach(b => b.addEventListener('click', () => setLang(b.dataset.lang)));
+setLang(detectLang());
 </script>
 </body>
 </html>
