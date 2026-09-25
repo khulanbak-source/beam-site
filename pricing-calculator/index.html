@@ -1,7 +1,16 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="description" content="See the hours and deals Beam gives back to your sales team, the monthly tool bill, and the cost of building it yourself.">
 <title>Beam Savings Calculator</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
 <style>
+[hidden]{display:none!important}
+html{background:#f6f5f1}
+body{margin:0}
 :root{
   --bg:#f6f5f1; --surface:#ffffff; --surface2:#efede6; --line:#dfdcd3;
   --text:#1d221e; --muted:#6c6f68; --dim:#9a9c94;
@@ -113,6 +122,8 @@ footer{margin-top:36px;color:var(--dim);font-size:12px;max-width:760px}
 @media (prefers-reduced-motion:reduce){*{transition:none!important}}
 </style>
 
+</head>
+<body>
 <div class="wrap">
   <header class="top">
     <a class="logo" href="/" style="text-decoration:none;color:inherit">beam<i>.</i></a>
@@ -414,3 +425,6 @@ function calc(){
 document.querySelectorAll("input").forEach(i=>i.addEventListener("input",calc));
 calc();
 </script>
+
+</body>
+</html>
